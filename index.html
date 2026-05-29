@@ -560,6 +560,14 @@ body{
 @media(max-width:1020px){.cashflow-grid,.bench-card .cashflow-grid,.v5-control-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.drawer-panel{inset:18px!important;width:calc(100vw - 36px)!important;height:calc(100dvh - 36px)!important;border-radius:28px!important}.drawer-head{padding:24px 22px 18px!important}#drawerBody{padding:20px 22px 28px!important}.customizer-grid{grid-template-columns:1fr!important}.custom-preview{position:static!important}}
 @media(max-width:700px){:root{--section-gap:18px;--tile-gap:12px}.monarch-focus-head,.bench-score-row,.v5-section-head,.v52-card-header{display:grid!important}.cashflow-grid,.bench-card .cashflow-grid,.v5-control-grid{grid-template-columns:1fr!important}.action-row{grid-template-columns:44px minmax(0,1fr)!important}.action-row strong{grid-column:2;justify-self:start}.drawer-panel{inset:0!important;width:100vw!important;height:100dvh!important;border-radius:0!important}.drawer-head{padding:20px 16px 16px!important}#drawerBody{padding:16px!important}.drawer-panel .card,.drawer-form-card{padding:18px!important;border-radius:22px!important}.quick-add-grid{grid-template-columns:1fr!important}.cashflow-tile{min-height:104px!important}.cashflow-tile b{font-size:34px!important}.budget-row-side{min-width:0;text-align:left}.tx-mini-row{grid-template-columns:42px minmax(0,1fr)!important}.tx-mini-row strong{grid-column:2;text-align:left;justify-self:start}}
 
+
+
+/* Phase 0 complete: persistent storage warning banner */
+.storage-warning-banner{display:none;margin:0 0 16px;border:1px solid var(--line);border-radius:18px;padding:13px 15px;background:color-mix(in srgb,var(--panel2) 86%,transparent);box-shadow:var(--shadow2);align-items:flex-start;justify-content:space-between;gap:12px}
+.storage-warning-banner.visible{display:flex}
+.storage-warning-banner b{display:block;font-size:13px;margin-bottom:3px}.storage-warning-banner span{display:block;color:var(--muted);font-size:12px;line-height:1.4}.storage-warning-banner .banner-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;flex:0 0 auto}.storage-warning-banner.notice{border-color:rgba(var(--accent-rgb),.32);background:rgba(var(--accent-rgb),.08)}.storage-warning-banner.warn{border-color:rgba(255,184,107,.45);background:rgba(255,184,107,.10)}.storage-warning-banner.danger{border-color:rgba(255,107,130,.48);background:rgba(255,107,130,.10)}
+@media(max-width:760px){.storage-warning-banner.visible{display:grid}.storage-warning-banner .banner-actions{justify-content:flex-start}.storage-warning-banner .banner-actions .btn{width:100%}}
+
 </style>
 
 <style id="v55-polish">
@@ -945,7 +953,7 @@ body:before{opacity:.12!important;background-size:56px 56px!important}
 
 
 <style id="v60-mobile-refresh">
-/* v6.0 mobile-first product polish: calmer contrast, cleaner dashboards, readable spending/budget modules. */
+/* pre-v1 mobile-first product polish: calmer contrast, cleaner dashboards, readable spending/budget modules. */
 :root{
   --v60-radius:18px;
   --v60-radius-sm:13px;
@@ -1102,7 +1110,7 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
       <div class="grid-21 overview-grid-main">
         <div class="card">
           <div class="card-header"><div><h3 class="card-title">Spending map</h3><p class="card-subtitle">Where your money went this month.</p></div><span class="pill" id="monthPill"></span></div>
-          <div class="canvas-wrap"><canvas id="spendCanvas"></canvas></div>
+          <div class="canvas-wrap chart-interactive mm-chart-card"><canvas id="spendCanvas" tabindex="0" aria-label="Monthly spending by category"></canvas><div class="chart-tooltip" id="spendChartTip" aria-hidden="true"></div></div><div class="chart-legend" id="spendLegend"></div><div class="chart-hover-note">Hover or tap a bar to inspect spending by category.</div>
         </div>
         <div class="card">
           <div class="card-header"><div><h3 class="card-title">Top categories</h3><p class="card-subtitle">Largest controllable spend.</p></div></div>
@@ -1234,7 +1242,7 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
           <div class="table-wrap"><table><thead><tr><th>Account</th><th>Type</th><th>Updated</th><th>Status</th><th class="right">Balance</th><th></th></tr></thead><tbody id="accountRows"></tbody></table></div>
         </div>
         <div class="stack">
-          <div class="card"><div class="card-header"><div><h3 class="card-title">Net worth trend</h3><p class="card-subtitle">Snapshots are manual so old values never drift when balances change.</p></div></div><div class="canvas-wrap"><canvas id="netWorthCanvas"></canvas></div><div class="split-line"></div><div class="form-row"><div><label>Snapshot date</label><input class="input" id="netWorthSnapshotDate" type="date" /></div><div><label>Note</label><input class="input" id="netWorthSnapshotNote" placeholder="Optional note" /></div></div><div class="hero-row"><button class="btn btn-primary" onclick="saveNetWorthSnapshot()">Save current net worth</button><button class="btn" onclick="exportTrackerCsv('networth')">Export CSV</button></div></div>
+          <div class="card"><div class="card-header"><div><h3 class="card-title">Net worth trend</h3><p class="card-subtitle">Snapshots are manual so old values never drift when balances change.</p></div></div><div class="canvas-wrap chart-interactive mm-chart-card"><canvas id="netWorthCanvas" tabindex="0" aria-label="Net worth trend"></canvas><div class="chart-tooltip" id="netWorthChartTip" aria-hidden="true"></div></div><div class="chart-legend" id="netWorthLegend"></div><div class="chart-hover-note">Hover or tap a point to inspect a net worth snapshot.</div><div class="split-line"></div><div class="form-row"><div><label>Snapshot date</label><input class="input" id="netWorthSnapshotDate" type="date" /></div><div><label>Note</label><input class="input" id="netWorthSnapshotNote" placeholder="Optional note" /></div></div><div class="hero-row"><button class="btn btn-primary" onclick="saveNetWorthSnapshot()">Save current net worth</button><button class="btn" onclick="exportTrackerCsv('networth')">Export CSV</button></div></div>
           <div class="card"><div class="card-header"><div><h3 class="card-title">Snapshot history</h3><p class="card-subtitle">Newest snapshots first.</p></div></div><div id="netWorthSnapshotList" class="mini-list"></div></div>
         </div>
       </div>
@@ -1264,7 +1272,7 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
           <div class="table-wrap"><table><thead><tr><th>Holding</th><th>Account</th><th>Class</th><th class="right">Qty</th><th class="right">Price</th><th class="right">Value</th><th class="right">Gain/Loss</th><th></th></tr></thead><tbody id="holdingRows"></tbody></table></div>
         </div>
         <div class="stack">
-          <div class="card"><div class="card-header"><div><h3 class="card-title">Allocation</h3><p class="card-subtitle">Grouped by asset class.</p></div></div><div class="canvas-wrap"><canvas id="investmentCanvas"></canvas></div><div class="split-line"></div><div id="allocationList" class="mini-list"></div></div>
+          <div class="card"><div class="card-header"><div><h3 class="card-title">Allocation</h3><p class="card-subtitle">Grouped by asset class.</p></div></div><div class="canvas-wrap chart-interactive mm-chart-card"><canvas id="investmentCanvas" tabindex="0" aria-label="Investment allocation by asset class"></canvas><div class="chart-tooltip" id="investmentChartTip" aria-hidden="true"></div></div><div class="chart-legend" id="investmentLegend"></div><div class="chart-hover-note">Hover or tap a bar to inspect allocation value and weight.</div><div class="split-line"></div><div id="allocationList" class="mini-list"></div></div>
           <div class="card"><h3 class="card-title">Portfolio notes</h3><p class="card-subtitle">Use manual holdings for visibility. Exclude holdings from net worth if you already track the same account balance on the Net worth page.</p><div class="split-line"></div><div id="investmentNotes" class="mini-list"></div></div>
         </div>
       </div>
@@ -1379,7 +1387,7 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
         </div>
         <div class="stack">
           <div class="card"><h3 class="card-title">Live preview</h3><p class="card-subtitle">A quick sense of the selected style.</p><div class="split-line"></div><div class="preview-shell"><div class="preview-card"><div class="metric-label">Monthly snapshot</div><div class="metric-value good">$4,280</div><div class="metric-sub">Income, budgets, and goals in one clean view.</div><div class="preview-bar"></div></div></div></div>
-          <div class="card"><h3 class="card-title">Privacy and portability</h3><p class="card-subtitle">This app has no backend. Use backups when switching devices or browsers.</p><div class="split-line"></div><div class="mini-list"><div class="mini-item"><div><b>Storage</b><br><span>Browser localStorage</span></div><span id="storageUsage">—</span></div><div class="mini-item"><div><b>Last backup</b><br><span id="lastBackupLabel">Never</span></div><span id="lastBackupAge" class="pill">No backup</span></div><div class="mini-item"><div><b>Backup JSON</b><br><span>Full portable workspace export.</span></div><button class="btn btn-small" onclick="exportBackup()">Export</button></div><div class="mini-item"><div><b>Reports</b><br><span>Download weekly or monthly summaries.</span></div><div class="table-actions"><button class="btn btn-small" onclick="exportPeriodReport('week')">Weekly</button><button class="btn btn-small" onclick="exportPeriodReport('month')">Monthly</button></div></div><div class="mini-item"><div><b>Danger zone</b><br><span>Clear all local data</span></div><button class="btn btn-small btn-danger" onclick="resetAllData()">Reset</button></div></div></div>
+          <div class="card"><h3 class="card-title">Privacy and portability</h3><p class="card-subtitle">This app has no backend. Use backups when switching devices or browsers.</p><div class="split-line"></div><div class="mini-list"><div class="mini-item"><div><b>Storage</b><br><span>Browser localStorage</span></div><span id="storageUsage">—</span></div><div class="mini-item"><div><b>Last backup</b><br><span id="lastBackupLabel">Never</span></div><span id="lastBackupAge" class="pill">No backup</span></div><div class="mini-item"><div><b>Backup JSON</b><br><span>Full portable workspace export.</span></div><button class="btn btn-small" onclick="exportBackup()">Export</button></div><div class="mini-item"><div><b>Reports</b><br><span>Download weekly or monthly summaries.</span></div><div class="table-actions"><button class="btn btn-small" onclick="exportPeriodReport('week')">Weekly</button><button class="btn btn-small" onclick="exportPeriodReport('month')">Monthly</button></div></div><div class="mini-item"><div><b>Build</b><br><span>Use this value for the GitHub release tag.</span></div><span id="appBuildLabel" class="pill">—</span></div><div class="mini-item"><div><b>Danger zone</b><br><span>Clear all local data</span></div><button class="btn btn-small btn-danger" onclick="resetAllData()">Reset</button></div></div></div>
         </div>
       </div>
     </section>
@@ -1413,10 +1421,98 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
   </div>
 </div>
 
+
+
+<style id="v62-focused-ux-polish">
+/* pre-v1 focused UX polish: tighter layout, non-scrolling mobile nav, cleaner touch controls. */
+:root{
+  --ux-nav-h:68px;
+  --ux-compact-radius:14px;
+  --ux-soft-shadow:0 10px 30px rgba(2,6,23,.10);
+}
+html{scroll-padding-bottom:calc(var(--ux-nav-h) + 18px)}
+body.uxv62-more-open{overflow:hidden}
+
+/* calmer, more consistent surfaces */
+.card,.metric-card,.hero-metric,.v60-card,.v60-panel,.v5-panel,.v5-control-card,.week-card,.tracker-stat,.budget-row,.mini-item,.snapshot-row{
+  border-color:color-mix(in srgb,var(--line) 85%,transparent)!important;
+}
+.card-header,.page-head,.v60-panel-head,.v5-panel-title{align-items:center!important}
+.card-header .actions,.page-head .actions,.v60-head-actions{gap:7px!important}
+.section-title{letter-spacing:-.042em!important}.section-sub{max-width:72ch!important}
+.btn{letter-spacing:-.005em!important}.btn-primary{font-weight:850!important}
+.pill,.category-chip,.balance-badge,.cleanup-badge,.confidence-pill,.v60-chip{box-shadow:none!important}
+
+/* friendlier tables and long vendor strings */
+td,th{white-space:nowrap}.table-wrap{position:relative}.table-wrap:after{content:"Swipe table →";display:none;position:sticky;left:10px;bottom:8px;width:max-content;margin:8px 0 0 10px;padding:5px 9px;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--panel) 94%,transparent);color:var(--muted);font-size:11px;backdrop-filter:blur(12px)}
+.amount-cell,.right,.v60-tx-amount{font-variant-numeric:tabular-nums}.v60-tx-merchant,.tx-card-merchant{letter-spacing:-.015em}.v60-tx-meta,.tx-card-meta{line-height:1.35}
+
+/* tighter top bar */
+.topbar{box-shadow:0 1px 0 color-mix(in srgb,var(--line) 65%,transparent)!important}.searchbar{min-width:0!important}.topbar .actions .btn:not(.btn-primary):not(.topbar-overflow-btn){background:var(--panel)!important}
+
+/* mobile: fixed 5-item nav, no horizontal scrolling */
+@media(max-width:900px){
+  .main{padding-bottom:calc(var(--ux-nav-h) + 18px + env(safe-area-inset-bottom))!important}
+  .mobile-bar{
+    display:grid!important;
+    grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    overflow:visible!important;
+    gap:4px!important;
+    height:calc(var(--ux-nav-h) + env(safe-area-inset-bottom))!important;
+    padding:6px 8px calc(6px + env(safe-area-inset-bottom))!important;
+    background:color-mix(in srgb,var(--panel) 96%,transparent)!important;
+    border-top:1px solid color-mix(in srgb,var(--line) 90%,transparent)!important;
+    box-shadow:0 -12px 34px rgba(2,6,23,.14)!important;
+  }
+  .mobile-bar button{
+    flex:initial!important;
+    min-width:0!important;
+    width:100%!important;
+    min-height:52px!important;
+    border-radius:15px!important;
+    padding:6px 3px!important;
+    gap:3px!important;
+    border:1px solid transparent!important;
+  }
+  .mobile-bar button span:first-child{font-size:18px!important;line-height:1!important}
+  .mobile-bar button span:last-child{font-size:10px!important;line-height:1.1!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  .mobile-bar button.active{border-color:rgba(var(--accent-rgb),.22)!important;background:rgba(var(--accent-rgb),.115)!important;color:var(--accent)!important}
+  .mobile-bar button:active{transform:translateY(1px)!important}
+
+  .topbar{gap:8px!important}.topbar .actions{gap:8px!important}.topbar .btn-primary{min-height:42px!important}.topbar-overflow-btn{min-height:42px!important}
+  .storage-warning-banner{margin:0 0 10px!important;border-radius:14px!important;display:grid!important;gap:10px!important}.storage-warning-banner .banner-actions{justify-content:flex-start!important}
+  .page-head{gap:10px!important}.page-head .actions{display:flex!important;overflow-x:auto!important;flex-wrap:nowrap!important;padding-bottom:2px!important;scrollbar-width:none}.page-head .actions::-webkit-scrollbar{display:none}.page-head .actions .btn{flex:0 0 auto!important}
+  .card-header{display:grid!important;gap:9px!important}.card-header .actions{justify-content:flex-start!important;overflow-x:auto!important;flex-wrap:nowrap!important;scrollbar-width:none}.card-header .actions::-webkit-scrollbar{display:none}
+  .v60-head{gap:12px!important}.v60-head h3{font-size:clamp(28px,8vw,40px)!important}.v60-head p{font-size:13px!important;line-height:1.4!important}.v60-head-actions{justify-content:flex-start!important}
+  .v60-summary-grid,.v60-content-grid,.metric-grid,.review-summary-grid,.tracker-hero,.goal-summary,.credit-metric-grid{gap:10px!important}
+  .v60-card,.v60-panel,.card,.metric-card,.hero-metric,.v5-panel,.week-card,.tracker-stat{border-radius:16px!important;padding:14px!important}
+  .mini-item,.snapshot-row,.budget-row,.v60-row,.v60-budget-card{border-radius:14px!important}
+  .table-wrap:after{display:block}
+  .toast{bottom:calc(var(--ux-nav-h) + 10px + env(safe-area-inset-bottom))!important}
+}
+
+@media(max-width:520px){
+  :root{--ux-nav-h:64px}
+  .main{padding-left:10px!important;padding-right:10px!important}
+  .topbar{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}
+  .mobile-bar{padding-left:6px!important;padding-right:6px!important;gap:3px!important}
+  .mobile-bar button{min-height:50px!important;border-radius:13px!important}
+  .mobile-bar button span:first-child{font-size:17px!important}.mobile-bar button span:last-child{font-size:9px!important}
+  .v60-tx-card{padding:11px!important;border-radius:14px!important}.v60-tx-avatar{width:36px!important;height:36px!important}.v60-tx-merchant{font-size:14px!important}.v60-tx-meta{font-size:11.5px!important}
+  .category-grid{grid-template-columns:1fr 1fr!important}.cat-btn{min-height:50px!important}
+}
+
+/* More menu bottom sheet */
+.mobile-more-sheet{position:fixed;inset:0;z-index:120;display:none;align-items:flex-end;justify-content:center;padding:12px;background:rgba(2,6,23,.48);backdrop-filter:blur(10px)}
+.mobile-more-sheet.active{display:flex}.mobile-more-panel{width:min(560px,100%);max-height:min(78vh,680px);overflow:auto;border:1px solid var(--line);border-radius:24px;background:var(--panel);box-shadow:0 26px 80px rgba(0,0,0,.28);padding:14px}.mobile-more-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 4px 12px}.mobile-more-head b{font-size:18px;letter-spacing:-.03em}.mobile-more-head span{display:block;color:var(--muted);font-size:12px;margin-top:2px}.mobile-more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mobile-more-item{min-height:58px;border:1px solid var(--line);border-radius:16px;background:var(--panel2);color:var(--text);display:flex;align-items:center;gap:10px;padding:11px;text-align:left}.mobile-more-item.active{border-color:rgba(var(--accent-rgb),.42);background:rgba(var(--accent-rgb),.10);color:var(--accent)}.mobile-more-icon{width:32px;height:32px;border-radius:12px;display:grid;place-items:center;background:var(--panel3);flex:0 0 auto}.mobile-more-copy{min-width:0}.mobile-more-copy strong{display:block;font-size:13px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mobile-more-copy span{display:block;color:var(--muted);font-size:11px;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+@media(min-width:901px){.mobile-more-sheet{display:none!important}}
+@media(max-width:380px){.mobile-more-grid{grid-template-columns:1fr}.mobile-more-panel{border-radius:20px}}
+</style>
+
 <script>
 const STORAGE_KEY = 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = 'v6.1-merchant-cleanup';
+const APP_BUILD_ID = 'v0.9.0-alpha';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;
@@ -1432,9 +1528,9 @@ const defaultState = {
   theme: 'light',
   appearance: { theme:'light', accent:'sunset', density:'compact', vibe:'minimal' },
   settings: { currency:'USD', showCents:false, incomeTarget:0, lastBackup:null, lastRestore:null, welcomeMode:'auto', firstRunComplete:false, startupSeenBuild:'', uiPolishV48:false, uiUsabilityV49:false, homeTiles:{intro:true, score:true}, uiParityV52:false, dashboardDensity:'balanced', commandPaletteSeen:false },
-  automation: { transferDetection:true, subscriptionDetection:true, ruleSuggestions:true },
+  automation: { transferDetection:true, subscriptionDetection:true, ruleSuggestions:true, merchantCleanup:true },
   trackerSettings: { debtStrategy:'avalanche', creditTarget:760, creditCadence:'monthly' },
-  transactions: [], rules: [], budgets: [], goals: [], accounts: [], netWorthHistory: [], debts: [], holdings: [], creditHistory: [], imports: [], importMappings: [], recurring: [], categoryStatus: {},
+  transactions: [], rules: [], merchantRules: [], budgets: [], goals: [], accounts: [], netWorthHistory: [], debts: [], holdings: [], creditHistory: [], imports: [], importMappings: [], recurring: [], categoryStatus: {},
 };
 let state = loadState();
 let activeView = 'overview';
@@ -1483,6 +1579,7 @@ function mergeState(base, saved){
   out.theme = out.appearance.theme;
   out.transactions = saved.transactions || [];
   out.rules = saved.rules || [];
+  out.merchantRules = (saved.merchantRules || []).map(r=>({id:r.id||uid('mr'), match:String(r.match||'').trim(), name:String(r.name||'').trim(), source:r.source||'auto', hits:Number(r.hits||0), createdAt:r.createdAt||new Date().toISOString(), updatedAt:r.updatedAt||r.createdAt||new Date().toISOString()})).filter(r=>r.match&&r.name);
   out.budgets = saved.budgets || [];
   out.goals = (saved.goals || []).map(g=>({priority:'Medium', dueDate:'', linkedAccount:'', notes:'', ...g}));
   out.accounts = (saved.accounts || []).map(a=>({includeNetWorth:true, updatedAt:a.updatedAt||a.createdAt||'', ...a}));
@@ -1496,13 +1593,65 @@ function mergeState(base, saved){
   return out;
 }
 function storageSnapshot(){ return JSON.stringify(state); }
+function storageSizeKb(){
+  try{ return Math.round(((localStorage.getItem(STORAGE_KEY)||'').length)/1024); }
+  catch(e){ return Math.round((window.__moneyMapMemoryState||storageSnapshot()||'').length/1024); }
+}
+function storageHealthLevel(kb=storageSizeKb()){
+  if(storageWriteFailed) return 'danger';
+  if(kb >= 5120) return 'danger';
+  if(kb >= 4096) return 'warn';
+  if(kb >= 2048) return 'notice';
+  return 'ok';
+}
+function storageHealthMessage(kb=storageSizeKb()){
+  if(storageWriteFailed) return {
+    title:'Storage save failed',
+    body:'MoneyMap could not write to browser storage. Export a backup now before refreshing or closing this tab.'
+  };
+  if(kb >= 5120) return {
+    title:'Storage is at the danger threshold',
+    body:`Workspace is about ${kb} KB. Browser localStorage may reject future saves. Export a backup now.`
+  };
+  if(kb >= 4096) return {
+    title:'Storage is getting close to the browser limit',
+    body:`Workspace is about ${kb} KB. Export a backup before importing more transactions.`
+  };
+  if(kb >= 2048) return {
+    title:'Backup recommended',
+    body:`Workspace is about ${kb} KB. Keep a recent JSON backup before larger imports.`
+  };
+  return null;
+}
+function ensureStorageWarningBanner(){
+  let banner=document.getElementById('storageWarningBanner');
+  if(banner) return banner;
+  banner=document.createElement('div');
+  banner.id='storageWarningBanner';
+  banner.className='storage-warning-banner';
+  banner.setAttribute('role','status');
+  banner.setAttribute('aria-live','polite');
+  const main=document.querySelector('.main');
+  if(main) main.insertBefore(banner, main.firstChild);
+  else document.body.prepend(banner);
+  return banner;
+}
+function updateStorageWarningBanner(){
+  const banner=ensureStorageWarningBanner();
+  const kb=storageSizeKb();
+  const level=storageHealthLevel(kb);
+  const msg=storageHealthMessage(kb);
+  banner.className=`storage-warning-banner ${level}`;
+  if(!msg){ banner.classList.remove('visible'); banner.innerHTML=''; return; }
+  banner.classList.add('visible');
+  banner.innerHTML=`<div><b>${escapeHtml(msg.title)}</b><span>${escapeHtml(msg.body)}</span></div><div class="banner-actions"><button class="btn btn-small btn-primary" onclick="exportBackup()">Export backup</button><button class="btn btn-small" onclick="openDrawer('backup')">Backup center</button></div>`;
+}
 function notifyStorageProblem(message='Storage is full or unavailable. Export a backup now.'){
   storageWriteFailed = true;
   window.__moneyMapMemoryState = storageSnapshot();
-  if(storageWarningShown) return;
-  storageWarningShown = true;
   console.warn(message);
   requestAnimationFrame(()=>{
+    updateStorageWarningBanner();
     if(typeof toast === 'function') toast(message);
     const badge=document.getElementById('storageUsage');
     if(badge) badge.textContent='Save failed';
@@ -1512,25 +1661,30 @@ function saveState(){
   try{
     localStorage.setItem(STORAGE_KEY, storageSnapshot());
     storageWriteFailed = false;
+    updateStorageWarningBanner();
     return true;
   }catch(e){
     notifyStorageProblem('Storage is full or unavailable. Export a backup now.');
+    try{ openDrawer('backup'); }catch(drawerError){ console.warn('MoneyMap could not open the backup drawer after a storage failure.', drawerError); }
     console.warn('MoneyMap saveState failed.', e);
-    return false;
+    throw e;
   }
 }
-function storageSizeKb(){ try{ return Math.round(((localStorage.getItem(STORAGE_KEY)||'').length)/1024); }catch(e){ return Math.round((window.__moneyMapMemoryState||storageSnapshot()||'').length/1024); } }
 function storageStatusText(){
   if(storageWriteFailed) return 'Save failed';
   const kb = storageSizeKb();
-  if(kb >= 4800) return `${kb} KB · near browser limit`;
-  if(kb >= 3000) return `${kb} KB · export backup soon`;
+  if(kb >= 5120) return `${kb} KB · danger threshold`;
+  if(kb >= 4096) return `${kb} KB · near browser limit`;
+  if(kb >= 2048) return `${kb} KB · backup recommended`;
   return `${kb} KB`;
 }
 function checkStorageHealth(){
   const kb=storageSizeKb();
+  updateStorageWarningBanner();
   if(storageWriteFailed) notifyStorageProblem('Storage is full or unavailable. Export a backup now.');
-  else if(kb>=4800 && !storageWarningShown){ storageWarningShown=true; requestAnimationFrame(()=>toast('Workspace storage is near the browser limit. Export a backup.')); }
+  else if(kb>=5120) requestAnimationFrame(()=>toast('Storage is at the danger threshold. Export a backup now.'));
+  else if(kb>=4096) requestAnimationFrame(()=>toast('Workspace storage is near the browser limit. Export a backup.'));
+  else if(kb>=2048) requestAnimationFrame(()=>toast('Workspace is growing. Export a backup before larger imports.'));
 }
 function money(n, opts={}){
   const currency = state.settings.currency || 'USD';
@@ -1579,6 +1733,106 @@ const MERCHANT_CANONICAL_RULES = [
   {test:/\bVERIZON\b/i, name:'Verizon'},
   {test:/\bAT[& ]T\b|\bATT\b/i, name:'AT&T'}
 ];
+
+function merchantRuleMatches(rule, raw){
+  if(!rule || !rule.match || !rule.name) return false;
+  const hay = merchantSearchText(raw);
+  const compactHay = hay.replace(/\s+/g,'');
+  const needle = merchantSearchText(rule.match);
+  const compactNeedle = needle.replace(/\s+/g,'');
+  return (needle && hay.includes(needle)) || (compactNeedle && compactHay.includes(compactNeedle));
+}
+function applyMerchantRenameRule(raw){
+  const rules = (state?.merchantRules || []).filter(r=>r?.match && r?.name).sort((a,b)=>String(b.match).length-String(a.match).length);
+  const hit = rules.find(r=>merchantRuleMatches(r, raw));
+  return hit ? hit.name : '';
+}
+function merchantCoreTokens(raw){
+  let s = merchantSearchText(raw);
+  s = s.replace(/\b(TST|SQ|SP|PP|PAYPAL|POINT OF SALE|CHECKCARD|CHECK CARD|DEBIT CARD|CREDIT CARD|CARD PURCHASE|PURCHASE AUTHORIZED|PREAUTHORIZED|AUTHORIZATION|AUTH|PENDING|RECURRING|ONLINE|WEB|ACH|ELECTRONIC|POS|VISA|MASTERCARD|AMEX|REF|REFERENCE|TRACE|TRANS|TRANSACTION|ID|THANK YOU|THANKS|NA|USA|US)\b/g,' ');
+  s = s.replace(/\b[A-Z0-9]+\.(COM|NET|ORG|CO|US)\b/g,' ');
+  s = s.replace(/\b(?=[A-Z0-9-]*\d)(?:[A-Z]{0,4}\d{3,}[A-Z0-9-]*|\d{2,}[A-Z]{1,})\b/g,' ');
+  let tokens = s.split(/\s+/).filter(Boolean).filter(t=>t.length>1 && !US_STATE_CODES.has(t) && !MERCHANT_LOCATION_WORDS.has(t));
+  const out=[];
+  for(const t of tokens){ if(out[out.length-1]!==t) out.push(t); }
+  return out.slice(0,4);
+}
+function merchantRuleMatchFromRaw(raw, cleanName){
+  const cleanTokens = merchantSearchText(cleanName).split(/\s+/).filter(Boolean).filter(t=>t.length>1);
+  const rawTokens = merchantCoreTokens(raw);
+  const rawJoined = rawTokens.join(' ');
+  for(let len=Math.min(3, cleanTokens.length); len>=1; len--){
+    const phrase = cleanTokens.slice(0,len).join(' ');
+    if(phrase && rawJoined.includes(phrase)) return phrase;
+  }
+  if(rawTokens.length>=2) return rawTokens.slice(0,2).join(' ');
+  return rawTokens[0] || merchantSearchText(cleanName).split(/\s+/).filter(Boolean)[0] || '';
+}
+function upsertMerchantRenameRule(raw, cleanName, source='auto'){
+  const name = String(cleanName||'').trim();
+  const match = merchantRuleMatchFromRaw(raw, name);
+  if(!name || !match || name.length < 2) return false;
+  state.merchantRules = state.merchantRules || [];
+  const existing = state.merchantRules.find(r=>merchantSearchText(r.match)===merchantSearchText(match));
+  const now = new Date().toISOString();
+  if(existing){
+    existing.name = name;
+    existing.hits = Number(existing.hits||0)+1;
+    existing.source = existing.source==='manual' || source==='manual' ? 'manual' : 'auto';
+    existing.updatedAt = now;
+  }else{
+    state.merchantRules.unshift({id:uid('mr'), match, name, source, hits:1, createdAt:now, updatedAt:now});
+  }
+  state.merchantRules = state.merchantRules.slice(0,500);
+  return true;
+}
+function autoMerchantName(raw){
+  const learned = applyMerchantRenameRule(raw);
+  if(learned) return learned;
+  return cleanMerchantName(raw);
+}
+function learnMerchantRulesFromTransactions(){
+  if(state.automation?.merchantCleanup === false) return 0;
+  const candidates = new Map();
+  (state.transactions || []).forEach(t=>{
+    const raw = t.rawDescription || t.description;
+    const cleaned = cleanMerchantName(raw);
+    if(!raw || !cleaned || cleaned === raw || !merchantLooksMessy(raw)) return;
+    const match = merchantRuleMatchFromRaw(raw, cleaned);
+    if(!match) return;
+    const key = merchantSearchText(match);
+    const prev = candidates.get(key) || {raw, cleaned, match, count:0};
+    prev.count += 1;
+    candidates.set(key, prev);
+  });
+  let added = 0;
+  candidates.forEach(c=>{ if(c.count >= 1 && upsertMerchantRenameRule(c.raw, c.cleaned, 'auto')) added++; });
+  return added;
+}
+function autoCleanAllMerchants(options={}){
+  if(state.automation?.merchantCleanup === false && !options.force){ toast('Merchant cleanup automation is off.'); return 0; }
+  const learned = learnMerchantRulesFromTransactions();
+  let count = 0;
+  (state.transactions || []).forEach(t=>{
+    const raw = t.rawDescription || t.description;
+    const next = autoMerchantName(raw);
+    if(next && next !== t.description){
+      if(!t.rawDescription) t.rawDescription = t.description;
+      t.description = next;
+      t.automation = [...new Set([...(t.automation||[]),'merchant'])];
+      count++;
+    }
+  });
+  if(count || learned) saveState();
+  renderAll();
+  if(options.toast !== false) toast(`Merchant automation: ${count} cleaned, ${learned} learned rule${learned===1?'':'s'}.`);
+  return count;
+}
+function toggleMerchantCleanup(){
+  state.automation = {...defaultState.automation, ...(state.automation||{})};
+  state.automation.merchantCleanup = state.automation.merchantCleanup === false;
+  saveState(); renderAll(); toast(`Merchant cleanup automation ${state.automation.merchantCleanup?'on':'off'}.`);
+}
 function titleCaseWords(s){
   const special={USA:'USA',ACH:'ACH',POS:'POS',ATM:'ATM',IRA:'IRA',FPL:'FPL',LAZ:'LAZ',NJ:'NJ',FL:'FL',PA:'PA',US:'US',LLC:'LLC',INC:'Inc',CO:'Co'};
   return String(s||'').toLowerCase().split(/\s+/).filter(Boolean).map(w=>{
@@ -1597,6 +1851,8 @@ function merchantSearchText(raw){
     .trim();
 }
 function canonicalMerchantName(raw){
+  const custom=applyMerchantRenameRule(raw);
+  if(custom) return custom;
   const spaced=merchantSearchText(raw);
   const compact=spaced.replace(/\s+/g,'');
   for(const rule of MERCHANT_CANONICAL_RULES){
@@ -2234,7 +2490,7 @@ function mapRow(row,map,meta={}){
   let amount = map.amount ? parseAmount(row[map.amount]) : 0;
   if(!amount && (map.debit || map.credit)){ const debit=parseAmount(row[map.debit]); const credit=parseAmount(row[map.credit]); amount = credit ? Math.abs(credit) : debit ? -Math.abs(debit) : 0; }
   const rawDescription=String(row[map.description]||'Unknown merchant').trim() || 'Unknown merchant';
-  const tx={ id:uid('tx'), date:normalizeDate(row[map.date]), rawDescription, description:cleanMerchantName(rawDescription), amount, account:String(row[map.account]||'General').trim()||'General', category:String(row[map.category]||'Other').trim()||'Other', reviewed:false, hidden:false, notes:'', createdAt:new Date().toISOString(), sourceFile:meta.fileName||'', sourceRow:meta.rowNumber||null, automation:[] };
+  const tx={ id:uid('tx'), date:normalizeDate(row[map.date]), rawDescription, description:autoMerchantName(rawDescription), amount, account:String(row[map.account]||'General').trim()||'General', category:String(row[map.category]||'Other').trim()||'Other', reviewed:false, hidden:false, notes:'', createdAt:new Date().toISOString(), sourceFile:meta.fileName||'', sourceRow:meta.rowNumber||null, automation:[] };
   applyAutomationToTx(tx,{guess:true});
   return tx;
 }
@@ -2353,7 +2609,8 @@ function commitImport(){
   const summary=pendingImport.summary; const dupes=summary.totals.dupes + guardDupes;
   state.imports.unshift({id:batchId, file:summary.filesSummary.map(f=>f.name).join(', '), files:summary.filesSummary, date:now, rows:summary.totals.rows, added:transactionIds.length, dupes, transactionIds, mappings:summary.filesSummary.map(f=>f.profileName)});
   state.imports=state.imports.slice(0,30); pendingImport=null; state.settings.firstRunComplete=true;
-  saveState(); renderMapping(); detectRecurring(true); renderImportHistory(); toast(`Imported ${transactionIds.length} transactions. Skipped ${dupes} duplicates.`); showView('review');
+  const merchantCleaned = autoCleanAllMerchants({toast:false});
+  saveState(); renderMapping(); detectRecurring(true); renderImportHistory(); toast(`Imported ${transactionIds.length} transactions. Skipped ${dupes} duplicates. Cleaned ${merchantCleaned} merchant name${merchantCleaned===1?'':'s'}.`); showView('review');
 }
 function clearPendingImport(){ pendingImport=null; renderMapping(); setStep('stepFile'); const input=document.getElementById('csvInput'); if(input) input.value=''; }
 function undoImport(id){
@@ -2413,12 +2670,12 @@ function approveCurrentWeek(){ const items=state.transactions.filter(t=>!t.revie
 function approveAllReviewed(){ const items=visibleTransactions().filter(t=>!t.reviewed); items.forEach(t=>{t.reviewed=true;t.reviewedAt=new Date().toISOString();}); toast(items.length?`Approved ${items.length} visible transaction${items.length===1?'':'s'}.`:'No visible transactions needed approval.'); renderAll(); }
 function skipReview(){ reviewIndex++; renderReview(); }
 function hideTx(id){ const t=state.transactions.find(x=>x.id===id); if(t){t.hidden=true;t.category='Transfers';t.hiddenReason='Manually hidden as transfer';t.reviewed=true;t.reviewedAt=new Date().toISOString();saveState();renderAll();} }
-function saveReviewMerchant(id){ const t=state.transactions.find(x=>x.id===id); const val=document.getElementById('reviewMerchantInput')?.value?.trim(); if(t && val){ t.description=val; saveState(); toast('Merchant name updated.'); renderAll(); } }
+function saveReviewMerchant(id){ const t=state.transactions.find(x=>x.id===id); const val=document.getElementById('reviewMerchantInput')?.value?.trim(); if(t && val){ t.description=val; if(t.rawDescription || merchantLooksMessy(t.description)) upsertMerchantRenameRule(t.rawDescription || t.description, val, 'manual'); saveState(); toast('Merchant name updated and remembered.'); renderAll(); } }
 function applyMerchantCleanupToTransactions(txns,label='merchant name'){
   let count=0;
   (txns||[]).forEach(t=>{
     const source=t.rawDescription || t.description;
-    const next=cleanMerchantName(source);
+    const next=autoMerchantName(source);
     if(next && next!==t.description){
       if(!t.rawDescription) t.rawDescription=t.description;
       t.description=next;
@@ -2433,7 +2690,7 @@ function applyMerchantCleanupToTransactions(txns,label='merchant name'){
 function cleanTxMerchant(id){ const t=state.transactions.find(x=>x.id===id); if(!t) return; applyMerchantCleanupToTransactions([t],'merchant name'); }
 function cleanVisibleMerchants(){ return applyMerchantCleanupToTransactions(visibleTransactions(),'visible merchant name'); }
 function cleanReviewQueueMerchants(){ return applyMerchantCleanupToTransactions(reviewCandidates(),'review queue merchant name'); }
-function cleanAllMerchants(){ return applyMerchantCleanupToTransactions(state.transactions,'merchant name'); }
+function cleanAllMerchants(){ return autoCleanAllMerchants({force:true}); }
 function suggestRuleContains(tx){ return normalizeMerchant(tx.rawDescription || tx.description).split(' ').filter(Boolean).slice(0,3).join(' ') || cleanMerchantName(tx.description); }
 function createRuleForTx(id){ const t=state.transactions.find(x=>x.id===id); if(!t) return; showView('rules'); requestAnimationFrame(()=>{ const contains=document.getElementById('ruleContains'), cat=document.getElementById('ruleCategory'), action=document.getElementById('ruleAction'), dir=document.getElementById('ruleDirection'); if(contains) contains.value=suggestRuleContains(t); if(cat) cat.value=t.category||'Other'; if(action) action.value=t.hidden||t.category==='Transfers'?'transfer':'categorize'; if(dir) dir.value=Number(t.amount)<0?'spend':Number(t.amount)>0?'income':'any'; syncRuleFormAction(); }); toast('Rule draft filled from transaction.'); }
 function createHideRuleForTx(id){ const t=state.transactions.find(x=>x.id===id); if(!t) return; const contains=suggestRuleContains(t); state.rules.unshift(canonicalRule({id:uid('rule'), contains, category:'Transfers', action:'transfer', direction:'any', createdBy:'review'})); state.transactions.forEach(tx=>applyAutomationToTx(tx,{guess:false})); saveState(); toast(`Hide rule added for ${contains}.`); renderAll(); }
@@ -2554,7 +2811,7 @@ function renderRules(){
   const rules=(state.rules||[]).map(canonicalRule); const suggestions=state.automation?.ruleSuggestions ? suggestedRules() : [];
   list.innerHTML=rules.length?rules.map(r=>`<div class="mini-item"><div><b>If description contains “${escapeHtml(r.contains)}”</b><br><span>${escapeHtml(ruleActionLabel(r))} · Category: ${escapeHtml(r.category)} · ${escapeHtml(r.direction==='any'?'any amount':r.direction)}</span><div class="recurring-meta"><span class="rule-chip">${r.system?'starter':'custom'}</span>${r.hide?'<span class="rule-chip">hidden</span>':''}</div></div><div class="rule-card-actions"><button class="btn btn-small" onclick="moveRule('${r.id}',-1)">↑</button><button class="btn btn-small" onclick="moveRule('${r.id}',1)">↓</button><button class="btn btn-small btn-danger" onclick="deleteRule('${r.id}')">Delete</button></div></div>`).join(''):emptyMini('No rules','Create merchant rules to automate imports.','Focus rule','document.getElementById(\'ruleContains\')?.focus()');
   if(sug) sug.innerHTML=suggestions.length?suggestions.map(s=>`<div class="mini-item"><div><span class="suggestion-source">${escapeHtml(s.source)}</span><br><b>${escapeHtml(s.contains)} → ${escapeHtml(s.category)}</b><br><span>${s.count} matching transaction${s.count===1?'':'s'} · ${Math.round(s.confidence)}% confidence</span></div><div class="rule-card-actions"><button class="btn btn-small btn-primary" onclick="addSuggestedRule('${escapeJs(s.contains)}','${escapeJs(s.category)}','${escapeJs(s.action)}','${escapeJs(s.direction)}')">Accept</button><button class="btn btn-small" onclick="showCategoryTransactions('${escapeJs(s.category)}')">Review</button></div></div>`).join(''):emptyMini(state.automation?.ruleSuggestions?'No suggestions yet':'Suggestions off',state.automation?.ruleSuggestions?'Suggestions appear after repeated edits or repeated merchants with consistent categories.':'Turn suggestions on to see repeated merchant patterns.','Review queue','showView(\'review\')');
-  if(stats){ const transferCandidates=state.transactions.filter(t=>transferDetectionReason(t)).length; const hiddenTransfers=state.transactions.filter(t=>t.hidden&&t.category==='Transfers').length; const recurring=(state.recurring||[]).length; stats.innerHTML=`<div class="automation-grid"><div class="automation-stat"><span>Rules</span><b>${rules.length}</b></div><div class="automation-stat"><span>Hidden transfers</span><b>${hiddenTransfers}</b></div><div class="automation-stat"><span>Subscriptions</span><b>${recurring}</b></div></div><div class="mini-item"><div><b>Transfer detection</b><br><span>${transferCandidates} likely transfer${transferCandidates===1?'':'s'} found in transaction history</span></div><button class="btn btn-small ${state.automation.transferDetection?'selected':''}" onclick="toggleAutomationSetting('transferDetection')">${state.automation.transferDetection?'On':'Off'}</button></div><div class="mini-item"><div><b>Subscription detection</b><br><span>Recurring charge detection from repeated merchants and similar amounts</span></div><button class="btn btn-small ${state.automation.subscriptionDetection?'selected':''}" onclick="toggleAutomationSetting('subscriptionDetection')">${state.automation.subscriptionDetection?'On':'Off'}</button></div><div class="mini-item"><div><b>Rule suggestions</b><br><span>Suggests merchant rules after repeated edits</span></div><button class="btn btn-small ${state.automation.ruleSuggestions?'selected':''}" onclick="toggleAutomationSetting('ruleSuggestions')">${state.automation.ruleSuggestions?'On':'Off'}</button></div>`; }
+  if(stats){ const transferCandidates=state.transactions.filter(t=>transferDetectionReason(t)).length; const hiddenTransfers=state.transactions.filter(t=>t.hidden&&t.category==='Transfers').length; const recurring=(state.recurring||[]).length; stats.innerHTML=`<div class="automation-grid"><div class="automation-stat"><span>Rules</span><b>${rules.length}</b></div><div class="automation-stat"><span>Hidden transfers</span><b>${hiddenTransfers}</b></div><div class="automation-stat"><span>Subscriptions</span><b>${recurring}</b></div></div><div class="mini-item"><div><b>Transfer detection</b><br><span>${transferCandidates} likely transfer${transferCandidates===1?'':'s'} found in transaction history</span></div><button class="btn btn-small ${state.automation.transferDetection?'selected':''}" onclick="toggleAutomationSetting('transferDetection')">${state.automation.transferDetection?'On':'Off'}</button></div><div class="mini-item"><div><b>Subscription detection</b><br><span>Recurring charge detection from repeated merchants and similar amounts</span></div><button class="btn btn-small ${state.automation.subscriptionDetection?'selected':''}" onclick="toggleAutomationSetting('subscriptionDetection')">${state.automation.subscriptionDetection?'On':'Off'}</button></div><div class="mini-item"><div><b>Rule suggestions</b><br><span>Suggests merchant rules after repeated edits</span></div><button class="btn btn-small ${state.automation.ruleSuggestions?'selected':''}" onclick="toggleAutomationSetting('ruleSuggestions')">${state.automation.ruleSuggestions?'On':'Off'}</button></div><div class="mini-item"><div><b>Merchant cleanup</b><br><span>${(state.merchantRules||[]).length} learned rename rule${(state.merchantRules||[]).length===1?'':'s'} apply during import</span></div><div class="rule-card-actions"><button class="btn btn-small ${state.automation.merchantCleanup?'selected':''}" onclick="toggleMerchantCleanup()">${state.automation.merchantCleanup?'On':'Off'}</button><button class="btn btn-small" onclick="autoCleanAllMerchants({force:true})">Run now</button></div></div>`; }
 }
 function addRuleFromForm(){ const contains=document.getElementById('ruleContains').value.trim(); const action=document.getElementById('ruleAction')?.value||'categorize'; const direction=document.getElementById('ruleDirection')?.value||'any'; const category=(action==='transfer'?'Transfers':document.getElementById('ruleCategory').value.trim()||'Other'); if(!contains){toast('Add matching text first.');return;} state.rules.unshift(canonicalRule({id:uid('rule'),contains,category,action,direction,createdBy:'user'})); document.getElementById('ruleContains').value=''; document.getElementById('ruleCategory').value=''; if(document.getElementById('ruleAction')) document.getElementById('ruleAction').value='categorize'; if(document.getElementById('ruleDirection')) document.getElementById('ruleDirection').value='any'; saveState(); toast('Rule added.'); renderAll(); }
 function addSuggestedRule(contains,category,action='categorize',direction='spend'){ if(ruleExistsForContains(contains)){ toast('A matching rule already exists.'); return; } state.rules.unshift(canonicalRule({id:uid('rule'),contains,category,action,direction,createdBy:'suggestion'})); state.transactions.forEach(tx=>applyAutomationToTx(tx,{guess:false})); saveState(); toast('Suggested rule accepted.'); renderAll(); }
@@ -2757,7 +3014,9 @@ function renderSettings(){
     el.textContent = visible ? 'Shown' : 'Hidden';
     el.setAttribute('aria-pressed', String(visible));
   });
-  const usage=document.getElementById('storageUsage'); if(usage){ usage.textContent=storageSizeKb()+' KB'; }
+  const usage=document.getElementById('storageUsage'); if(usage){ usage.textContent=storageStatusText(); }
+  const build=document.getElementById('appBuildLabel'); if(build) build.textContent=APP_BUILD_ID;
+  updateStorageWarningBanner();
   const backupLabel = lastBackupText();
   const backupAge = backupFreshnessLabel();
   ['lastBackupLabel','lastBackupLabelDrawer'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=backupLabel; });
@@ -3645,7 +3904,9 @@ renderSettings = function(){
     el.textContent = visible ? 'Shown' : 'Hidden';
     el.setAttribute('aria-pressed', String(visible));
   });
-  const usage=document.getElementById('storageUsage'); if(usage){ usage.textContent=storageSizeKb()+' KB'; }
+  const usage=document.getElementById('storageUsage'); if(usage){ usage.textContent=storageStatusText(); }
+  const build=document.getElementById('appBuildLabel'); if(build) build.textContent=APP_BUILD_ID;
+  updateStorageWarningBanner();
   const backupLabel = lastBackupText();
   const backupAge = backupFreshnessLabel();
   ['lastBackupLabel','lastBackupLabelDrawer'].forEach(id=>{ const el=document.getElementById(id); if(el) el.textContent=backupLabel; });
@@ -3989,7 +4250,7 @@ window.addEventListener('resize',()=>requestAnimationFrame(v59AfterRender),{pass
 /* ---- end v5.9 executive usability + dark mode landing page ---- */
 
 
-/* ---- v6.0 mobile-first refresh ---- */
+/* ---- pre-v1 mobile-first refresh ---- */
 function v60Money(value){ return typeof v54FriendlyMoney === 'function' ? v54FriendlyMoney(value) : money(value); }
 function v60ClampPct(n){ return Math.min(100, Math.max(0, Number(n)||0)); }
 function v60StatusClass(pct){ return pct>=100?'bad':pct>=85?'warn':'good'; }
@@ -4083,10 +4344,227 @@ renderAll = function(){ _v60RenderAll(); requestAnimationFrame(v60AfterRender); 
 const _v60ShowView = showView;
 showView = function(id){ _v60ShowView(id); requestAnimationFrame(v60AfterRender); };
 window.addEventListener('resize',()=>requestAnimationFrame(v60AfterRender),{passive:true});
-/* ---- end v6.0 mobile-first refresh ---- */
+/* ---- end pre-v1 mobile-first refresh ---- */
 
 init();
 requestAnimationFrame(()=>{ ensureTransactionFilterExtras(); renderAll(); });
+
+
+/* ---- pre-v1 focused UX polish ---- */
+const UXV62_PRIMARY_MOBILE_NAV = ['overview','review','transactions','budgets'];
+function ux62NavTitle(id){
+  const item = NAV.find(n=>n[0]===id);
+  return item ? item[1] : id;
+}
+function ux62NavIcon(id){
+  const item = NAV.find(n=>n[0]===id);
+  return item ? item[3] : '•';
+}
+function ux62NavSub(id){
+  const item = NAV.find(n=>n[0]===id);
+  return item ? item[2] : '';
+}
+function ux62EnsureMobileMoreSheet(){
+  let sheet = document.getElementById('mobileMoreSheet');
+  if(sheet) return sheet;
+  sheet = document.createElement('div');
+  sheet.id = 'mobileMoreSheet';
+  sheet.className = 'mobile-more-sheet';
+  sheet.setAttribute('aria-hidden','true');
+  sheet.innerHTML = `<div class="mobile-more-panel" role="dialog" aria-modal="true" aria-label="More MoneyMap sections">
+    <div class="mobile-more-head"><div><b>More sections</b><span>Open the tools that do not fit in the bottom bar.</span></div><button type="button" class="btn btn-square" onclick="toggleMobileMore(false)" aria-label="Close more menu">×</button></div>
+    <div class="mobile-more-grid" id="mobileMoreGrid"></div>
+  </div>`;
+  sheet.addEventListener('click', event => { if(event.target === sheet) toggleMobileMore(false); });
+  document.body.appendChild(sheet);
+  return sheet;
+}
+function ux62RenderMobileMoreGrid(){
+  const sheet = ux62EnsureMobileMoreSheet();
+  const grid = sheet.querySelector('#mobileMoreGrid');
+  if(!grid) return;
+  const ids = NAV.map(n=>n[0]).filter(id => !UXV62_PRIMARY_MOBILE_NAV.includes(id));
+  grid.innerHTML = ids.map(id => `<button type="button" class="mobile-more-item ${id===activeView?'active':''}" onclick="showView('${id}')">
+    <span class="mobile-more-icon">${escapeHtml(ux62NavIcon(id))}</span>
+    <span class="mobile-more-copy"><strong>${escapeHtml(ux62NavTitle(id))}</strong><span>${escapeHtml(ux62NavSub(id))}</span></span>
+  </button>`).join('');
+}
+function toggleMobileMore(open){
+  const sheet = ux62EnsureMobileMoreSheet();
+  const shouldOpen = typeof open === 'boolean' ? open : !sheet.classList.contains('active');
+  if(shouldOpen) ux62RenderMobileMoreGrid();
+  sheet.classList.toggle('active', shouldOpen);
+  sheet.setAttribute('aria-hidden', shouldOpen ? 'false' : 'true');
+  document.body.classList.toggle('uxv62-more-open', shouldOpen);
+}
+buildMobileNav = function(){
+  const el = document.getElementById('mobileNav');
+  if(!el) return;
+  const moreActive = !UXV62_PRIMARY_MOBILE_NAV.includes(activeView);
+  const items = UXV62_PRIMARY_MOBILE_NAV.map(id => ({id, title:ux62NavTitle(id), icon:ux62NavIcon(id), active:id===activeView, action:`showView('${id}')`}));
+  items.push({id:'more', title:'More', icon:'•••', active:moreActive, action:'toggleMobileMore(true)'});
+  el.innerHTML = items.map(item => `<button type="button" class="${item.active?'active':''}" onclick="${item.action}" aria-label="${item.id==='more'?'Open more sections':'Open '+escapeHtml(item.title)}"><span>${escapeHtml(item.icon)}</span><span>${escapeHtml(item.title)}</span></button>`).join('');
+  ux62RenderMobileMoreGrid();
+};
+const _ux62ShowView = showView;
+showView = function(id){
+  toggleMobileMore(false);
+  _ux62ShowView(id);
+  requestAnimationFrame(()=>{
+    buildMobileNav();
+    document.body.classList.add('uxv62-ready');
+    const top = document.querySelector('.main');
+    if(window.matchMedia('(max-width: 900px)').matches && top){ try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); } }
+  });
+};
+const _ux62RenderAll = renderAll;
+renderAll = function(){
+  _ux62RenderAll();
+  requestAnimationFrame(()=>{
+    buildMobileNav();
+    document.body.classList.add('uxv62-ready');
+    document.querySelectorAll('button:not([type])').forEach(btn=>{ btn.type='button'; });
+  });
+};
+window.addEventListener('keydown', event => {
+  if(event.key === 'Escape') toggleMobileMore(false);
+});
+/* ---- end pre-v1 focused UX polish ---- */
+
+
+/* ---- v0.9.0-alpha deep UI and mobile polish ---- */
+(function(){
+  const style=document.createElement('style');
+  style.textContent=`
+    :root{--mm-compact-bottom:64px;--mm-mobile-safe:env(safe-area-inset-bottom)}
+    .main{padding-bottom:calc(92px + var(--mm-mobile-safe))}
+    .topbar{border-bottom:1px solid color-mix(in srgb,var(--line) 72%,transparent)}
+    .searchbar{height:44px;min-height:44px;border-radius:14px;padding:9px 13px;background:color-mix(in srgb,var(--panel) 82%,transparent)!important}
+    .section-title{letter-spacing:-.055em}.section-sub{max-width:760px}
+    .card,.metric-card,.hero-metric,.tracker-stat,.week-card{background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 96%,transparent),color-mix(in srgb,var(--panel2) 74%,transparent))!important;border-color:color-mix(in srgb,var(--line) 88%,transparent)!important}
+    .card-header{gap:10px}.card-subtitle{line-height:1.38}.btn{border-radius:13px}.btn-primary{color:#061015!important}.pill,.category-chip,.balance-badge,.confidence-pill,.cleanup-badge,.goal-chip{border-radius:999px;background:color-mix(in srgb,var(--panel2) 90%,transparent)!important}
+    .metric-card,.tracker-stat,.week-card{min-height:104px}.metric-label{margin-bottom:8px}.metric-sub{line-height:1.35}
+    .canvas-wrap.mm-chart-card{position:relative;border-radius:22px!important;padding:16px!important;background:radial-gradient(700px 180px at 50% -20%,rgba(var(--accent-rgb),.10),transparent 58%),linear-gradient(180deg,color-mix(in srgb,var(--panel2) 95%,transparent),color-mix(in srgb,var(--panel) 92%,transparent))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
+    .chart-legend{margin-top:10px}.legend-chip{min-height:34px;background:color-mix(in srgb,var(--panel2) 92%,transparent)!important;border-color:var(--line)!important}.chart-hover-note{font-size:11.5px;color:var(--soft)}
+    .chart-tooltip{font-size:12px}.chart-tip-title{font-size:13px}.chart-tip-row b{font-size:12px}.chart-tip-row{padding:5px 0}
+    .table-wrap{box-shadow:inset 0 1px 0 rgba(255,255,255,.025)} tbody tr{transition:background .12s ease}
+    .mobile-bar{height:calc(var(--mm-compact-bottom) + var(--mm-mobile-safe));padding:6px 8px calc(6px + var(--mm-mobile-safe))!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:5px!important;background:color-mix(in srgb,var(--panel) 94%,transparent)!important;box-shadow:0 -12px 34px rgba(0,0,0,.20)!important}
+    .mobile-bar button{min-height:50px!important;border-radius:16px!important;gap:2px!important;padding:6px 3px!important;font-weight:800!important;letter-spacing:-.01em!important}
+    .mobile-bar button span:first-child{font-size:17px;line-height:1}.mobile-bar button span:last-child{font-size:10.5px!important;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+    .mobile-bar button.active{background:linear-gradient(180deg,rgba(var(--accent-rgb),.18),rgba(var(--accent-rgb),.08))!important;box-shadow:inset 0 0 0 1px rgba(var(--accent-rgb),.24)}
+    .mobile-more-sheet{padding-bottom:calc(78px + var(--mm-mobile-safe))!important}.mobile-more-panel{border-radius:24px 24px 0 0!important}.mobile-more-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.mobile-more-item{min-height:74px!important;border-radius:17px!important;padding:12px!important}.mobile-more-icon{width:34px!important;height:34px!important;border-radius:13px!important}.mobile-more-copy strong{font-size:13px!important}.mobile-more-copy span{font-size:11px!important}
+    .storage-banner{border-radius:16px!important;margin-bottom:12px!important}.drawer-panel{max-width:min(720px,calc(100vw - 20px))}.drawer-actions .btn{border-radius:15px}
+    @media(max-width:1180px){.main{padding-top:12px}.topbar{position:sticky;top:0;z-index:30;margin:-12px -12px 12px!important;padding:10px 12px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 96%,transparent),color-mix(in srgb,var(--bg) 88%,transparent))!important;backdrop-filter:blur(18px)}.actions{gap:7px}.actions .btn{min-height:38px;padding:9px 10px;font-size:12px}.metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid{gap:10px!important}}
+    @media(max-width:760px){body{background-attachment:fixed}.main{padding-left:10px!important;padding-right:10px!important;padding-bottom:calc(84px + var(--mm-mobile-safe))!important}.topbar{display:grid!important;grid-template-columns:1fr!important}.searchbar{width:100%;max-width:none}.actions{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;width:100%}.actions .btn{width:100%;min-height:38px}.hero.compact,.hero{gap:10px!important;margin-bottom:10px!important}.command-strip,.hero-card{border-radius:20px!important;padding:18px!important;min-height:0!important}.command-copy h2,.hero h2{font-size:30px!important;line-height:1!important;letter-spacing:-.055em!important}.command-copy p,.hero p{font-size:13px!important;line-height:1.42!important}.metric-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.metric-card,.tracker-stat,.week-card{padding:14px!important;border-radius:16px!important;min-height:98px!important}.metric-value{font-size:25px!important}.metric-label{font-size:8.5px!important}.metric-sub{font-size:11px!important}.card{padding:14px!important;border-radius:17px!important}.card-header{display:grid!important;margin-bottom:12px!important}.card-title{font-size:16px!important}.card-subtitle{font-size:12px!important}.page-head{gap:10px!important;margin-bottom:12px!important}.section-title{font-size:26px!important}.section-sub{font-size:13px!important}.canvas-wrap{height:218px!important;min-height:218px!important;border-radius:18px!important}.canvas-wrap.mm-chart-card{padding:12px!important}.chart-legend{display:grid!important;grid-template-columns:1fr!important;gap:7px!important}.legend-chip{padding:8px 10px!important}.review-transaction{padding:18px!important;border-radius:20px!important}.review-merchant{font-size:23px!important}.review-amount{font-size:33px!important;margin:13px 0!important}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.cat-btn{padding:12px 10px!important}.mini-item{border-radius:15px!important;padding:11px!important}.form-field{margin-bottom:10px}.input,select,textarea{min-height:44px!important;border-radius:13px!important}.table-actions .btn,.tx-actions .btn{min-height:32px!important}.mobile-more-panel{max-height:min(78vh,620px)!important}.drawer-panel{inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;border-radius:0!important}.drawer-head{padding:16px 14px 12px!important}.drawer-head .section-title{font-size:26px!important}#drawerBody{padding:12px 12px 18px!important}}
+    @media(max-width:430px){.metric-grid{grid-template-columns:1fr!important}.topbar .actions{grid-template-columns:1fr!important}.mobile-bar{padding-left:5px!important;padding-right:5px!important;gap:3px!important}.mobile-bar button{border-radius:14px!important}.mobile-bar button span:first-child{font-size:16px}.mobile-bar button span:last-child{font-size:9.5px!important}.mobile-more-grid{grid-template-columns:1fr!important}.command-copy h2,.hero h2{font-size:27px!important}.canvas-wrap{height:204px!important;min-height:204px!important}}
+  `;
+  document.head.appendChild(style);
+
+  window.APP_PRERELEASE_LABEL = 'Pre-v1 alpha';
+
+  const originalBackupPayload = window.backupPayload;
+  if(typeof originalBackupPayload === 'function'){
+    window.backupPayload = function(){
+      const payload = originalBackupPayload();
+      payload.releaseStage = 'pre-v1-alpha';
+      payload.build = APP_BUILD_ID;
+      return payload;
+    };
+  }
+
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function font(){ return getComputedStyle(document.body).fontFamily; }
+  function clearCanvas(canvas, minW=620, minH=250){
+    const wrap=canvas.parentElement; const rect=wrap.getBoundingClientRect(); const dpr=window.devicePixelRatio||1;
+    canvas.width=Math.max(minW,Math.floor(rect.width*dpr)); canvas.height=Math.max(minH,Math.floor(rect.height*dpr));
+    const ctx=canvas.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
+    const w=canvas.width/dpr,h=canvas.height/dpr; ctx.clearRect(0,0,w,h);
+    return {ctx,w,h,dpr,wrap};
+  }
+  function noData(ctx,msg,w){ ctx.fillStyle=cssVar('--muted'); ctx.font='13px '+font(); ctx.fillText(msg,18,34); }
+  function setLegend(id,items,title='Now showing'){
+    const el=document.getElementById(id); if(!el) return;
+    el.innerHTML=`<span class="chart-legend-title">${escapeHtml(title)}</span>`+items.map(item=>`<span class="legend-chip"><span class="chart-swatch" style="background:${escapeHtml(item.color||cssVar('--accent'))}"></span><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b></span>`).join('');
+  }
+  function showTip(tipId,canvas,x,y,title,rows){
+    const tip=document.getElementById(tipId); if(!tip) return;
+    tip.innerHTML=`<div class="chart-tip-title"><b>${escapeHtml(title)}</b><span>Detail</span></div>`+rows.map(r=>`<div class="chart-tip-row"><span class="chart-tip-label"><span class="chart-swatch" style="background:${escapeHtml(r.color||cssVar('--accent'))}"></span>${escapeHtml(r.label)}</span><b>${escapeHtml(r.value)}</b></div>`).join('');
+    const wrap=canvas.parentElement; const maxX=wrap.clientWidth-260; tip.style.left=Math.max(10,Math.min(maxX,x+14))+'px'; tip.style.top=Math.max(10,y-12)+'px'; tip.classList.add('visible'); tip.setAttribute('aria-hidden','false');
+  }
+  function hideTip(id){ const tip=document.getElementById(id); if(tip){ tip.classList.remove('visible'); tip.setAttribute('aria-hidden','true'); } }
+  function bindCanvasHover(canvas,key,model,onIndex){
+    if(!canvas || canvas.dataset[key]) return; canvas.dataset[key]='1';
+    const move=(event)=>{ const rect=canvas.getBoundingClientRect(); const x=event.clientX-rect.left; const y=event.clientY-rect.top; const m=window[key+'Model']; if(!m || !m.items?.length) return; let idx=0, best=Infinity; m.items.forEach((it,i)=>{ const dx=x-it.cx, dy=y-it.cy; const dist=Math.abs(dx)+(it.band?0:Math.abs(dy)*.45); if(dist<best){best=dist;idx=i;} }); onIndex(idx,x,y); };
+    canvas.addEventListener('mousemove',move); canvas.addEventListener('click',move); canvas.addEventListener('mouseleave',()=>{ hideTip(key+'Tip'); onIndex(null); });
+    canvas.addEventListener('focus',()=>{ const m=window[key+'Model']; if(m?.items?.length) onIndex(m.items.length-1, m.items[m.items.length-1].cx, m.items[m.items.length-1].cy); });
+    canvas.addEventListener('blur',()=>{ hideTip(key+'Tip'); onIndex(null); });
+  }
+
+  window.renderSpendChart = function(activeIndex=null){
+    const canvas=document.getElementById('spendCanvas'); if(!canvas) return; const {ctx,w,h}=clearCanvas(canvas,620,240);
+    const cats=byCategory(monthTransactions(currentMonth())).slice(0,8);
+    if(!cats.length){ noData(ctx,'Import transactions to draw the spending map.',w); setLegend('spendLegend',[], 'Spending'); return; }
+    const total=cats.reduce((a,c)=>a+c[1],0); const max=Math.max(...cats.map(c=>c[1])); const pad={l:18,r:22,t:18,b:18}; const labelW=Math.min(150,Math.max(104,w*.26)); const rowH=(h-pad.t-pad.b)/cats.length; const barH=Math.max(12,Math.min(24,rowH-8)); const items=[];
+    ctx.font='12px '+font(); ctx.textBaseline='middle';
+    cats.forEach(([cat,val],i)=>{ const y=pad.t+i*rowH+(rowH-barH)/2; const x=pad.l+labelW; const bw=Math.max(2,(w-x-pad.r-70)*(val/max)); const color=COLORS[i%COLORS.length]; ctx.fillStyle=i===activeIndex?'rgba(148,163,184,.16)':'rgba(148,163,184,.09)'; roundRect(ctx,x,y,w-x-pad.r-70,barH,999); ctx.fill(); const grad=ctx.createLinearGradient(x,y,x+bw,y); grad.addColorStop(0,color); grad.addColorStop(1,cssVar('--accent2')||color); ctx.fillStyle=grad; roundRect(ctx,x,y,bw,barH,999); ctx.fill(); ctx.fillStyle=cssVar('--text'); ctx.font='750 12px '+font(); const cleanCat=String(cat).length>18?String(cat).slice(0,17)+'…':cat; ctx.fillText(cleanCat,pad.l,y+barH/2); ctx.fillStyle=cssVar('--muted'); ctx.font='12px '+font(); ctx.fillText(money(val),x+bw+8,y+barH/2); items.push({cx:x+bw,cy:y+barH/2,band:true,cat,val,color,pct:total?val/total*100:0}); });
+    window.spendChartModel={items}; const item=items[activeIndex??0]; setLegend('spendLegend', item?[{label:item.cat,value:money(item.val),color:item.color},{label:'Share',value:pctFmt(item.pct),color:cssVar('--accent2')},{label:'Month total',value:money(total),color:cssVar('--accent3')}]:[], 'Spending');
+    if(activeIndex!==null && item) showTip('spendChartTip',canvas,item.cx,item.cy,item.cat,[{label:'Amount',value:money(item.val),color:item.color},{label:'Share',value:pctFmt(item.pct),color:cssVar('--accent2')}]);
+    bindCanvasHover(canvas,'spendChart',window.spendChartModel,(idx)=>renderSpendChart(idx));
+  };
+
+  window.renderNetWorthChart = function(activeIndex=null){
+    const canvas=document.getElementById('netWorthCanvas'); if(!canvas || !canvas.closest('.view.active')) return; const {ctx,w,h}=clearCanvas(canvas,640,250);
+    const rows=(state.netWorthHistory||[]).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(-18);
+    if(!rows.length){ noData(ctx,'Save net worth snapshots to draw your trend.',w); setLegend('netWorthLegend',[], 'Snapshots'); return; }
+    const vals=rows.map(r=>nval(r.netWorth)); const min=Math.min(...vals), max=Math.max(...vals); const spread=max-min || Math.max(1,Math.abs(max)); const lo=min-spread*.08, hi=max+spread*.08; const pad={l:64,r:24,t:20,b:34}; const xFor=i=>pad.l+(rows.length===1?(w-pad.l-pad.r)/2:(w-pad.l-pad.r)*(i/(rows.length-1))); const yFor=v=>pad.t+(h-pad.t-pad.b)*(1-(v-lo)/(hi-lo||1));
+    ctx.strokeStyle='rgba(148,163,184,.16)'; ctx.lineWidth=1; [lo,(lo+hi)/2,hi].forEach(v=>{ const y=yFor(v); ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke(); ctx.fillStyle=cssVar('--muted'); ctx.font='10.5px '+font(); ctx.fillText(money(v),8,y+3); });
+    const grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b); grad.addColorStop(0,'rgba('+cssVar('--accent-rgb')+',.18)'); grad.addColorStop(1,'rgba('+cssVar('--accent-rgb')+',0)'); ctx.beginPath(); rows.forEach((r,i)=>{ const x=xFor(i), y=yFor(nval(r.netWorth)); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.lineTo(xFor(rows.length-1),h-pad.b); ctx.lineTo(xFor(0),h-pad.b); ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+    ctx.strokeStyle=cssVar('--accent'); ctx.lineWidth=3; ctx.lineJoin='round'; ctx.beginPath(); rows.forEach((r,i)=>{ const x=xFor(i), y=yFor(nval(r.netWorth)); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke();
+    const items=[]; rows.forEach((r,i)=>{ const x=xFor(i),y=yFor(nval(r.netWorth)); ctx.fillStyle=i===activeIndex?cssVar('--accent2'):cssVar('--accent'); ctx.beginPath(); ctx.arc(x,y,i===activeIndex?5:3.8,0,Math.PI*2); ctx.fill(); items.push({cx:x,cy:y,row:r,color:cssVar('--accent')}); });
+    ctx.fillStyle=cssVar('--muted'); ctx.font='11px '+font(); rows.forEach((r,i)=>{ if(rows.length>7 && i%2) return; ctx.fillText(dateFmt(r.date).split(',')[0],Math.max(0,Math.min(w-48,xFor(i)-22)),h-10); });
+    window.netWorthChartModel={items}; const item=items[activeIndex??items.length-1]; const first=vals[0], last=vals[vals.length-1]; setLegend('netWorthLegend', item?[{label:'Snapshot',value:money(nval(item.row.netWorth)),color:cssVar('--accent')},{label:'Assets',value:money(nval(item.row.assets)),color:cssVar('--good')},{label:'Liabilities',value:money(nval(item.row.liabilities)),color:cssVar('--red')},{label:'Period change',value:money(last-first),color:last>=first?cssVar('--good'):cssVar('--red')}]:[], 'Net worth');
+    if(activeIndex!==null && item) showTip('netWorthChartTip',canvas,item.cx,item.cy,dateFmt(item.row.date),[{label:'Net worth',value:money(nval(item.row.netWorth)),color:cssVar('--accent')},{label:'Assets',value:money(nval(item.row.assets)),color:cssVar('--good')},{label:'Liabilities',value:money(nval(item.row.liabilities)),color:cssVar('--red')}]);
+    bindCanvasHover(canvas,'netWorthChart',window.netWorthChartModel,(idx)=>renderNetWorthChart(idx));
+  };
+
+  window.renderInvestmentChart = function(activeIndex=null){
+    const canvas=document.getElementById('investmentCanvas'); if(!canvas || !canvas.closest('.view.active')) return; const {ctx,w,h}=clearCanvas(canvas,620,240);
+    const rows=allocationRows(); if(!rows.length){ noData(ctx,'Add holdings to draw allocation.',w); setLegend('investmentLegend',[], 'Allocation'); return; }
+    const max=Math.max(...rows.map(r=>r.value)); const total=rows.reduce((a,r)=>a+r.value,0); const pad={l:18,r:22,t:18,b:18}; const labelW=Math.min(136,Math.max(96,w*.24)); const rowH=(h-pad.t-pad.b)/rows.length; const barH=Math.max(12,Math.min(24,rowH-8)); const items=[];
+    rows.forEach((r,i)=>{ const y=pad.t+i*rowH+(rowH-barH)/2; const x=pad.l+labelW; const bw=Math.max(2,(w-x-pad.r-96)*(r.value/max)); const color=COLORS[i%COLORS.length]; ctx.fillStyle=i===activeIndex?'rgba(148,163,184,.16)':'rgba(148,163,184,.09)'; roundRect(ctx,x,y,w-x-pad.r-96,barH,999); ctx.fill(); ctx.fillStyle=color; roundRect(ctx,x,y,bw,barH,999); ctx.fill(); ctx.fillStyle=cssVar('--text'); ctx.font='750 12px '+font(); const name=String(r.name).length>16?String(r.name).slice(0,15)+'…':r.name; ctx.fillText(name,pad.l,y+barH/2); ctx.fillStyle=cssVar('--muted'); ctx.font='12px '+font(); ctx.fillText(`${pctFmt(r.pct)} · ${money(r.value)}`,x+bw+8,y+barH/2); items.push({cx:x+bw,cy:y+barH/2,band:true,row:r,color}); });
+    window.investmentChartModel={items}; const item=items[activeIndex??0]; setLegend('investmentLegend', item?[{label:item.row.name,value:money(item.row.value),color:item.color},{label:'Weight',value:pctFmt(item.row.pct),color:cssVar('--accent2')},{label:'Portfolio',value:money(total),color:cssVar('--accent3')}]:[], 'Allocation');
+    if(activeIndex!==null && item) showTip('investmentChartTip',canvas,item.cx,item.cy,item.row.name,[{label:'Value',value:money(item.row.value),color:item.color},{label:'Weight',value:pctFmt(item.row.pct),color:cssVar('--accent2')}]);
+    bindCanvasHover(canvas,'investmentChart',window.investmentChartModel,(idx)=>renderInvestmentChart(idx));
+  };
+
+  const baseRenderSettings = window.renderSettings;
+  if(typeof baseRenderSettings === 'function'){
+    window.renderSettings = function(){
+      baseRenderSettings();
+      const build=document.getElementById('appBuildLabel'); if(build) build.textContent='Pre-v1 alpha · '+APP_BUILD_ID;
+    };
+  }
+
+  const baseBuildMobileNav = window.buildMobileNav;
+  window.buildMobileNav = function(){
+    if(typeof baseBuildMobileNav === 'function') baseBuildMobileNav();
+    const nav=document.getElementById('mobileNav'); if(!nav) return;
+    const names={overview:'Home',review:'Review',transactions:'Txns',budgets:'Budget'};
+    nav.querySelectorAll('button').forEach(btn=>{
+      const txt=btn.querySelector('span:last-child'); if(!txt) return;
+      const raw=txt.textContent.trim().toLowerCase();
+      const match=Object.entries(names).find(([id])=>raw===ux62NavTitle(id).toLowerCase());
+      if(match) txt.textContent=match[1];
+    });
+  };
+
+  const baseRenderAll=window.renderAll;
+  if(typeof baseRenderAll==='function'){
+    window.renderAll=function(){ baseRenderAll(); requestAnimationFrame(()=>{ window.buildMobileNav?.(); if(chartsReady) renderCharts(); }); };
+  }
+})();
+/* ---- end v0.9.0-alpha deep UI and mobile polish ---- */
+
 </script>
 </body>
 </html>
