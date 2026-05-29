@@ -1512,7 +1512,7 @@ td,th{white-space:nowrap}.table-wrap{position:relative}.table-wrap:after{content
 <script>
 const STORAGE_KEY = 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = 'v0.9.10-alpha';
+const APP_BUILD_ID = 'v0.9.11-alpha';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;
@@ -4434,7 +4434,7 @@ window.addEventListener('keydown', event => {
 /* ---- end pre-v1 focused UX polish ---- */
 
 
-/* ---- v0.9.10-alpha deep UI and mobile polish ---- */
+/* ---- v0.9.11-alpha deep UI and mobile polish ---- */
 (function(){
   const style=document.createElement('style');
   style.textContent=`
@@ -4565,10 +4565,10 @@ window.addEventListener('keydown', event => {
     window.renderAll=function(){ baseRenderAll(); requestAnimationFrame(()=>{ window.buildMobileNav?.(); if(chartsReady) renderCharts(); }); };
   }
 })();
-/* ---- end v0.9.10-alpha deep UI and mobile polish ---- */
+/* ---- end v0.9.11-alpha deep UI and mobile polish ---- */
 
 
-/* ---- v0.9.10-alpha recursive aggressive UI/UX polish waves ---- */
+/* ---- v0.9.11-alpha recursive aggressive UI/UX polish waves ---- */
 (function(){
   const PREV1_BUILD_LABEL = 'Pre-v1 alpha';
 
@@ -4674,7 +4674,7 @@ window.addEventListener('keydown', event => {
 
   function normalizeBuildLabels(){
     document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el => {
-      el.textContent = `${PREV1_BUILD_LABEL} · v0.9.10-alpha`;
+      el.textContent = `${PREV1_BUILD_LABEL} · v0.9.11-alpha`;
     });
   }
 
@@ -4722,7 +4722,7 @@ window.addEventListener('keydown', event => {
   if(typeof baseBackupPayload === 'function'){
     window.backupPayload = function(){
       const payload = baseBackupPayload();
-      payload.build = 'v0.9.10-alpha';
+      payload.build = 'v0.9.11-alpha';
       payload.releaseStage = PREV1_BUILD_LABEL;
       return payload;
     };
@@ -4772,13 +4772,13 @@ window.addEventListener('keydown', event => {
     normalizeBuildLabels();
   });
 })();
-/* ---- end v0.9.10-alpha recursive aggressive UI/UX polish waves ---- */
+/* ---- end v0.9.11-alpha recursive aggressive UI/UX polish waves ---- */
 
 
 
-/* ---- v0.9.10-alpha mobile clarity + investments refresh ---- */
+/* ---- v0.9.11-alpha mobile clarity + investments refresh ---- */
 (function(){
-  const BUILD='v0.9.10-alpha';
+  const BUILD='v0.9.11-alpha';
   document.title='MoneyMap';
   function addStyle(css){ const style=document.createElement('style'); style.setAttribute('data-patch','v0.9.2-mobile-investments'); style.textContent=css; document.head.appendChild(style); }
   addStyle(`
@@ -4890,12 +4890,12 @@ window.addEventListener('keydown', event => {
   const prevBackup=window.backupPayload; if(typeof prevBackup==='function'){ window.backupPayload=function(){ const payload=prevBackup(); payload.build=BUILD; payload.releaseStage='Pre-v1 alpha'; return payload; }; }
   requestAnimationFrame(()=>{ afterPaint(); window.renderInvestments?.(); });
 })();
-/* ---- end v0.9.10-alpha mobile clarity + investments refresh ---- */
+/* ---- end v0.9.11-alpha mobile clarity + investments refresh ---- */
 
 
-/* ---- v0.9.10-alpha UI/UX rescue pass: mobile nav, tables, budgets, investments ---- */
+/* ---- v0.9.11-alpha UI/UX rescue pass: mobile nav, tables, budgets, investments ---- */
 (function(){
-  const BUILD='v0.9.10-alpha';
+  const BUILD='v0.9.11-alpha';
   const ICONS={
     overview:'🏠', import:'⬆️', review:'✅', transactions:'🧾', budgets:'💸', recurring:'🔁',
     networth:'💎', debt:'🧭', investments:'📈', credit:'⭐', goals:'🎯', rules:'⚙️', settings:'🛠️'
@@ -5029,11 +5029,11 @@ window.addEventListener('keydown', event => {
 
   requestAnimationFrame(()=>{ try{ renderNav(); }catch(e){} try{ renderAll(); }catch(e){} });
 })();
-/* ---- end v0.9.10-alpha UI/UX rescue pass ---- */
+/* ---- end v0.9.11-alpha UI/UX rescue pass ---- */
 
 </script>
 
-/* ---- v0.9.10-alpha iPhone QA fixes: compact chrome, friendly icons, investment polish ---- */
+/* ---- v0.9.11-alpha iPhone QA fixes: compact chrome, friendly icons, investment polish ---- */
 <style id="mm-v094-iphone-qa-style">
 :root{--mm-nav-h:62px;--mm-top-h:58px}
 @media(max-width:900px){
@@ -5086,13 +5086,13 @@ window.addEventListener('keydown', event => {
   const oldBuild=window.buildMobileNav; window.buildMobileNav=function(){ if(typeof oldBuild==='function') oldBuild(); polishNav(); };
   const oldRenderAll=window.renderAll; if(typeof oldRenderAll==='function'){ window.renderAll=function(){ oldRenderAll(); requestAnimationFrame(polishNav); }; }
   const oldShow=window.showView; if(typeof oldShow==='function'){ window.showView=function(id){ oldShow(id); requestAnimationFrame(()=>{polishNav(); if(id==='investments') window.renderInvestments?.();}); }; }
-  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent='Pre-v1 alpha · v0.9.10-alpha'; }; }
-  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build='v0.9.10-alpha'; p.releaseStage='pre-v1-alpha'; return p; }; }
+  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent='Pre-v1 alpha · v0.9.11-alpha'; }; }
+  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build='v0.9.11-alpha'; p.releaseStage='pre-v1-alpha'; return p; }; }
   document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(polishNav));
   setTimeout(polishNav,250);
 })();
 </script>
-/* ---- end v0.9.10-alpha iPhone QA fixes ---- */
+/* ---- end v0.9.11-alpha iPhone QA fixes ---- */
 
 <style id="mm-v094-topbar-hotfix">
 @media(max-width:900px){
@@ -5115,7 +5115,7 @@ window.addEventListener('keydown', event => {
 </style>
 
 
-<!-- v0.9.10-alpha nav/accounts/Monarch-style landing polish -->
+<!-- v0.9.11-alpha nav/accounts/Monarch-style landing polish -->
 <style id="mm-v095-nav-accounts-polish">
 :root{--mm-sidebar-w:250px;--mm-nav-svg:20px}
 .nav-btn .mm-nav-svg,.mobile-bar .mm-nav-svg,.mobile-more-icon .mm-nav-svg{width:20px;height:20px;display:block;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}.nav-icon{color:var(--muted)}.nav-btn.active .nav-icon{color:var(--accent)}
@@ -5127,7 +5127,7 @@ window.addEventListener('keydown', event => {
 </style>
 <script id="mm-v095-nav-accounts-script">
 (function(){
-  const BUILD='v0.9.10-alpha';
+  const BUILD='v0.9.11-alpha';
   const NAV_DEF=[
     {id:'overview',title:'Overview',mobile:'Home',sub:'Net worth snapshot'},
     {id:'accounts',title:'Accounts',mobile:'Accounts',sub:'Balances and edits'},
@@ -5217,7 +5217,7 @@ window.addEventListener('keydown', event => {
 </script>
 
 
-<!-- v0.9.10-alpha desktop live QA fixes -->
+<!-- v0.9.11-alpha desktop live QA fixes -->
 <style id="mm-v096-desktop-qa-fixes">
 #view-overview #overviewHero,
 #view-overview #accountSnapshotLanding ~ .hero,
@@ -5232,7 +5232,7 @@ window.addEventListener('keydown', event => {
 </style>
 <script id="mm-v096-desktop-qa-fixes-script">
 (function(){
-  const BUILD='v0.9.10-alpha';
+  const BUILD='v0.9.11-alpha';
   function hideLegacySidebarKickers(){
     const side=document.querySelector('.sidebar'); if(!side) return;
     [...side.children].forEach(el=>{
@@ -5267,7 +5267,7 @@ window.addEventListener('keydown', event => {
 
 
 
-<!-- v0.9.10-alpha declutter + spending chart hit-test fixes -->
+<!-- v0.9.11-alpha declutter + spending chart hit-test fixes -->
 <style id="mm-v097-declutter-css">
   :root{
     --mm-soft-surface: color-mix(in srgb,var(--panel) 94%,transparent);
@@ -5395,7 +5395,7 @@ window.addEventListener('keydown', event => {
 </style>
 <script id="mm-v097-declutter-js">
 (function(){
-  const BUILD='v0.9.10-alpha';
+  const BUILD='v0.9.11-alpha';
   function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   function appFont(){ return getComputedStyle(document.body).fontFamily; }
   function setupCanvas(canvas,minW=620,minH=220){
@@ -5527,11 +5527,11 @@ window.addEventListener('keydown', event => {
   window.addEventListener('resize',()=>{ if(window.chartsReady!==false) requestAnimationFrame(()=>window.renderCharts?.()); });
 })();
 </script>
-<!-- end v0.9.10-alpha declutter + spending chart hit-test fixes -->
+<!-- end v0.9.11-alpha declutter + spending chart hit-test fixes -->
 
 
 
-<!-- v0.9.10-alpha safe mobile rescue: inserted before the real closing body, not inside report templates -->
+<!-- v0.9.11-alpha safe mobile rescue: inserted before the real closing body, not inside report templates -->
 <style id="mm-v0910-safe-mobile-rescue">
 :root{--mm-mobile-nav-h:68px;--mm-quiet-shadow:0 6px 22px rgba(15,23,42,.08);--mm-border-soft:rgba(148,163,184,.14)}
 .card,.metric-card,.tracker-stat,.hero-metric,.week-card{box-shadow:var(--mm-quiet-shadow)!important;border-color:var(--mm-border-soft)!important}
@@ -5557,7 +5557,7 @@ window.addEventListener('keydown', event => {
 </style>
 <script id="mm-v0910-safe-mobile-rescue-js">
 (function(){
-  const BUILD='v0.9.10-alpha';
+  const BUILD='v0.9.11-alpha';
   function setBuild(){document.querySelectorAll('#appBuildLabel').forEach(el=>{el.textContent='Pre-v1 alpha · '+BUILD;});}
   const oldPayload=window.backupPayload; if(typeof oldPayload==='function'){window.backupPayload=function(){const p=oldPayload.apply(this,arguments); p.build=BUILD; p.releaseStage='pre-v1-alpha'; return p;};}
   function investCards(){
@@ -5581,6 +5581,103 @@ window.addEventListener('keydown', event => {
   document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(polish)); setTimeout(polish,350);
 })();
 </script>
-<!-- end v0.9.10-alpha safe mobile rescue -->
+<!-- end v0.9.11-alpha safe mobile rescue -->
+
+
+<!-- v0.9.11-alpha nav/accounts/mobile parity repair -->
+<style id="mm-v0911-nav-accounts-mobile-repair">
+/* Keep the mobile and desktop navigation aligned, visible, and configurable. */
+.mm-nav-svg{width:20px;height:20px;display:block;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn .mm-nav-svg,.mobile-bar .mm-nav-svg,.mobile-more-icon .mm-nav-svg{width:20px;height:20px}.mobile-bar .mm-nav-svg{width:22px;height:22px}
+.mobile-more-sheet{position:fixed;inset:0;z-index:120;display:none;background:rgba(3,7,18,.44);backdrop-filter:blur(8px);padding:14px 10px calc(12px + env(safe-area-inset-bottom));align-items:flex-end}.mobile-more-sheet.active{display:flex}
+.mobile-more-panel{width:100%;max-height:min(76vh,720px);overflow:auto;border:1px solid var(--line);border-radius:28px 28px 24px 24px;background:color-mix(in srgb,var(--panel) 97%,transparent);box-shadow:0 28px 80px rgba(0,0,0,.32);padding:14px}.mobile-more-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 4px 12px}.mobile-more-head b{display:block;font-size:19px;letter-spacing:-.03em}.mobile-more-head span{display:block;margin-top:3px;color:var(--muted);font-size:12px}.mobile-more-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mobile-more-item{border:1px solid var(--line);border-radius:18px;background:var(--panel2);color:var(--text);padding:12px;display:flex;gap:10px;align-items:center;text-align:left;min-height:66px}.mobile-more-item.active{border-color:rgba(var(--accent-rgb),.42);background:rgba(var(--accent-rgb),.10)}.mobile-more-icon{width:34px;height:34px;border-radius:13px;background:var(--panel3);display:grid;place-items:center;color:var(--muted);flex:0 0 auto}.mobile-more-copy strong{display:block;font-size:13.5px;line-height:1.15}.mobile-more-copy span{display:block;color:var(--muted);font-size:11.5px;margin-top:3px;line-height:1.2}
+.mobile-tab-manager{margin-top:12px;border:1px solid var(--line);border-radius:20px;background:var(--panel2);padding:12px}.mobile-tab-manager h4{margin:0 0 4px;font-size:14px}.mobile-tab-manager p{margin:0 0 10px;color:var(--muted);font-size:12px;line-height:1.35}.mobile-tab-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mobile-tab-chip{border:1px solid var(--line);border-radius:999px;background:var(--panel);color:var(--muted);min-height:40px;padding:8px 10px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:12px;font-weight:850}.mobile-tab-chip.active{color:var(--text);border-color:rgba(var(--accent-rgb),.45);background:rgba(var(--accent-rgb),.12)}.mobile-tab-reset{width:100%;margin-top:10px;justify-content:center}.mobile-tab-note{font-size:11px;color:var(--soft);line-height:1.35;margin-top:8px}
+/* Accounts surface should be obvious and polished on phones. */
+#view-accounts .page-head{align-items:flex-start}.accounts-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(320px,.9fr);gap:var(--gap)}.accounts-card-list{display:grid;gap:10px}.accounts-card{border:1px solid var(--line);border-radius:22px;background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--panel2) 72%,transparent));padding:16px;box-shadow:var(--shadow2)}.accounts-card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.accounts-card h3{margin:0;font-size:18px;letter-spacing:-.035em}.accounts-card p{margin:5px 0 0;color:var(--muted);font-size:13px;line-height:1.35}.accounts-card-value{font-size:32px;font-weight:930;letter-spacing:-.06em;margin-top:12px}.accounts-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}.accounts-fact{border:1px solid var(--line);border-radius:15px;background:var(--panel2);padding:10px}.accounts-fact span{display:block;color:var(--muted);font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.1em}.accounts-fact b{display:block;margin-top:5px;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.accounts-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:13px}.accounts-actions .btn{width:100%;justify-content:center}.mm-v095-tab-row{grid-template-columns:32px minmax(0,1fr) auto!important}.mm-v095-tab-actions .btn{white-space:nowrap}
+@media(max-width:1180px){.accounts-grid{grid-template-columns:1fr}.mobile-more-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){.mobile-more-sheet{padding-left:8px;padding-right:8px}.mobile-more-panel{border-radius:26px 26px 20px 20px;padding:12px}.mobile-more-grid{grid-template-columns:1fr}.mobile-tab-grid{grid-template-columns:1fr 1fr}.accounts-card{border-radius:20px;padding:15px}.accounts-card-value{font-size:34px}.accounts-facts{grid-template-columns:1fr 1fr}.accounts-actions{grid-template-columns:1fr}.mm-v095-tab-row{grid-template-columns:28px minmax(0,1fr)!important}.mm-v095-tab-actions{grid-column:1/-1;justify-content:flex-start}.mm-v095-tab-actions .btn{flex:1 1 72px}}
+@media(max-width:390px){.mobile-tab-grid{grid-template-columns:1fr}.accounts-facts{grid-template-columns:1fr}}
+</style>
+<script id="mm-v0911-nav-accounts-mobile-repair-script">
+(function(){
+  const BUILD='v0.9.11-alpha';
+  const ITEMS=[
+    ['overview','Home','Overview','Net worth snapshot','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="M4 11.5 12 5l8 6.5"/><path d="M6.5 10.5V20h11v-9.5"/><path d="M10 20v-5h4v5"/></svg>'],
+    ['accounts','Accounts','Accounts','Balances and edits','<svg class="mm-nav-svg" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="3"/><path d="M7 9h10"/><path d="M7 13h5"/><path d="M16 15.5h1"/></svg>'],
+    ['review','Review','Review','Weekly cleanup','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="m5 13 4 4L19 7"/><path d="M4 5h10"/><path d="M4 19h16"/></svg>'],
+    ['transactions','Txns','Transactions','Search and edit','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="M5 7h14"/><path d="M5 12h14"/><path d="M5 17h8"/></svg>'],
+    ['budgets','Budget','Budgets','Monthly limits','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="M4 18V8a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v10"/><path d="M7 18v-4"/><path d="M12 18v-7"/><path d="M17 18v-10"/></svg>'],
+    ['investments','Invest','Investments','Holdings','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg>'],
+    ['networth','Worth','Net worth','History and snapshots','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="M12 3l8 7-8 11-8-11 8-7Z"/><path d="M4 10h16"/><path d="M9 10l3 11 3-11"/></svg>'],
+    ['import','Import','Import','CSV dropzone','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="M12 4v11"/><path d="m7 10 5 5 5-5"/><path d="M5 20h14"/></svg>'],
+    ['recurring','Bills','Subscriptions','Recurring charges','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 16v-5h-5"/></svg>'],
+    ['debt','Debt','Debt','Payoff plan','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="M6 6h12"/><path d="M8 6v9a4 4 0 0 0 8 0V6"/><path d="M6 20h12"/></svg>'],
+    ['credit','Credit','Credit','Score history','<svg class="mm-nav-svg" viewBox="0 0 24 24"><rect x="4" y="6" width="16" height="12" rx="2"/><path d="M4 10h16"/><path d="M8 15h3"/></svg>'],
+    ['goals','Goals','Goals','Targets','<svg class="mm-nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>'],
+    ['rules','Rules','Rules','Autopilot','<svg class="mm-nav-svg" viewBox="0 0 24 24"><path d="M4 7h10"/><path d="M18 7h2"/><path d="M4 12h2"/><path d="M10 12h10"/><path d="M4 17h8"/><path d="M16 17h4"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="14" cy="17" r="2"/></svg>'],
+    ['settings','Settings','Settings','Local app','<svg class="mm-nav-svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19 13.5a7.5 7.5 0 0 0 0-3l2-1.5-2-3.4-2.4 1a7.5 7.5 0 0 0-2.6-1.5L13.7 2h-3.4L10 5.1a7.5 7.5 0 0 0-2.6 1.5l-2.4-1-2 3.4 2 1.5a7.5 7.5 0 0 0 0 3L3 15l2 3.4 2.4-1a7.5 7.5 0 0 0 2.6 1.5l.3 3.1h3.4l.3-3.1a7.5 7.5 0 0 0 2.6-1.5l2.4 1 2-3.4-2-1.5Z"/></svg>']
+  ];
+  const DEF_PRIMARY=['overview','accounts','transactions','budgets','review','investments'];
+  const DEF_MOBILE=['overview','accounts','review','transactions'];
+  const byId=id=>ITEMS.find(x=>x[0]===id);
+  const ids=()=>ITEMS.map(x=>x[0]);
+  const esc=s=>(typeof escapeHtml==='function'?escapeHtml(String(s??'')):String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])));
+  function valid(list,fallback){const allowed=ids(), seen=new Set(); const src=Array.isArray(list)?list:fallback; const out=src.filter(id=>allowed.includes(id)&&!seen.has(id)&&(seen.add(id),true)); return out.length?out:fallback.slice();}
+  function migrateNav(){
+    if(!window.state) return {navPrimary:DEF_PRIMARY.slice(),mobileTabs:DEF_MOBILE.slice()};
+    state.settings=state.settings||{};
+    let primary=valid(state.settings.navPrimary,DEF_PRIMARY);
+    let mobile=valid(state.settings.mobileTabs,DEF_MOBILE).filter(id=>id!=='settings').slice(0,4);
+    if(!state.settings.navMigratedV0911){
+      // Existing users may have older saved nav settings from before Accounts existed. Add it once.
+      primary=['overview','accounts',...primary.filter(id=>id!=='overview'&&id!=='accounts')];
+      primary=valid(primary,DEF_PRIMARY).slice(0,8);
+      mobile=['overview','accounts','review','transactions'];
+      state.settings.navMigratedV0911=true;
+      try{ if(typeof saveState==='function') saveState(); }catch(e){}
+    }
+    state.settings.navPrimary=primary;
+    state.settings.mobileTabs=mobile.length?mobile:DEF_MOBILE.slice();
+    return state.settings;
+  }
+  function icon(id){ const item=byId(id); return item?item[4]:(window.mmNavIcon?window.mmNavIcon(id):''); }
+  window.mmNavIcon=icon;
+  function sideButton(id,secondary){const n=byId(id); if(!n) return ''; return `<button class="nav-btn ${secondary?'secondary':''} ${id===activeView?'active':''}" data-view="${id}" onclick="showView('${id}')"><span class="nav-icon">${icon(id)}</span><span class="nav-copy"><strong>${esc(n[2])}</strong><span>${esc(n[3])}</span></span></button>`;}
+  window.buildNav=function(){
+    const side=document.getElementById('sideNav'); if(!side) return;
+    const s=migrateNav(); const primary=s.navPrimary; const more=ids().filter(id=>!primary.includes(id));
+    side.innerHTML=`<div class="nav-kicker nav-more-kicker"><span>Workspace</span><button class="btn btn-small" onclick="showView('settings'); setTimeout(()=>document.getElementById('navLayoutSettings')?.scrollIntoView({behavior:'smooth',block:'start'}),80)">Edit</button></div><div class="nav-group">${primary.map(id=>sideButton(id,false)).join('')}</div><div class="nav-kicker nav-more-kicker"><span>More</span></div><div class="nav-group nav-secondary">${more.map(id=>sideButton(id,true)).join('')}</div>`;
+  };
+  function ensureAccountsView(){
+    if(document.getElementById('view-accounts')) return;
+    const anchor=document.getElementById('view-networth')||document.querySelector('.view');
+    const sec=document.createElement('section'); sec.className='view'; sec.id='view-accounts';
+    sec.innerHTML=`<div class="page-head"><div><h2 class="section-title">Accounts</h2><p class="section-sub">Current balances, inclusion status, and quick edits for your net worth snapshot.</p></div><div class="actions"><button class="btn" onclick="saveNetWorthSnapshot()">Save snapshot</button><button class="btn btn-primary" onclick="openDrawer('account')">Add account</button></div></div><div class="tracker-hero" id="accountsMetrics"></div><div class="accounts-grid"><div class="card"><div class="card-header"><div><h3 class="card-title">All accounts</h3><p class="card-subtitle">Edit balances manually. Include only accounts that should count toward net worth.</p></div><button class="btn btn-small" onclick="openDrawer('account')">Add</button></div><div class="accounts-card-list" id="accountsCardList"></div></div><div class="stack"><div class="card"><h3 class="card-title">Snapshot actions</h3><p class="card-subtitle">When balances look right, save a point in your net worth history.</p><div class="split-line"></div><div class="hero-row"><button class="btn btn-primary" onclick="saveNetWorthSnapshot()">Save current net worth</button><button class="btn" onclick="showView('networth')">View history</button></div></div><div class="card"><h3 class="card-title">Account tips</h3><div class="split-line"></div><div class="mini-list"><div class="mini-item"><div><b>Avoid double counting</b><br><span>If holdings are tracked separately, exclude the related brokerage account balance.</span></div></div><div class="mini-item"><div><b>Liabilities</b><br><span>Credit cards and loans count as negative values in net worth.</span></div></div></div></div></div></div>`;
+    if(anchor?.parentNode) anchor.parentNode.insertBefore(sec,anchor); else document.querySelector('.main')?.appendChild(sec);
+  }
+  function signedAccount(a){ if(typeof accountSignedValue==='function') return accountSignedValue(a); const val=Number(a.balance||0); return /credit|card|loan|debt/i.test(a.type||'')? -Math.abs(val):val; }
+  function accountCard(a){ const signed=signedAccount(a); const included=a.includeNetWorth!==false; return `<div class="accounts-card"><div class="accounts-card-head"><div><h3>${esc(a.name||'Account')}</h3><p>${esc(a.institution||'Manual')} · ${esc(a.type||'Account')}</p></div><span class="balance-badge ${included?'include':'exclude'}">${included?'Included':'Excluded'}</span></div><div class="accounts-card-value ${signed<0?'bad':'good'}">${money(signed)}</div><div class="accounts-facts"><div class="accounts-fact"><span>Updated</span><b>${a.updatedAt?dateFmt(String(a.updatedAt).slice(0,10)):'—'}</b></div><div class="accounts-fact"><span>Status</span><b>${included?'In net worth':'Excluded'}</b></div><div class="accounts-fact"><span>Type</span><b>${esc(a.type||'Account')}</b></div></div><div class="accounts-actions"><button class="btn btn-small" onclick="toggleAccountInclude('${a.id}')">${included?'Exclude':'Include'}</button><button class="btn btn-small" onclick="openDrawer('account', findById('accounts','${a.id}'))">Edit</button><button class="btn btn-small btn-danger" onclick="deleteTrackerItem('accounts','${a.id}')">Delete</button></div></div>`; }
+  window.renderAccountsDashboard=function(){ ensureAccountsView(); const metrics=document.getElementById('accountsMetrics'); const list=document.getElementById('accountsCardList'); const accounts=state.accounts||[]; const included=accounts.filter(a=>a.includeNetWorth!==false); const assets=included.reduce((s,a)=>s+Math.max(0,signedAccount(a)),0); const liabilities=included.reduce((s,a)=>s+Math.abs(Math.min(0,signedAccount(a))),0); if(metrics) metrics.innerHTML=`<div class="tracker-stat"><div class="metric-label">Included accounts</div><div class="metric-value">${included.length}</div><div class="metric-sub">${accounts.length} total manual account${accounts.length===1?'':'s'}</div></div><div class="tracker-stat"><div class="metric-label">Account assets</div><div class="metric-value good">${money(assets)}</div><div class="metric-sub">Positive included balances</div></div><div class="tracker-stat"><div class="metric-label">Account debt</div><div class="metric-value bad">${money(liabilities)}</div><div class="metric-sub">Cards, loans, and negative balances</div></div><div class="tracker-stat"><div class="metric-label">Net account value</div><div class="metric-value ${assets-liabilities>=0?'good':'bad'}">${money(assets-liabilities)}</div><div class="metric-sub">Before separate holdings and debt tracker</div></div>`; if(list) list.innerHTML=accounts.length?accounts.map(accountCard).join(''):(typeof emptyMini==='function'?emptyMini('No accounts yet','Add checking, savings, brokerage, cards, loans, vehicle, property, or other balances.','Add account','openDrawer(\'account\')'):'<div class="empty"><strong>No accounts yet</strong></div>'); };
+  function resetMobileTabs(){ state.settings=state.settings||{}; state.settings.mobileTabs=DEF_MOBILE.slice(); try{saveState()}catch(e){}; buildMobileNav(); openMobileMoreSheet(); }
+  window.resetMobileTabs=resetMobileTabs;
+  window.toggleMobileTab=function(id){ const s=migrateNav(); const i=s.mobileTabs.indexOf(id); if(i>=0){ if(s.mobileTabs.length>1) s.mobileTabs.splice(i,1); } else { if(s.mobileTabs.length>=4) s.mobileTabs.shift(); s.mobileTabs.push(id); } try{saveState()}catch(e){}; buildMobileNav(); openMobileMoreSheet(); if(typeof renderNavLayoutSettings==='function') renderNavLayoutSettings(); };
+  function moreButton(id){ const n=byId(id); return `<button class="mobile-more-item ${id===activeView?'active':''}" onclick="closeMobileMoreSheet(); showView('${id}')"><span class="mobile-more-icon">${icon(id)}</span><span class="mobile-more-copy"><strong>${esc(n[2])}</strong><span>${esc(n[3])}</span></span></button>`; }
+  window.openMobileMoreSheet=function(){
+    const s=migrateNav(); let sheet=document.getElementById('mobileMoreSheet'); if(!sheet){sheet=document.createElement('div'); sheet.id='mobileMoreSheet'; sheet.className='mobile-more-sheet'; document.body.appendChild(sheet);} sheet.onclick=e=>{if(e.target===sheet) closeMobileMoreSheet();};
+    const more=ids().filter(id=>!s.mobileTabs.includes(id));
+    const chips=ids().filter(id=>id!=='settings').map(id=>{const n=byId(id); const on=s.mobileTabs.includes(id); return `<button class="mobile-tab-chip ${on?'active':''}" onclick="event.stopPropagation(); toggleMobileTab('${id}')"><span>${icon(id)}</span><span>${esc(n[1])}</span></button>`;}).join('');
+    sheet.innerHTML=`<div class="mobile-more-panel"><div class="mobile-more-head"><div><b>More</b><span>Open sections or customize the bottom bar.</span></div><button class="btn btn-small" onclick="closeMobileMoreSheet()">Close</button></div><div class="mobile-more-grid">${more.map(moreButton).join('')}</div><div class="mobile-tab-manager"><h4>Bottom bar</h4><p>Pick up to four tabs. Everything else stays here in More.</p><div class="mobile-tab-grid">${chips}</div><button class="btn btn-small mobile-tab-reset" onclick="event.stopPropagation(); resetMobileTabs()">Reset recommended tabs</button><div class="mobile-tab-note">Recommended: Home, Accounts, Review, Txns.</div></div></div>`;
+    sheet.classList.add('active');
+  };
+  window.closeMobileMoreSheet=function(){document.getElementById('mobileMoreSheet')?.classList.remove('active')};
+  window.buildMobileNav=function(){ const nav=document.getElementById('mobileNav'); if(!nav) return; const s=migrateNav(); const active=(typeof activeView!=='undefined'?activeView:'overview'); const moreActive=!s.mobileTabs.includes(active); nav.innerHTML=s.mobileTabs.map(id=>{const n=byId(id); return `<button class="${id===active?'active':''}" onclick="showView('${id}')" aria-label="${esc(n[1])}"><span>${icon(id)}</span><span>${esc(n[1])}</span></button>`;}).join('')+`<button class="${moreActive?'active':''}" onclick="openMobileMoreSheet()" aria-label="More"><span><svg class="mm-nav-svg" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/></svg></span><span>More</span></button>`; };
+  function applySettingsCard(){ if(typeof ensureSettingsNavCard==='function') ensureSettingsNavCard(); if(typeof renderNavLayoutSettings==='function') renderNavLayoutSettings(); }
+  const previousShow=window.showView; window.showView=function(id){ ensureAccountsView(); if(typeof activeView!=='undefined' && id==='accounts') activeView='accounts'; if(typeof previousShow==='function') previousShow(id); if(id==='accounts') renderAccountsDashboard(); if(typeof renderOverviewLanding==='function') renderOverviewLanding(); buildNav(); buildMobileNav(); applySettingsCard(); };
+  const previousRenderAll=window.renderAll; window.renderAll=function(){ if(typeof previousRenderAll==='function') previousRenderAll(); ensureAccountsView(); renderAccountsDashboard(); if(typeof renderOverviewLanding==='function') renderOverviewLanding(); buildNav(); buildMobileNav(); applySettingsCard(); const build=document.getElementById('appBuildLabel'); if(build) build.textContent='Pre-v1 alpha · '+BUILD; };
+  const previousSettings=window.renderSettings; if(typeof previousSettings==='function'){ window.renderSettings=function(){ previousSettings(); applySettingsCard(); const build=document.getElementById('appBuildLabel'); if(build) build.textContent='Pre-v1 alpha · '+BUILD; }; }
+  function init(){ ensureAccountsView(); migrateNav(); buildNav(); buildMobileNav(); renderAccountsDashboard(); if(typeof renderOverviewLanding==='function') renderOverviewLanding(); applySettingsCard(); }
+  document.addEventListener('DOMContentLoaded',init); setTimeout(init,100); setTimeout(init,600);
+})();
+</script>
 </body>
 </html>
