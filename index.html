@@ -1512,7 +1512,7 @@ td,th{white-space:nowrap}.table-wrap{position:relative}.table-wrap:after{content
 <script>
 const STORAGE_KEY = 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = 'v0.9.2-alpha';
+const APP_BUILD_ID = 'v0.9.3-alpha';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;
@@ -4889,6 +4889,146 @@ window.addEventListener('keydown', event => {
   requestAnimationFrame(()=>{ afterPaint(); window.renderInvestments?.(); });
 })();
 /* ---- end v0.9.2-alpha mobile clarity + investments refresh ---- */
+
+
+/* ---- v0.9.3-alpha UI/UX rescue pass: mobile nav, tables, budgets, investments ---- */
+(function(){
+  const BUILD='v0.9.3-alpha';
+  const ICONS={
+    overview:'🏠', import:'⬆️', review:'✅', transactions:'🧾', budgets:'💸', recurring:'🔁',
+    networth:'💎', debt:'🧭', investments:'📈', credit:'⭐', goals:'🎯', rules:'⚙️', settings:'🛠️'
+  };
+  const SHORT={overview:'Home', review:'Review', transactions:'Txns', budgets:'Budget'};
+  function addStyle(css){ const s=document.createElement('style'); s.setAttribute('data-patch','v0.9.3-uiux-rescue'); s.textContent=css; document.head.appendChild(s); }
+  addStyle(`
+    :root{--mm-nav-h:56px;--mm-card-line:color-mix(in srgb,var(--line) 82%,transparent)}
+
+    /* Friendlier navigation icons and calmer sidebar density. */
+    .nav-icon,.mobile-more-icon,.mobile-bar button span:first-child{font-family:Apple Color Emoji,Segoe UI Emoji,Noto Color Emoji,var(--font)!important}
+    .nav-icon{background:color-mix(in srgb,var(--panel2) 72%,transparent)!important;font-size:15px!important;border-radius:10px!important}
+    .nav-btn.active .nav-icon{background:rgba(var(--accent-rgb),.14)!important;color:inherit!important}
+    .nav-btn{min-height:48px!important}.nav-copy strong{font-weight:850!important}.nav-copy span{font-size:10.5px!important}
+
+    /* Budget cards: replace raw gray blocks with actual product cards. */
+    .budget-board-list,.v60-budget-list{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))!important;gap:12px!important;width:100%!important;align-items:stretch!important}
+    .budget-row,.v60-budget-row,.v092-budget-card{width:100%!important;max-width:none!important;min-width:0!important;border:1px solid var(--mm-card-line)!important;border-radius:20px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 98%,transparent),color-mix(in srgb,var(--panel2) 84%,transparent))!important;box-shadow:0 10px 28px rgba(0,0,0,.055)!important;padding:14px!important;color:var(--text)!important;text-align:left!important;display:grid!important;gap:11px!important;overflow:hidden!important}
+    .budget-row-top,.v60-budget-top,.v092-budget-main{display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:12px!important;align-items:start!important;background:transparent!important;border:0!important;padding:0!important;width:100%!important;text-align:left!important;color:inherit!important}
+    .budget-category-link,.v60-budget-name,.v092-budget-title,.budget-name{background:transparent!important;border:0!important;color:var(--text)!important;text-align:left!important;padding:0!important;margin:0!important;font-size:16px!important;font-weight:900!important;letter-spacing:-.02em!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+    .budget-meta,.v60-budget-meta,.v092-budget-meta{font-size:12px!important;color:var(--muted)!important;margin-top:3px!important;line-height:1.25!important;background:transparent!important}
+    .budget-row-side,.v60-budget-side{display:grid!important;justify-items:end!important;gap:2px!important;min-width:72px!important;background:transparent!important}.budget-row-side strong,.v60-budget-side strong,.v092-budget-pct{font-size:22px!important;font-weight:950!important;letter-spacing:-.045em!important;line-height:1!important}.budget-row-side span,.v60-budget-left,.v092-budget-left{font-size:11.5px!important;color:var(--muted)!important;white-space:nowrap!important}
+    .budget-progress,.v60-budget-meter,.v092-meter{height:9px!important;border-radius:999px!important;background:color-mix(in srgb,var(--panel3) 80%,transparent)!important;overflow:hidden!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--line) 60%,transparent)!important}.budget-progress>span,.v60-budget-meter span,.v092-meter span{display:block!important;height:100%!important;border-radius:999px!important;background:linear-gradient(90deg,var(--accent),var(--accent2))!important}.budget-row.bad .budget-progress>span,.v60-budget-row.bad .v60-budget-meter span,.v092-budget-card.bad .v092-meter span{background:linear-gradient(90deg,var(--red),var(--orange))!important}.budget-row.warn .budget-progress>span,.v60-budget-row.warn .v60-budget-meter span,.v092-budget-card.warn .v092-meter span{background:linear-gradient(90deg,var(--orange),var(--gold))!important}
+    .budget-row-footer,.v60-budget-actions,.v092-budget-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important;align-items:center!important}.budget-footnote{display:none!important}.budget-inline-actions{display:contents!important}.budget-row-footer .btn,.v60-budget-actions .btn,.v092-budget-actions .btn{width:100%!important;min-height:36px!important;border-radius:999px!important;font-size:12px!important;background:color-mix(in srgb,var(--panel2) 86%,transparent)!important}
+
+    /* Tables: prevent full-width select pills and huge action columns. */
+    .row-inline-select{width:auto!important;max-width:178px!important;min-width:150px!important;min-height:36px!important;height:36px!important;border-radius:999px!important;padding:0 32px 0 12px!important;font-size:12px!important;background-color:var(--panel2)!important;white-space:nowrap!important;text-overflow:ellipsis!important}
+    .row-menu summary{min-height:36px!important;border-radius:999px!important;padding:8px 12px!important;font-size:12px!important;white-space:nowrap!important}.row-menu-popover{min-width:180px!important}.table-actions{gap:7px!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:nowrap!important}.balance-badge{width:auto!important;max-width:max-content!important;min-height:26px!important;padding:5px 9px!important;font-size:11px!important;white-space:nowrap!important}.table-wrap{scrollbar-gutter:stable!important}#accountRows td,#debtRows td,#holdingRows td{vertical-align:middle!important}#accountRows td:last-child,#debtRows td:last-child,#holdingRows td:last-child{min-width:260px!important}
+
+    /* Chart cards: use the credit tracker surface everywhere without giant hover cards blocking content. */
+    .canvas-wrap{border-radius:24px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--panel2) 78%,transparent),color-mix(in srgb,var(--panel) 96%,transparent))!important;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--line) 85%,transparent)!important;overflow:hidden!important}.chart-tooltip{border-radius:18px!important;max-width:280px!important;box-shadow:0 18px 50px rgba(0,0,0,.16)!important}.chart-tip-title{font-size:14px!important}.chart-tip-row{padding:5px 0!important}
+
+    /* Investments desktop: cleaner than a spreadsheet, but still precise. */
+    #view-investments .tracker-hero{grid-template-columns:repeat(4,minmax(0,1fr))!important}#view-investments .tracker-stat{min-height:118px!important}.investment-dashboard{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(340px,.75fr);gap:var(--gap);align-items:start}.holding-card-list.desktop-cards{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}.holding-card{box-shadow:0 10px 26px rgba(0,0,0,.055)!important}.holding-card-actions .btn{border-radius:999px!important}
+
+    /* Tablet: avoid awkward half-sidebar / half-mobile states. */
+    @media(max-width:1100px){.app-shell{display:block!important}.sidebar{display:none!important}.main{max-width:900px!important;margin:0 auto!important;padding-bottom:calc(86px + env(safe-area-inset-bottom,0px))!important}.mobile-bar{display:grid!important}.grid-21,.grid-12,.tracker-grid,.tracker-grid-reverse,.investment-dashboard{grid-template-columns:1fr!important}.metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid,#view-investments .tracker-hero{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+    /* Phone: less chrome, more content, friendlier tab bar. */
+    @media(max-width:760px){
+      :root{--mm-nav-h:54px;--gap:11px;--card-pad:14px}.main{padding:8px 10px calc(74px + env(safe-area-inset-bottom,0px))!important}.topbar{margin:-8px -10px 10px!important;padding:8px 10px 9px!important;gap:7px!important}.searchbar{height:38px!important;min-height:38px!important}.topbar .actions{grid-template-columns:1fr 40px!important;gap:7px!important}.topbar .actions .btn-primary{height:38px!important;min-height:38px!important;border-radius:14px!important}.topbar-overflow-btn{width:40px!important;height:40px!important}
+      .section-title{font-size:24px!important;line-height:1.02!important}.section-sub{font-size:12.5px!important}.page-head{margin-bottom:10px!important}.card,.metric-card,.tracker-stat,.week-card,.hero-metric,.v60-panel{border-radius:18px!important;padding:14px!important}.card-header{margin-bottom:10px!important}.card-title{font-size:16px!important}.card-subtitle{font-size:12px!important}
+      .metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid,#view-investments .tracker-hero{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.metric-value{font-size:23px!important}.metric-label{font-size:8.5px!important}.metric-sub{font-size:10.8px!important}
+      .budget-board-list,.v60-budget-list{grid-template-columns:1fr!important;gap:10px!important}.budget-row,.v60-budget-row,.v092-budget-card{border-radius:18px!important;padding:12px!important}.budget-category-link,.v60-budget-name,.v092-budget-title,.budget-name{font-size:16px!important}.budget-row-side strong,.v60-budget-side strong,.v092-budget-pct{font-size:21px!important}.budget-row-footer,.v60-budget-actions,.v092-budget-actions{grid-template-columns:1fr 1fr!important}.budget-row-footer .btn,.v60-budget-actions .btn,.v092-budget-actions .btn{font-size:11.5px!important;min-height:34px!important}
+      .mobile-bar{height:calc(var(--mm-nav-h) + env(safe-area-inset-bottom,0px))!important;padding:5px 7px calc(5px + env(safe-area-inset-bottom,0px))!important;gap:5px!important;background:color-mix(in srgb,var(--panel) 96%,transparent)!important;box-shadow:0 -10px 28px rgba(0,0,0,.12)!important;border-top:1px solid var(--line)!important;backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important}.mobile-bar button{height:44px!important;min-height:44px!important;border-radius:14px!important;padding:4px 2px!important;gap:1px!important;background:transparent!important;box-shadow:none!important;color:var(--muted)!important}.mobile-bar button span:first-child{font-size:17px!important}.mobile-bar button span:last-child{font-size:9.5px!important;font-weight:850!important}.mobile-bar button.active{background:rgba(var(--accent-rgb),.10)!important;color:var(--accent)!important;box-shadow:inset 0 0 0 1px rgba(var(--accent-rgb),.22)!important}.mobile-bar button.active:before{display:none!important}
+      .mobile-more-panel{border-radius:24px 24px 0 0!important;padding:14px!important}.mobile-more-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.mobile-more-item{min-height:72px!important;border-radius:18px!important}.mobile-more-icon{font-size:21px!important}.mobile-more-copy strong{font-size:13px!important}.mobile-more-copy span{display:block!important;font-size:10.5px!important;line-height:1.2!important}
+      .table-wrap.responsive-cards{overflow:visible!important;border:0!important;background:transparent!important}.table-wrap.responsive-cards table,.table-wrap.responsive-cards tbody,.table-wrap.responsive-cards tr,.table-wrap.responsive-cards td{display:block!important;width:100%!important}.table-wrap.responsive-cards thead{display:none!important}.table-wrap.responsive-cards tr{border:1px solid var(--line)!important;border-radius:18px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 98%,transparent),color-mix(in srgb,var(--panel2) 86%,transparent))!important;margin-bottom:10px!important;padding:12px!important;box-shadow:0 8px 22px rgba(0,0,0,.055)!important}.table-wrap.responsive-cards td{border:0!important;padding:4px 0!important;text-align:left!important}.table-wrap.responsive-cards td.amount-cell{font-size:18px!important;font-weight:900!important}.table-wrap.responsive-cards td:last-child{min-width:0!important}.table-wrap.responsive-cards .table-actions{justify-content:stretch!important;display:grid!important;grid-template-columns:1fr auto!important}.table-wrap.responsive-cards .row-inline-select{max-width:none!important;width:100%!important}.table-wrap.responsive-cards .row-menu summary{width:100%!important}
+      #view-investments .table-wrap{display:none!important}#holdingCardsV093{display:grid!important}.holding-facts{grid-template-columns:repeat(3,1fr)!important}.holding-card-actions{grid-template-columns:1fr 1fr 1fr!important}.investment-insight{border-radius:16px!important}
+      .chart-tooltip{display:none!important}.canvas-wrap{height:210px!important;min-height:210px!important;border-radius:20px!important}.chart-legend{display:grid!important;grid-template-columns:1fr 1fr!important;gap:7px!important}.legend-chip{min-width:0!important;justify-content:space-between!important}
+    }
+    @media(max-width:390px){.metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid,#view-investments .tracker-hero{grid-template-columns:1fr!important}.mobile-bar{gap:3px!important;padding-left:5px!important;padding-right:5px!important}.mobile-bar button span:first-child{font-size:16px!important}.mobile-bar button span:last-child{font-size:8.6px!important}.mobile-more-grid{grid-template-columns:1fr!important}.holding-facts{grid-template-columns:1fr 1fr!important}.budget-row-footer,.v60-budget-actions,.v092-budget-actions{grid-template-columns:1fr!important}.section-title{font-size:22px!important}}
+  `);
+
+  // Replace wireframe symbols with friendlier emoji icons in both sidebar and mobile nav.
+  try{ NAV.forEach(item=>{ if(ICONS[item[0]]) item[3]=ICONS[item[0]]; }); }catch(e){}
+  window.ux62NavIcon=function(id){ return ICONS[id] || '•'; };
+  window.ux62NavTitle=function(id){ const item=(window.NAV||NAV).find(n=>n[0]===id); return SHORT[id] || (item?item[1]:id); };
+
+  function moneySafe(v){ try{return typeof v60Money==='function'?v60Money(v):money(v);}catch(e){return '$'+Number(v||0).toLocaleString();} }
+  function clsForPct(p){ p=Number(p)||0; return p>=100?'bad':p>=85?'warn':'good'; }
+  function pctWidth(p){ return Math.max(0,Math.min(100,Number(p)||0)); }
+  function budgetCard(b){
+    const cls=clsForPct(b.pct); const remaining=Math.max(0,Number(b.remaining)||0); const pct=Math.round(Number(b.pct)||0);
+    return `<div class="budget-row ${cls}"><div class="budget-row-top"><div><button type="button" class="budget-category-link" onclick="showCategoryTransactions('${escapeJs(b.category)}')">${escapeHtml(b.category)}</button><div class="budget-meta">${moneySafe(b.spent)} spent of ${moneySafe(b.limit)}</div></div><div class="budget-row-side"><strong class="${cls}">${pct}%</strong><span>${moneySafe(remaining)} left</span></div></div><div class="progress budget-progress"><span style="width:${pctWidth(b.pct)}%"></span></div><div class="budget-row-footer"><button class="btn btn-small" type="button" onclick="showCategoryTransactions('${escapeJs(b.category)}')">View transactions</button><button class="btn btn-small" type="button" onclick="editBudget('${b.id}')">Edit budget</button></div></div>`;
+  }
+  window.budgetRowHtml=budgetCard; window.v60BudgetCard=budgetCard;
+
+  function refreshBudgets(){
+    const board=document.getElementById('budgetBoard');
+    if(board){ const stats=budgetStats().sort((a,b)=>b.pct-a.pct); board.innerHTML=stats.length?`<div class="budget-board-list">${stats.map(budgetCard).join('')}</div>`:emptyMini('No budgets yet','Create monthly category limits for quick guardrails.','Add budget','openDrawer(\'budget\')'); }
+    const heat=document.getElementById('budgetHeat');
+    if(heat){ const rows=budgetStats().sort((a,b)=>b.pct-a.pct).slice(0,4); heat.innerHTML=rows.length?`<div class="budget-board-list">${rows.map(budgetCard).join('')}</div>`:emptyMini('No budgets','Create simple monthly caps.','Add budget','openDrawer(\'budget\')'); }
+  }
+
+  function markResponsiveTables(){
+    ['accountRows','debtRows','holdingRows'].forEach(id=>{ const tbody=document.getElementById(id); const wrap=tbody?.closest('.table-wrap'); if(wrap) wrap.classList.add('responsive-cards'); });
+  }
+
+  function ensureHoldingCards(){
+    const table=document.querySelector('#view-investments .table-wrap'); if(!table) return null;
+    let cards=document.getElementById('holdingCardsV093');
+    if(!cards){ cards=document.createElement('div'); cards.id='holdingCardsV093'; cards.className='holding-card-list desktop-cards'; table.insertAdjacentElement('afterend',cards); }
+    return cards;
+  }
+  function holdingCard(h){
+    const value=holdingValue(h); const cost=holdingCost(h); const gain=value-cost; const ret=cost?gain/cost*100:0; const included=h.includeNetWorth!==false;
+    return `<div class="holding-card"><div class="holding-card-top"><div><div class="holding-symbol">${escapeHtml(h.symbol||h.name||'Holding')}</div><div class="holding-name">${escapeHtml(h.name||h.account||'Manual holding')}</div></div><div><div class="holding-value">${money(value)}</div><div class="holding-gain ${gain>=0?'good':'bad'}">${gain>=0?'+':''}${money(gain)}${cost?` · ${ret>=0?'+':''}${pctFmt(ret)}`:''}</div></div></div><div class="holding-facts"><div class="holding-fact"><span>Account</span><b>${escapeHtml(h.account||'Manual')}</b></div><div class="holding-fact"><span>Class</span><b>${escapeHtml(h.assetClass||'Stock')}</b></div><div class="holding-fact"><span>Status</span><b>${included?'Included':'Excluded'}</b></div><div class="holding-fact"><span>Qty</span><b>${nval(h.quantity).toLocaleString()}</b></div><div class="holding-fact"><span>Price</span><b>${money(h.price,{cents:true})}</b></div><div class="holding-fact"><span>Basis</span><b>${money(cost)}</b></div></div><div class="holding-card-actions"><button type="button" class="btn btn-small" onclick="toggleHoldingInclude('${h.id}')">${included?'Exclude':'Include'}</button><button type="button" class="btn btn-small" onclick="openDrawer('holding', findById('holdings','${h.id}'))">Edit</button><button type="button" class="btn btn-small btn-danger" onclick="deleteTrackerItem('holdings','${h.id}')">Delete</button></div></div>`;
+  }
+  function refreshHoldingCards(){ const cards=ensureHoldingCards(); if(!cards) return; const holdings=state.holdings||[]; cards.innerHTML=holdings.length?holdings.map(holdingCard).join(''):`<div class="empty"><div><strong>No holdings yet.</strong><p>Add stocks, funds, bonds, cash, or crypto positions manually.</p><button type="button" class="btn btn-primary" onclick="openDrawer('holding')">Add holding</button></div></div>`; }
+
+  const oldRenderInvestments=window.renderInvestments;
+  window.renderInvestments=function(){
+    if(typeof oldRenderInvestments==='function') oldRenderInvestments();
+    const notes=document.getElementById('investmentNotes'); const alloc=allocationRows();
+    if(notes){ const top=alloc[0]; notes.innerHTML=`<div class="investment-insight"><b>${top&&top.pct>65?'Concentration watch':'Portfolio check'}</b><span>${top?`${escapeHtml(top.name)} is ${pctFmt(top.pct)} of tracked holdings.`:'Add holdings to generate allocation insights.'}</span></div><div class="investment-insight"><b>Duplicate guard</b><span>If the same brokerage balance is already in Net worth, exclude these holdings from net worth.</span></div><div class="investment-insight"><b>Manual prices</b><span>Prices are manual. Update them before saving net worth snapshots.</span></div>`; }
+    refreshHoldingCards(); markResponsiveTables();
+  };
+
+  // Cleaner allocation chart labels, especially on phone.
+  window.renderInvestmentChart=function(){
+    const canvas=document.getElementById('investmentCanvas'); if(!canvas || !canvas.closest('.view.active')) return;
+    const rect=canvas.parentElement.getBoundingClientRect(); const dpr=devicePixelRatio||1; canvas.width=Math.max(360,rect.width*dpr); canvas.height=Math.max(220,rect.height*dpr); const ctx=canvas.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0); const w=canvas.width/dpr,h=canvas.height/dpr; ctx.clearRect(0,0,w,h);
+    const rows=allocationRows(); if(!rows.length){ if(typeof noData==='function') noData(ctx,'Add holdings to draw allocation.',w); else {ctx.fillStyle=getCss('--muted');ctx.fillText('Add holdings to draw allocation.',20,42);} return; }
+    const max=Math.max(...rows.map(r=>r.value)); const left=w<480?22:150; const right=24; const top=24; const gap=16; const barH=Math.max(16,Math.min(26,(h-top-28-(rows.length-1)*gap)/rows.length));
+    ctx.font='700 12px '+getComputedStyle(document.body).fontFamily;
+    rows.forEach((r,i)=>{ const y=top+i*(barH+gap); const trackW=w-left-right; const bw=Math.max(10,trackW*(r.value/max)); const color=COLORS[i%COLORS.length];
+      if(w>=480){ ctx.fillStyle=getCss('--text'); ctx.fillText(r.name,18,y+barH/2+4); }
+      ctx.fillStyle='rgba(148,163,184,.14)'; roundRect(ctx,left,y,trackW,barH,barH/2); ctx.fill(); ctx.fillStyle=color; roundRect(ctx,left,y,bw,barH,barH/2); ctx.fill();
+      ctx.fillStyle=getCss('--muted'); ctx.font='600 12px '+getComputedStyle(document.body).fontFamily; const label=w<480?`${r.name} · ${pctFmt(r.pct)} · ${money(r.value)}`:`${pctFmt(r.pct)} · ${money(r.value)}`; ctx.fillText(label,left+Math.min(bw+10,trackW-150),y+barH/2+4);
+    });
+  };
+
+  function buildFriendlyMobileNav(){
+    const el=document.getElementById('mobileNav'); if(!el) return;
+    const primary=['overview','review','transactions','budgets']; const moreActive=!primary.includes(activeView);
+    const html=primary.map(id=>`<button type="button" class="${id===activeView?'active':''}" onclick="showView('${id}')" aria-label="Open ${SHORT[id]||id}"><span>${ICONS[id]}</span><span>${SHORT[id]||id}</span></button>`).join('') + `<button type="button" class="${moreActive?'active':''}" onclick="toggleMobileMore(true)" aria-label="Open more sections"><span>☰</span><span>More</span></button>`;
+    el.innerHTML=html;
+  }
+
+  function polishMoreSheet(){
+    const grid=document.getElementById('mobileMoreGrid'); if(!grid) return;
+    grid.querySelectorAll('.mobile-more-item').forEach(btn=>{ const onclick=btn.getAttribute('onclick')||''; const match=onclick.match(/showView\('([^']+)'\)/); const id=match?.[1]; const icon=btn.querySelector('.mobile-more-icon'); if(icon&&id&&ICONS[id]) icon.textContent=ICONS[id]; });
+  }
+
+  const prevBuild=window.buildMobileNav; window.buildMobileNav=function(){ buildFriendlyMobileNav(); polishMoreSheet(); };
+  const prevRenderNav=window.renderNav; if(typeof prevRenderNav==='function'){ window.renderNav=function(){ prevRenderNav(); document.querySelectorAll('.nav-btn').forEach(btn=>{ const id=btn.dataset.view; const icon=btn.querySelector('.nav-icon'); if(icon&&ICONS[id]) icon.textContent=ICONS[id]; }); }; }
+
+  const oldRenderAll=window.renderAll; window.renderAll=function(){ oldRenderAll(); requestAnimationFrame(()=>{ document.querySelectorAll('#appBuildLabel').forEach(el=>el.textContent='Pre-v1 alpha · '+BUILD); refreshBudgets(); markResponsiveTables(); refreshHoldingCards(); buildFriendlyMobileNav(); polishMoreSheet(); }); };
+  const oldShowView=window.showView; window.showView=function(id){ oldShowView(id); requestAnimationFrame(()=>{ refreshBudgets(); markResponsiveTables(); refreshHoldingCards(); buildFriendlyMobileNav(); polishMoreSheet(); if(id==='investments') window.renderInvestments?.(); }); };
+  const oldPayload=window.backupPayload; if(typeof oldPayload==='function'){ window.backupPayload=function(){ const p=oldPayload(); p.build=BUILD; p.releaseStage='Pre-v1 alpha'; return p; }; }
+
+  requestAnimationFrame(()=>{ try{ renderNav(); }catch(e){} try{ renderAll(); }catch(e){} });
+})();
+/* ---- end v0.9.3-alpha UI/UX rescue pass ---- */
+
 </script>
 </body>
 </html>
