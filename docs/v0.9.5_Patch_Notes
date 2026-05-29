@@ -1,0 +1,20 @@
+MoneyMap v0.9.5-alpha Notes
+Focused polish based on the latest UI review.
+Changes
+Replaced the remaining emoji-style navigation icons with line-style SVG icons.
+Added a new Accounts tab for manual balances and quick editing.
+Added a Monarch-style Overview landing section focused on net worth, assets, liabilities, and current accounts.
+Added configurable navigation layout in Settings.
+Pin frequent tabs to the sidebar.
+Move less-used tabs into More.
+Choose up to four bottom mobile tabs.
+Reset to recommended defaults.
+Cleaned the desktop sidebar into primary Workspace tabs plus a smaller More section.
+Updated mobile More sheet to use the same line icon language.
+Updated build label to v0.9.5-alpha.
+Suggested QA
+Desktop sidebar, including Customize navigation.
+iPhone bottom nav and More sheet.
+Accounts tab add, edit, include/exclude, delete.
+Overview net worth landing card.
+Backup export metadata.
