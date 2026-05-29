@@ -1178,7 +1178,7 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
     </section>
 
     <section class="view" id="view-review">
-      <div class="page-head"><div><h2 class="section-title">Weekly review</h2><p class="section-sub">Review the current queue, clean merchant names, approve categories, and close the week with one click.</p></div><div class="actions"><button class="btn" onclick="approveCurrentWeek()">Approve week</button><button class="btn" onclick="approveAllReviewed()">Approve visible</button><button class="btn btn-primary" onclick="showView('rules')">Improve rules</button></div></div>
+      <div class="page-head"><div><h2 class="section-title">Weekly review</h2><p class="section-sub">Review the current queue, clean merchant names, approve categories, and close the week with one click.</p></div><div class="actions"><button class="btn" onclick="cleanReviewQueueMerchants()">Clean queue</button><button class="btn" onclick="approveCurrentWeek()">Approve week</button><button class="btn" onclick="approveAllReviewed()">Approve visible</button><button class="btn btn-primary" onclick="showView('rules')">Improve rules</button></div></div>
       <div class="review-summary-grid" id="weeklyReviewSummary"></div>
       <div class="grid-21">
         <div class="review-card">
@@ -1194,7 +1194,7 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
     </section>
 
     <section class="view" id="view-transactions">
-      <div class="page-head"><div><h2 class="section-title">Transactions</h2><p class="section-sub">Search, filter, recategorize, hide transfers, and export cleaned data.</p></div><div class="actions"><button class="btn" onclick="cleanVisibleMerchants()">Clean visible merchants</button><button class="btn" onclick="exportTransactionsCsv()">Export CSV</button><button class="btn btn-primary" onclick="openDrawer('quickAdd')">Add transaction</button></div></div>
+      <div class="page-head"><div><h2 class="section-title">Transactions</h2><p class="section-sub">Search, filter, recategorize, hide transfers, and export cleaned data.</p></div><div class="actions"><button class="btn" onclick="cleanVisibleMerchants()">Clean visible</button><button class="btn" onclick="cleanAllMerchants()">Clean all</button><button class="btn" onclick="exportTransactionsCsv()">Export CSV</button><button class="btn btn-primary" onclick="openDrawer('quickAdd')">Add transaction</button></div></div>
       <div class="card">
         <div class="tx-filter-grid">
           <div><label>Search transactions</label><input class="input" id="transactionSearch" placeholder="Merchant, category, account, notes..." oninput="renderAll()" /></div>
@@ -1416,7 +1416,7 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
 <script>
 const STORAGE_KEY = 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = 'v6.0-phase0-stabilization';
+const APP_BUILD_ID = 'v6.1-merchant-cleanup';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;
@@ -1550,19 +1550,113 @@ function startOfWeek(date=new Date()){
 function inCurrentWeek(dateStr){ const d=new Date(String(dateStr||'')+'T00:00:00'); if(isNaN(d)) return false; const s=startOfWeek(); const e=new Date(s); e.setDate(s.getDate()+7); return d>=s && d<e; }
 function dateKey(d){ return d.toISOString().slice(0,10); }
 function displayWeekRange(){ const s=startOfWeek(); const e=new Date(s); e.setDate(s.getDate()+6); return `${dateFmt(dateKey(s))} to ${dateFmt(dateKey(e))}`; }
-function titleCaseWords(s){ return String(s||'').toLowerCase().replace(/\b[a-z]/g,c=>c.toUpperCase()).replace(/\b(Usa|Ach|Pos|Atm|Paypal|Uber|Lyft|Ira|Fpl)\b/g,m=>m.toUpperCase()); }
+const US_STATE_CODES = new Set('AL AK AZ AR CA CO CT DC DE FL GA HI IA ID IL IN KS KY LA MA MD ME MI MN MO MS MT NC ND NE NH NJ NM NV NY OH OK OR PA RI SC SD TN TX UT VA VT WA WI WV WY'.split(' '));
+const MERCHANT_LOCATION_WORDS = new Set('MIAMI SOUTH NORTH EAST WEST DOWNTOWN MIDTOWN BEACH GABLES CORAL FORT FT LAUDERDALE HOLLYWOOD AVENTURA DORAL HIALEAH KENDALL BRICKELL SUNRISE PLANTATION PEMBROKE PINES BOCA RATON ORLANDO TAMPA JACKSONVILLE ATLANTA CHICAGO NEW YORK BROOKLYN LOS ANGELES LAS VEGAS PHOENIX DALLAS HOUSTON AUSTIN DENVER SEATTLE PORTLAND BOSTON PHILADELPHIA SAN FRANCISCO DIEGO JOSE WASHINGTON'.split(' '));
+const MERCHANT_CANONICAL_RULES = [
+  {test:/\b(T[- ]?MOBILE|TMOBILE)\b/i, name:'T-Mobile'},
+  {test:/\b(PAYBYPHONE|PAY BY PHONE)\b/i, name:'PayByPhone'},
+  {test:/\b(MOBILE PAYMENT THANK YOU|MOBILE PAYMENT)\b/i, name:'Mobile Payment'},
+  {test:/\b(TST\s*PINCHO|PINCHO)\b/i, name:'Pincho'},
+  {test:/\b(AUDIBLE|AUDIBLE\.?COM)\b/i, name:'Audible'},
+  {test:/\bWINGSTOP\b/i, name:'Wingstop'},
+  {test:/\bALFA LOCK( AND | &)ALARM\b|\bALFA LOCK\b/i, name:'Alfa Lock And Alarm'},
+  {test:/\bLAZ PARKING\b/i, name:'LAZ Parking'},
+  {test:/\bAAXON LAUNDRY\b/i, name:'Aaxon Laundry'},
+  {test:/\b(AMAZON MARKETPLACE|AMZN MKTP|AMZN|AMAZON)\b/i, name:'Amazon'},
+  {test:/\b(APPLE\.COM|APPLE SERVICES|APPLE)\b/i, name:'Apple'},
+  {test:/\bUBER\s*EATS\b/i, name:'Uber Eats'},
+  {test:/\bDOORDASH\b/i, name:'DoorDash'},
+  {test:/\bSTARBUCKS\b/i, name:'Starbucks'},
+  {test:/\bPUBLIX\b/i, name:'Publix'},
+  {test:/\bWHOLE FOODS\b/i, name:'Whole Foods'},
+  {test:/\bTRADER JOE'?S\b/i, name:'Trader Joe’s'},
+  {test:/\bWALMART\b/i, name:'Walmart'},
+  {test:/\bTARGET\b/i, name:'Target'},
+  {test:/\bNETFLIX\b/i, name:'Netflix'},
+  {test:/\bSPOTIFY\b/i, name:'Spotify'},
+  {test:/\bFPL\b|\bFLORIDA POWER\b/i, name:'FPL'},
+  {test:/\bCOMCAST\b|\bXFINITY\b/i, name:'Xfinity'},
+  {test:/\bVERIZON\b/i, name:'Verizon'},
+  {test:/\bAT[& ]T\b|\bATT\b/i, name:'AT&T'}
+];
+function titleCaseWords(s){
+  const special={USA:'USA',ACH:'ACH',POS:'POS',ATM:'ATM',IRA:'IRA',FPL:'FPL',LAZ:'LAZ',NJ:'NJ',FL:'FL',PA:'PA',US:'US',LLC:'LLC',INC:'Inc',CO:'Co'};
+  return String(s||'').toLowerCase().split(/\s+/).filter(Boolean).map(w=>{
+    const raw=w.replace(/[^a-z0-9&’']/gi,''); const upper=raw.toUpperCase();
+    if(special[upper]) return special[upper];
+    if(/^mc[a-z]/i.test(raw)) return raw.charAt(0).toUpperCase()+raw.charAt(1).toLowerCase()+raw.charAt(2).toUpperCase()+raw.slice(3).toLowerCase();
+    return raw.charAt(0).toUpperCase()+raw.slice(1).toLowerCase();
+  }).join(' ');
+}
+function merchantSearchText(raw){
+  return String(raw||'').normalize('NFKC').toUpperCase()
+    .replace(/&/g,' AND ')
+    .replace(/[’']/g,'')
+    .replace(/[^A-Z0-9]+/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+function canonicalMerchantName(raw){
+  const spaced=merchantSearchText(raw);
+  const compact=spaced.replace(/\s+/g,'');
+  for(const rule of MERCHANT_CANONICAL_RULES){
+    if(rule.test.test(spaced) || rule.test.test(compact)) return rule.name;
+  }
+  return '';
+}
+function stripMerchantLocationTail(s){
+  let tokens=String(s||'').split(/\s+/).filter(Boolean);
+  let changed=true;
+  while(changed && tokens.length>1){
+    changed=false;
+    const last=tokens[tokens.length-1].toUpperCase().replace(/[^A-Z]/g,'');
+    if(US_STATE_CODES.has(last) || ['US','USA','NA'].includes(last)){ tokens.pop(); changed=true; continue; }
+    if(MERCHANT_LOCATION_WORDS.has(last)){ tokens.pop(); changed=true; continue; }
+    if(tokens.length>2 && /^[A-Z]$/.test(last)){ tokens.pop(); changed=true; continue; }
+  }
+  return tokens.join(' ');
+}
+function dedupeMerchantWords(s){
+  const out=[];
+  String(s||'').split(/\s+/).filter(Boolean).forEach(w=>{
+    const prev=out[out.length-1]||'';
+    if(prev.toUpperCase()!==w.toUpperCase()) out.push(w);
+  });
+  if(out.length===2 && out[0].toUpperCase()===out[1].toUpperCase()) out.pop();
+  return out.join(' ');
+}
 function cleanMerchantName(raw){
-  let s=String(raw||'').replace(/\s+/g,' ').trim();
-  s=s.replace(/\b(POS|DEBIT|CREDIT|CARD|PURCHASE|CHECKCARD|VISA|MASTERCARD|AMEX|AUTH|AUTHORIZATION|PENDING|RECURRING|ONLINE|WEB|ACH|ELECTRONIC|PAYMENT)\b/gi,' ');
-  s=s.replace(/\b[A-Z]{2,}\d{3,}\b/g,' ');
-  s=s.replace(/[#!*]{2,}|\bREF\s*[:#]?\s*\w+|\bID\s*[:#]?\s*\w+/gi,' ');
-  s=s.replace(/\d{4,}/g,' ');
-  s=s.replace(/\s[-–—]\s.*$/,'');
+  const original=String(raw||'').replace(/\s+/g,' ').trim();
+  const canonical=canonicalMerchantName(original);
+  if(canonical) return canonical;
+  let s=original;
+  s=s.normalize('NFKC').replace(/&/g,' and ');
+  s=s.replace(/\b(TST|SQ|SP|PP|PAYPAL)\s*[*#:-]?\s*/gi,' ');
+  s=s.replace(/\b(POINT OF SALE|CHECKCARD|CHECK CARD|DEBIT CARD|CREDIT CARD|CARD PURCHASE|PURCHASE AUTHORIZED|PREAUTHORIZED|AUTHORIZATION|AUTH|PENDING|RECURRING|ONLINE|WEB|ACH|ELECTRONIC|POS|VISA|MASTERCARD|AMEX)\b/gi,' ');
+  s=s.replace(/\b(REF|REFERENCE|TRACE|TRANS|TRANSACTION|ID|AUTH CODE|APPROVAL)\s*[:#-]?\s*[A-Z0-9-]+/gi,' ');
+  s=s.replace(/https?:\/\/\S+|www\.\S+/gi,' ');
+  s=s.replace(/\b[A-Z0-9-]+\.(COM|NET|ORG|CO|US)\b/gi,' ');
+  s=s.replace(/\b[NSEW]?SOUTH\b/gi,' South').replace(/\b[NSEW]?NORTH\b/gi,' North').replace(/\b[NSEW]?EAST\b/gi,' East').replace(/\b[NSEW]?WEST\b/gi,' West');
+  s=s.replace(/[-–—_/\|]+/g,' ');
+  s=s.replace(/[*#]+/g,' ');
+  s=s.replace(/\bMOBILEFT\b/gi,' ');
+  s=s.replace(/\b(?=[A-Z0-9-]*\d)(?:[A-Z]{0,4}\d{3,}[A-Z0-9-]*|\d{2,}[A-Z]{1,})\b/gi,' ');
+  s=s.replace(/\b(THANK YOU|THANKS|NA|USA|US)\b/gi,' ');
   s=s.replace(/\s+/g,' ').trim();
-  if(!s) s=String(raw||'Unknown merchant').trim()||'Unknown merchant';
+  s=stripMerchantLocationTail(s);
+  s=dedupeMerchantWords(s);
+  s=s.replace(/\b(Inc|LLC|Ltd|Co|Company|Corp|Corporation|Store|Stores)\b$/i,'').trim();
+  if(!s) s=original||'Unknown merchant';
   return titleCaseWords(s).slice(0,64);
 }
-function merchantLooksMessy(s){ const raw=String(s||''); return /\b(POS|CHECKCARD|DEBIT|AUTH|PURCHASE|PENDING|RECURRING|REF|ID)\b/i.test(raw) || /[#*]{2,}|\d{5,}/.test(raw) || raw.length>48; }
+function merchantLooksMessy(s){
+  const raw=String(s||'');
+  return /\b(TST|SQ|SP|POS|CHECKCARD|DEBIT|AUTH|PURCHASE|PENDING|RECURRING|REF|REFERENCE|TRACE|TRANSACTION|ID)\b/i.test(raw)
+    || /[#*]{1,}|\d{4,}/.test(raw)
+    || /\b[A-Z0-9-]+\.(COM|NET|ORG|CO|US)\b/i.test(raw)
+    || /\b(AL|AK|AZ|AR|CA|CO|CT|DC|DE|FL|GA|HI|IA|ID|IL|IN|KS|KY|LA|MA|MD|ME|MI|MN|MO|MS|MT|NC|ND|NE|NH|NJ|NM|NV|NY|OH|OK|OR|PA|RI|SC|SD|TN|TX|UT|VA|VT|WA|WI|WV|WY)\b$/i.test(raw.trim())
+    || raw.length>48;
+}
 function currentMonth(){ const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`; }
 function uid(prefix='id'){ return prefix + '_' + Math.random().toString(36).slice(2,10) + Date.now().toString(36).slice(-4); }
 function normalizeMerchant(s){ return String(s||'').toUpperCase().replace(/\b(POS|DEBIT|CREDIT|CARD|PURCHASE|CHECKCARD|ACH|WEB|ONLINE|PAYMENT|AUTOPAY|INC|LLC|STORE)\b/g,' ').replace(/[0-9#*.-]+/g,' ').replace(/\s+/g,' ').trim().slice(0,44) || 'UNKNOWN'; }
@@ -2320,8 +2414,26 @@ function approveAllReviewed(){ const items=visibleTransactions().filter(t=>!t.re
 function skipReview(){ reviewIndex++; renderReview(); }
 function hideTx(id){ const t=state.transactions.find(x=>x.id===id); if(t){t.hidden=true;t.category='Transfers';t.hiddenReason='Manually hidden as transfer';t.reviewed=true;t.reviewedAt=new Date().toISOString();saveState();renderAll();} }
 function saveReviewMerchant(id){ const t=state.transactions.find(x=>x.id===id); const val=document.getElementById('reviewMerchantInput')?.value?.trim(); if(t && val){ t.description=val; saveState(); toast('Merchant name updated.'); renderAll(); } }
-function cleanTxMerchant(id){ const t=state.transactions.find(x=>x.id===id); if(!t) return; if(!t.rawDescription) t.rawDescription=t.description; const next=cleanMerchantName(t.rawDescription || t.description); t.description=next; saveState(); toast('Merchant name cleaned.'); renderAll(); }
-function cleanVisibleMerchants(){ const txns=visibleTransactions(); let count=0; txns.forEach(t=>{ const next=cleanMerchantName(t.rawDescription || t.description); if(next && next!==t.description){ if(!t.rawDescription) t.rawDescription=t.description; t.description=next; count++; } }); saveState(); toast(count?`Cleaned ${count} visible merchant name${count===1?'':'s'}.`:'Visible merchant names already look clean.'); renderAll(); }
+function applyMerchantCleanupToTransactions(txns,label='merchant name'){
+  let count=0;
+  (txns||[]).forEach(t=>{
+    const source=t.rawDescription || t.description;
+    const next=cleanMerchantName(source);
+    if(next && next!==t.description){
+      if(!t.rawDescription) t.rawDescription=t.description;
+      t.description=next;
+      count++;
+    }
+  });
+  if(count) saveState();
+  toast(count?`Cleaned ${count} ${label}${count===1?'':'s'}.`:`${label.charAt(0).toUpperCase()+label.slice(1)}s already look clean.`);
+  renderAll();
+  return count;
+}
+function cleanTxMerchant(id){ const t=state.transactions.find(x=>x.id===id); if(!t) return; applyMerchantCleanupToTransactions([t],'merchant name'); }
+function cleanVisibleMerchants(){ return applyMerchantCleanupToTransactions(visibleTransactions(),'visible merchant name'); }
+function cleanReviewQueueMerchants(){ return applyMerchantCleanupToTransactions(reviewCandidates(),'review queue merchant name'); }
+function cleanAllMerchants(){ return applyMerchantCleanupToTransactions(state.transactions,'merchant name'); }
 function suggestRuleContains(tx){ return normalizeMerchant(tx.rawDescription || tx.description).split(' ').filter(Boolean).slice(0,3).join(' ') || cleanMerchantName(tx.description); }
 function createRuleForTx(id){ const t=state.transactions.find(x=>x.id===id); if(!t) return; showView('rules'); requestAnimationFrame(()=>{ const contains=document.getElementById('ruleContains'), cat=document.getElementById('ruleCategory'), action=document.getElementById('ruleAction'), dir=document.getElementById('ruleDirection'); if(contains) contains.value=suggestRuleContains(t); if(cat) cat.value=t.category||'Other'; if(action) action.value=t.hidden||t.category==='Transfers'?'transfer':'categorize'; if(dir) dir.value=Number(t.amount)<0?'spend':Number(t.amount)>0?'income':'any'; syncRuleFormAction(); }); toast('Rule draft filled from transaction.'); }
 function createHideRuleForTx(id){ const t=state.transactions.find(x=>x.id===id); if(!t) return; const contains=suggestRuleContains(t); state.rules.unshift(canonicalRule({id:uid('rule'), contains, category:'Transfers', action:'transfer', direction:'any', createdBy:'review'})); state.transactions.forEach(tx=>applyAutomationToTx(tx,{guess:false})); saveState(); toast(`Hide rule added for ${contains}.`); renderAll(); }
@@ -2376,6 +2488,7 @@ function commandActions(){
     {icon:'↧',title:'Export backup JSON',sub:'Portable full backup',key:'',fn:()=>exportBackupJson()},
     {icon:'▤',title:'Export monthly report',sub:'HTML and CSV report',key:'',fn:()=>exportMonthlyReport()},
     {icon:'▦',title:'Transactions',sub:'Search, filter, export CSV',key:'T',fn:()=>showView('transactions')},
+    {icon:'✎',title:'Clean merchant names',sub:'Normalize all vendor names',key:'',fn:()=>cleanAllMerchants()},
     {icon:'⚙',title:'Settings',sub:'Privacy, categories, data tools',key:'',fn:()=>showView('settings')}
   ];
 }
@@ -2399,7 +2512,7 @@ function handleCommandPaletteKey(e){
   if(e.key==='Enter'){ e.preventDefault(); runCommandAction(Number(items[idx]?.dataset.commandIndex||0)); }
 }
 
-function setupKeyboard(){ document.addEventListener('keydown',e=>{ const tag=document.activeElement?.tagName; const inField=['INPUT','SELECT','TEXTAREA'].includes(tag); if((e.metaKey||e.ctrlKey) && e.key.toLowerCase()==='k'){ e.preventDefault(); openCommandPalette(); return; } if(e.key==='Escape' && document.getElementById('commandPalette')?.classList.contains('active')){ e.preventDefault(); closeCommandPalette(); return; } if(!inField && e.key==='/'){ e.preventDefault(); document.getElementById('globalSearch')?.focus(); return; } if(!inField && e.key.toLowerCase()==='n'){ e.preventDefault(); openDrawer('quickAdd'); return; } if(!inField && e.key.toLowerCase()==='b'){ e.preventDefault(); showView('budgets'); return; } if(!inField && e.key.toLowerCase()==='c'){ e.preventDefault(); openDrawer('customize'); return; } if(!inField && e.key.toLowerCase()==='t'){ e.preventDefault(); showView('transactions'); return; } if(!inField && e.key.toLowerCase()==='w'){ e.preventDefault(); showView('networth'); return; } if(activeView!=='review' || inField) return; const t=currentReviewTx(); if(!t) return; const key=e.key.toLowerCase(); if(key==='a') approveTx(t.id); if(key==='s') skipReview(); if(key==='r') createRuleForTx(t.id); if(key==='c') cleanTxMerchant(t.id); }); }
+function setupKeyboard(){ document.addEventListener('keydown',e=>{ const tag=document.activeElement?.tagName; const inField=['INPUT','SELECT','TEXTAREA'].includes(tag); const key=e.key.toLowerCase(); if((e.metaKey||e.ctrlKey) && key==='k'){ e.preventDefault(); openCommandPalette(); return; } if(e.key==='Escape' && document.getElementById('commandPalette')?.classList.contains('active')){ e.preventDefault(); closeCommandPalette(); return; } if(activeView==='review' && !inField){ const t=currentReviewTx(); if(t && ['a','s','r','c'].includes(key)){ e.preventDefault(); if(key==='a') approveTx(t.id); if(key==='s') skipReview(); if(key==='r') createRuleForTx(t.id); if(key==='c') cleanTxMerchant(t.id); return; } } if(!inField && e.key==='/'){ e.preventDefault(); document.getElementById('globalSearch')?.focus(); return; } if(!inField && key==='n'){ e.preventDefault(); openDrawer('quickAdd'); return; } if(!inField && key==='b'){ e.preventDefault(); showView('budgets'); return; } if(!inField && key==='c'){ e.preventDefault(); openDrawer('customize'); return; } if(!inField && key==='t'){ e.preventDefault(); showView('transactions'); return; } if(!inField && key==='w'){ e.preventDefault(); showView('networth'); return; } }); }
 
 function quickBudget(cat,limit){ state.budgets.push({id:uid('bud'),category:cat,limit}); toast('Budget added.'); renderAll(); }
 function median(vals){ const a=vals.slice().sort((x,y)=>x-y); if(!a.length) return 0; const mid=Math.floor(a.length/2); return a.length%2?a[mid]:(a[mid-1]+a[mid])/2; }
