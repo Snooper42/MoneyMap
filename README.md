@@ -4,15 +4,35 @@ MoneyMap is a private, local-first personal finance planner.
 
 ## v0.10.0-alpha structural split
 
-This milestone separates the original single-file app into a small project structure:
+This milestone continues the migration from a single-file app into a GitHub Pages-compatible static project.
 
 ```text
 index.html
-src/css/styles.css
-src/js/app.js
+README.md
+docs/
+  v0.10.0-alpha-notes.md
+  v0.10.0-alpha-split-migration.md
+src/
+  css/
+    base.css
+    layout.css
+    components.css
+    mobile.css
+  js/
+    utils.js
+    state.js
+    storage.js
+    navigation.js
+    accounts.js
+    transactions.js
+    budgets.js
+    investments.js
+    charts.js
+    settings.js
+    app.js
 ```
 
-No product redesign was intended in this step. The goal is to make future UI, mobile, accounts, charts, storage, and navigation work safer.
+No backend dependency was added. Data remains local-first in browser storage.
 
 ## Run locally
 
