@@ -246,3 +246,13 @@ body{background:linear-gradient(180deg,var(--bg),var(--bg2));letter-spacing:-.00
 
 /* v4.9 Monarch usability benchmark pass
  */
+
+/* v0.10.0-alpha final QA: prevent dense tracker tables from being squeezed beside cards */
+@media(max-width:1500px){
+  #view-debt>.grid-21{grid-template-columns:1fr!important}
+  #view-debt .table-wrap{max-width:100%!important}
+}
+@media(max-width:1500px){
+  #view-debt>.tracker-grid-reverse,
+  #view-credit>.grid-12{grid-template-columns:1fr!important}
+}

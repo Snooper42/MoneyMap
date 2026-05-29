@@ -2264,3 +2264,43 @@ window.addEventListener('keydown', event => {
   }
   window.addEventListener('resize',()=>{ if(window.chartsReady!==false) requestAnimationFrame(()=>window.renderCharts?.()); });
 })();
+
+/* ---- v0.10.0-alpha final responsive QA pass: mobile table cards ---- */
+(function(){
+  const BODY_IDS=['accountRows','debtRows','holdingRows','creditRows'];
+  const fallbackLabels={
+    accountRows:['Account','Type','Updated','Status','Balance','Actions'],
+    debtRows:['Debt','APR','Min','Extra','Include','Balance','Actions'],
+    holdingRows:['Holding','Account','Class','Qty','Price','Value','Gain','Actions'],
+    creditRows:['Month','Experian','Equifax','TransUnion','Average','Util.','Source','Note','Actions']
+  };
+  function labelsFor(table,id){
+    const heads=[...table.querySelectorAll('thead th')].map(th=>String(th.textContent||'').trim()||'Actions');
+    return heads.length?heads:(fallbackLabels[id]||[]);
+  }
+  function labelRows(tbody,id){
+    const table=tbody.closest('table'); if(!table) return;
+    const wrap=tbody.closest('.table-wrap'); if(wrap) wrap.classList.add('responsive-cards','qa-responsive-cards');
+    const labels=labelsFor(table,id);
+    [...tbody.rows].forEach(row=>{
+      [...row.cells].forEach((cell,index)=>{
+        if(cell.colSpan && cell.colSpan>1){ cell.dataset.label=''; return; }
+        const label=labels[index] || (index===row.cells.length-1?'Actions':'');
+        cell.dataset.label=label;
+      });
+    });
+  }
+  function applyResponsiveTableCards(){ BODY_IDS.forEach(id=>{ const tbody=document.getElementById(id); if(tbody) labelRows(tbody,id); }); }
+  function afterPaint(){ requestAnimationFrame(()=>requestAnimationFrame(applyResponsiveTableCards)); }
+  ['renderAll','showView','renderNetWorth','renderDebt','renderInvestments','renderCredit','renderAccountsDashboard'].forEach(name=>{
+    const fn=window[name];
+    if(typeof fn==='function' && !fn.__qaResponsiveWrapped){
+      const wrapped=function(){ const result=fn.apply(this,arguments); afterPaint(); return result; };
+      wrapped.__qaResponsiveWrapped=true;
+      window[name]=wrapped;
+    }
+  });
+  document.addEventListener('DOMContentLoaded',afterPaint);
+  window.addEventListener('resize',afterPaint,{passive:true});
+  afterPaint();
+})();

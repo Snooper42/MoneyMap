@@ -279,3 +279,124 @@
     min-height:40px!important;
   }
 }
+
+/* v0.10.0-alpha final QA responsive table/card pass */
+.table-actions{min-width:0!important;max-width:100%!important}
+.table-actions .btn,.row-menu summary{max-width:100%!important}
+.row-menu-popover{max-width:min(220px,calc(100vw - 32px))!important;right:0!important}
+
+@media(max-width:760px){
+  body .table-wrap.responsive-cards,
+  body .table-wrap.qa-responsive-cards{
+    overflow:visible!important;
+    border:0!important;
+    background:transparent!important;
+    box-shadow:none!important;
+  }
+  body .table-wrap.responsive-cards table,
+  body .table-wrap.responsive-cards tbody,
+  body .table-wrap.qa-responsive-cards table,
+  body .table-wrap.qa-responsive-cards tbody{
+    display:block!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  body .table-wrap.responsive-cards thead,
+  body .table-wrap.qa-responsive-cards thead{display:none!important}
+  body .table-wrap.responsive-cards tr,
+  body .table-wrap.qa-responsive-cards tr{
+    display:grid!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    margin:0 0 10px!important;
+    padding:12px!important;
+    border:1px solid var(--line)!important;
+    border-radius:18px!important;
+    background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 98%,transparent),color-mix(in srgb,var(--panel2) 86%,transparent))!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.055)!important;
+  }
+  body .table-wrap.responsive-cards td,
+  body .table-wrap.qa-responsive-cards td{
+    display:grid!important;
+    grid-template-columns:minmax(82px,.38fr) minmax(0,1fr)!important;
+    align-items:start!important;
+    gap:8px!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    box-sizing:border-box!important;
+    border:0!important;
+    padding:6px 0!important;
+    text-align:left!important;
+    overflow-wrap:anywhere!important;
+  }
+  body .table-wrap.responsive-cards td::before,
+  body .table-wrap.qa-responsive-cards td::before{
+    content:attr(data-label);
+    display:block!important;
+    min-width:0!important;
+    color:var(--muted)!important;
+    font-family:var(--mono)!important;
+    font-size:10px!important;
+    line-height:1.35!important;
+    letter-spacing:.10em!important;
+    text-transform:uppercase!important;
+  }
+  body .table-wrap.responsive-cards td[data-label=""]::before,
+  body .table-wrap.qa-responsive-cards td[data-label=""]::before{display:none!important;content:""!important}
+  body .table-wrap.responsive-cards td.amount-cell,
+  body .table-wrap.qa-responsive-cards td.amount-cell{
+    font-size:18px!important;
+    font-weight:900!important;
+    justify-items:start!important;
+  }
+  body .table-wrap.responsive-cards td.right,
+  body .table-wrap.qa-responsive-cards td.right{
+    grid-template-columns:1fr!important;
+  }
+  body .table-wrap.responsive-cards td.right::before,
+  body .table-wrap.qa-responsive-cards td.right::before{display:none!important;content:""!important}
+  body .table-wrap.responsive-cards .table-actions,
+  body .table-wrap.qa-responsive-cards .table-actions{
+    display:grid!important;
+    grid-template-columns:1fr auto!important;
+    justify-content:stretch!important;
+    align-items:center!important;
+    gap:8px!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+  }
+  body .table-wrap.responsive-cards .table-actions>.btn,
+  body .table-wrap.qa-responsive-cards .table-actions>.btn{width:100%!important;min-width:0!important}
+  body .table-wrap.responsive-cards .row-inline-select,
+  body .table-wrap.qa-responsive-cards .row-inline-select{
+    width:100%!important;
+    min-width:0!important;
+    max-width:none!important;
+  }
+  body .table-wrap.responsive-cards .row-menu,
+  body .table-wrap.qa-responsive-cards .row-menu{width:100%!important;min-width:0!important}
+  body .table-wrap.responsive-cards .row-menu summary,
+  body .table-wrap.qa-responsive-cards .row-menu summary{width:100%!important;justify-content:center!important}
+  body .table-wrap.responsive-cards .row-menu-popover,
+  body .table-wrap.qa-responsive-cards .row-menu-popover{
+    right:0!important;
+    left:auto!important;
+    width:min(220px,calc(100vw - 48px))!important;
+    min-width:0!important;
+  }
+  body #creditRows td:last-child .btn{min-width:0!important;padding-left:10px!important;padding-right:10px!important}
+}
+
+@media(max-width:420px){
+  body .table-wrap.responsive-cards td,
+  body .table-wrap.qa-responsive-cards td{grid-template-columns:1fr!important;gap:3px!important}
+  body .table-wrap.responsive-cards td::before,
+  body .table-wrap.qa-responsive-cards td::before{font-size:9.5px!important}
+  body .table-wrap.responsive-cards .table-actions,
+  body .table-wrap.qa-responsive-cards .table-actions{grid-template-columns:1fr!important}
+}

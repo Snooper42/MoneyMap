@@ -841,3 +841,21 @@ td,th{white-space:nowrap}.table-wrap{position:relative}.table-wrap:after{content
 @media(min-width:1181px){.main{padding-top:18px}.topbar{margin-bottom:18px}.page-head{margin-bottom:16px}.section-title{line-height:1.02}.tracker-hero{gap:12px}.card{overflow:hidden}.sidebar .nav-kicker{margin-top:14px}.sidebar .nav-btn{min-height:48px}.sidebar .nav-copy strong{text-transform:none}}
 
 
+
+/* v0.10.0-alpha final QA table action containment */
+@media(min-width:761px){
+  #accountRows td:last-child,
+  #debtRows td:last-child,
+  #holdingRows td:last-child{width:230px!important;min-width:230px!important;max-width:230px!important}
+  #accountRows .table-actions,
+  #debtRows .table-actions,
+  #holdingRows .table-actions{flex-wrap:wrap!important;justify-content:flex-end!important;max-width:230px!important;gap:6px!important}
+  #accountRows .row-inline-select,
+  #debtRows .row-inline-select,
+  #holdingRows .row-inline-select{min-width:0!important;max-width:150px!important;width:150px!important}
+  #accountRows .row-menu summary,
+  #debtRows .row-menu summary,
+  #holdingRows .row-menu summary{padding-left:10px!important;padding-right:10px!important}
+  #creditRows td:last-child{min-width:122px!important;max-width:122px!important;white-space:normal!important;text-align:right!important}
+  #creditRows td:last-child .btn{margin:2px 0 2px 4px!important;padding-left:9px!important;padding-right:9px!important}
+}
