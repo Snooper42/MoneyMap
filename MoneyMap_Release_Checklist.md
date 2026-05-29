@@ -4,7 +4,7 @@ Use this before pushing the Phase 0 build to GitHub Pages.
 
 ## Smoke test
 
-- [ ] Open the app in a clean browser profile with no existing MoneyMap data.
+- [X] Open the app in a clean browser profile with no existing MoneyMap data.
 - [ ] Confirm first-run screen appears.
 - [ ] Choose Demo mode and confirm dashboard renders.
 - [ ] Export a backup JSON from Settings.
