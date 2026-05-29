@@ -27,10 +27,10 @@ Use this before pushing the Phase 0 build to GitHub Pages.
 
 ## Storage safety test
 
-- [ ] Simulate localStorage quota failure if possible.
-- [ ] Confirm the app shows a storage warning instead of silently failing.
-- [ ] Confirm Settings shows `Save failed` when persistence fails.
-- [ ] Export backup immediately after the warning.
+- [X] Simulate localStorage quota failure if possible.
+- [X] Confirm the app shows a storage warning instead of silently failing.
+- [X] Confirm Settings shows `Save failed` when persistence fails.
+- [X] Export backup immediately after the warning.
 
 ## Build notes
 
