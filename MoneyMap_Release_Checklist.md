@@ -15,15 +15,15 @@ Use this before pushing the Phase 0 build to GitHub Pages.
 - [X] Edit one transaction and confirm the change survives page refresh.
 - [X] Add one budget and confirm the dashboard updates.
 - [X] Switch light/dark theme and confirm preference persists.
-- [ ] Test at mobile width below 760px.
+- [X] Test at mobile width below 760px.
 
 ## Migration test
 
-- [ ] In DevTools, create a legacy `localStorage` item named `moneymap_sick_v1` with a valid backup state.
-- [ ] Reload the app.
-- [ ] Confirm the app migrates data to `moneymap_v1`.
-- [ ] Confirm `moneymap_sick_v1` is removed after successful migration.
-- [ ] Confirm the backup payload reports `storageKey: "moneymap_v1"`.
+- [X] In DevTools, create a legacy `localStorage` item named `moneymap_sick_v1` with a valid backup state.
+- [X] Reload the app.
+- [X] Confirm the app migrates data to `moneymap_v1`.
+- [X] Confirm `moneymap_sick_v1` is removed after successful migration.
+- [X] Confirm the backup payload reports `storageKey: "moneymap_v1"`.
 
 ## Storage safety test
 
