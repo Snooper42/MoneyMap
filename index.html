@@ -943,6 +943,77 @@ body:before{opacity:.12!important;background-size:56px 56px!important}
 @media(max-width:420px){.main{padding-left:10px!important;padding-right:10px!important}.topbar{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}.v59-net-value{font-size:42px}.v59-mini-card .v59-value{font-size:32px}.v59-row{grid-template-columns:1fr}.v59-row strong{text-align:left}.mobile-bar button{flex-basis:62px!important;min-width:62px!important}.first-run-head h2{font-size:36px!important}}
 </style>
 
+
+<style id="v60-mobile-refresh">
+/* v6.0 mobile-first product polish: calmer contrast, cleaner dashboards, readable spending/budget modules. */
+:root{
+  --v60-radius:18px;
+  --v60-radius-sm:13px;
+  --v60-pad:18px;
+  --v60-gap:14px;
+  --v60-surface-blur:18px;
+  --v60-ring:0 0 0 3px rgba(var(--accent-rgb),.16);
+}
+:root[data-theme="light"]{
+  --bg:#fbf8f1!important;
+  --bg2:#f5efe4!important;
+  --panel:#fffdf8!important;
+  --panel2:#f6f1e8!important;
+  --panel3:#eee7dc!important;
+  --line:rgba(32,38,48,.115)!important;
+  --line2:rgba(32,38,48,.22)!important;
+  --text:#172033!important;
+  --muted:#647084!important;
+  --soft:#8b94a3!important;
+  --shadow:0 16px 42px rgba(25,31,42,.07)!important;
+  --shadow2:0 10px 28px rgba(25,31,42,.05)!important;
+}
+:root[data-theme="dark"]{
+  --bg:#090e17!important;
+  --bg2:#0d1420!important;
+  --panel:#111a29!important;
+  --panel2:#172337!important;
+  --panel3:#1f2d43!important;
+  --line:rgba(210,222,240,.115)!important;
+  --line2:rgba(210,222,240,.22)!important;
+  --text:#f4f7fb!important;
+  --muted:#a8b3c6!important;
+  --soft:#7f8ca2!important;
+  --shadow:0 18px 48px rgba(0,0,0,.28)!important;
+  --shadow2:0 12px 34px rgba(0,0,0,.20)!important;
+}
+html{font-size:16px!important;-webkit-text-size-adjust:100%}
+body{background:linear-gradient(180deg,var(--bg),var(--bg2))!important;color:var(--text)!important;line-height:1.42!important}
+body:before{opacity:.18!important;background-size:54px 54px!important}
+.main{max-width:1240px!important;padding:20px 18px 84px!important}.view.active>*+*{margin-top:14px!important}
+.card,.metric-card,.hero-metric,.v59-card,.v59-panel,.v60-card,.week-card,.tracker-stat,.review-transaction,.first-run-panel{background:var(--panel)!important;color:var(--text)!important;border:1px solid var(--line)!important;box-shadow:var(--shadow2)!important;border-radius:var(--v60-radius)!important}
+.btn,.topbar-overflow-btn{border-radius:999px!important;font-weight:760!important;box-shadow:none!important;min-height:38px!important}.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2))!important;color:#08111a!important;border-color:transparent!important}.btn:focus-visible,.topbar-overflow-btn:focus-visible,.v60-row:focus-visible,.v60-budget-row:focus-visible,.v60-tx-card:focus-visible{outline:none!important;box-shadow:var(--v60-ring)!important}
+:root[data-theme="dark"] .btn-primary{color:#061014!important}.btn:hover{transform:none!important}.btn:active{transform:translateY(1px)!important}
+.topbar{background:color-mix(in srgb,var(--bg) 90%,transparent)!important;backdrop-filter:blur(var(--v60-surface-blur))!important;border-bottom:1px solid var(--line)!important}.searchbar{background:var(--panel)!important;border-color:var(--line)!important}.searchbar input{color:var(--text)!important}.searchbar input::placeholder{color:var(--soft)!important}
+.mobile-bar{display:none!important;background:color-mix(in srgb,var(--panel) 94%,transparent)!important;border-top:1px solid var(--line)!important;box-shadow:0 -14px 40px rgba(0,0,0,.12)!important}.mobile-bar button{border-radius:16px!important;color:var(--muted)!important}.mobile-bar button.active{background:rgba(var(--accent-rgb),.13)!important;color:var(--accent)!important}.mobile-bar span:first-child{font-size:18px!important}.mobile-bar span:last-child{font-size:10px!important;max-width:72px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* v6 landing */
+#view-overview>.hero,#view-overview>.metric-grid,#monarchUsabilityPanel,#v52ParityPanel{display:none!important}.v5-command-board{display:block!important}.v60-dashboard{display:grid;gap:16px!important}.v60-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}.v60-head h3{margin:0;font-size:clamp(28px,4vw,44px);line-height:1;letter-spacing:-.055em;font-weight:900}.v60-head p{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.45;max-width:60ch}.v60-head-actions{display:flex;gap:8px;align-items:center;justify-content:flex-end;flex-wrap:wrap}.v60-chip{display:inline-flex;align-items:center;min-height:31px;border:1px solid var(--line);background:var(--panel2);border-radius:999px;padding:6px 10px;color:var(--muted);font-size:12px;font-weight:800;white-space:nowrap}
+.v60-summary-grid{display:grid;grid-template-columns:minmax(0,1.35fr) repeat(3,minmax(0,.72fr));gap:12px;align-items:stretch}.v60-card{position:relative;overflow:hidden;padding:18px;text-align:left}.v60-card-click{cursor:pointer}.v60-card-click:hover{border-color:var(--line2)!important;background:color-mix(in srgb,var(--panel3) 18%,var(--panel))!important}.v60-net-card{min-height:190px;display:grid;gap:14px}.v60-net-card:after{content:"";position:absolute;right:-110px;bottom:-130px;width:300px;height:300px;border-radius:999px;background:radial-gradient(circle,rgba(var(--accent-rgb),.13),transparent 67%);pointer-events:none}.v60-kicker{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:12px;font-weight:850;letter-spacing:.01em}.v60-net-value{font-size:clamp(48px,7vw,86px);font-weight:920;letter-spacing:-.078em;line-height:.86}.v60-sub{color:var(--muted);font-size:13px;line-height:1.42;max-width:66ch}.v60-snapshot-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;position:relative;z-index:1}.v60-stat{border:1px solid var(--line);background:var(--panel2);border-radius:14px;padding:10px 11px;min-width:0}.v60-stat span{display:block;color:var(--soft);font-size:11px;font-weight:800}.v60-stat b{display:block;margin-top:4px;font-size:15px;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v60-actions{display:flex;gap:8px;flex-wrap:wrap;position:relative;z-index:1}.v60-mini{display:flex;flex-direction:column;gap:8px;min-height:190px}.v60-mini-value{font-size:clamp(30px,4vw,48px);font-weight:900;letter-spacing:-.065em;line-height:.9}.v60-mini-copy{color:var(--muted);font-size:12.5px;line-height:1.36}.v60-mini .v60-chip{margin-top:auto;align-self:flex-start}
+.v60-content-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.v60-panel{border:1px solid var(--line);border-radius:var(--v60-radius);background:var(--panel);box-shadow:var(--shadow2);padding:16px;min-width:0}.v60-panel.wide{grid-column:1/-1}.v60-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.v60-panel-head b{font-size:16px;letter-spacing:-.02em}.v60-panel-head span{color:var(--muted);font-size:12px}.v60-row-list{display:grid;gap:0}.v60-row{width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;padding:12px 0;min-height:58px;cursor:pointer}.v60-row:last-child{border-bottom:0}.v60-row b{display:block;font-size:14px;font-weight:830;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v60-row span{display:block;margin-top:3px;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v60-row strong{font-size:14px;font-weight:880;white-space:nowrap;text-align:right}.v60-arrow{color:var(--soft);margin-left:4px}.v60-empty{padding:30px 10px;text-align:center;color:var(--muted)}
+.v60-spend-list{display:grid;gap:12px}.v60-spend-row{display:grid;grid-template-columns:minmax(120px,1fr) minmax(180px,2.1fr) auto;gap:14px;align-items:center;width:100%;border:0;background:transparent;color:var(--text);text-align:left;cursor:pointer;padding:2px 0}.v60-spend-label b{display:block;font-size:14px;font-weight:840;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v60-spend-label span{display:block;margin-top:2px;color:var(--muted);font-size:12px}.v60-bar-track{height:12px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;overflow:hidden}.v60-bar{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2))}.v60-spend-amount{font-weight:850;font-size:14px;white-space:nowrap;text-align:right;color:var(--text)}
+
+/* Budget heat and budget page */
+.v60-budget-list{display:grid;gap:10px}.v60-budget-row{border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:14px;display:grid;gap:11px;color:var(--text);text-align:left}.v60-budget-row:hover{border-color:var(--line2)!important}.v60-budget-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start}.v60-budget-name{font-size:16px;font-weight:850;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v60-budget-meta{margin-top:3px;color:var(--muted);font-size:12.5px}.v60-budget-pct{font-size:20px;font-weight:900;letter-spacing:-.04em;line-height:1;text-align:right}.v60-budget-left{font-size:12px;color:var(--muted);text-align:right;margin-top:3px}.v60-budget-track{height:8px;border:1px solid var(--line);background:var(--panel2);border-radius:999px;overflow:hidden}.v60-budget-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2))}.v60-budget-fill.warn{background:linear-gradient(90deg,var(--orange),var(--gold))}.v60-budget-fill.bad{background:linear-gradient(90deg,var(--red),var(--orange))}.v60-budget-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.v60-budget-actions .btn{min-height:32px;padding:6px 10px;font-size:12px}.budget-board-list{display:grid!important;gap:10px!important}.budget-row{background:transparent!important;border:0!important;padding:0!important}.budget-row .v60-budget-row{width:100%}
+
+/* Transactions */
+.tx-card-list{display:none}.v60-tx-card{width:100%;display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;background:var(--panel);color:var(--text);padding:12px;text-align:left;cursor:pointer}.v60-tx-card:hover{border-color:var(--line2)!important}.v60-tx-avatar{width:42px;height:42px;border-radius:14px;background:rgba(var(--accent-rgb),.11);color:var(--accent);display:grid;place-items:center;font-weight:900}.v60-tx-main{min-width:0}.v60-tx-merchant{font-size:14px;font-weight:840;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v60-tx-meta{margin-top:3px;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v60-tx-right{display:grid;gap:5px;justify-items:end;align-items:center}.v60-tx-amount{font-size:14px;font-weight:900;white-space:nowrap}.v60-tx-badge{font-size:10.5px;border:1px solid var(--line);border-radius:999px;background:var(--panel2);color:var(--muted);padding:3px 7px}.v60-tx-badge.needs-review{color:var(--orange);border-color:rgba(255,184,107,.34);background:rgba(255,184,107,.10)}.v60-tx-badge.reviewed{color:var(--accent);border-color:rgba(var(--accent-rgb),.28);background:rgba(var(--accent-rgb),.09)}.v60-tx-badge.hidden{color:var(--soft)}
+#view-transactions .card-header,#view-transactions .page-head{align-items:flex-start!important}#view-transactions .table-wrap{border-radius:16px!important}#view-transactions td,#view-transactions th{vertical-align:middle!important}
+
+/* First run / drawer contrast fixes */
+.first-run{background:rgba(4,8,15,.72)!important}.first-run-panel{background:var(--panel)!important;color:var(--text)!important}.first-run-head h2{color:var(--text)!important;text-shadow:none!important;opacity:1!important}.first-run-head p,.first-run-footer{color:var(--muted)!important}.start-option{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important}.dismiss-btn,.drawer-close{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important}.drawer-panel{background:var(--panel)!important;color:var(--text)!important}.drawer-head,.drawer-actions{background:color-mix(in srgb,var(--panel) 94%,transparent)!important;border-color:var(--line)!important}
+
+@media(max-width:1180px){.v60-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v60-net-card{grid-column:1/-1}.v60-content-grid{grid-template-columns:1fr}.v60-panel.wide{grid-column:auto}.v60-snapshot-strip{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.main{padding:12px 12px calc(96px + env(safe-area-inset-bottom))!important;max-width:none!important;width:100%!important}.topbar{margin:-12px -12px 12px!important;padding:10px 12px!important}.mobile-bar{display:flex!important;overflow-x:auto;gap:6px;padding:8px 8px calc(8px + env(safe-area-inset-bottom))!important}.mobile-bar button{flex:0 0 72px;min-width:72px;min-height:56px}.topbar .actions{display:grid!important;grid-template-columns:minmax(0,1fr) 48px!important;width:100%!important}.topbar .actions .btn-primary{width:100%!important}.topbar-secondary{display:none!important}.topbar-menu-wrap{display:block!important}}
+@media(max-width:720px){:root{--v60-pad:14px;--v60-gap:12px}.v60-dashboard{gap:12px!important}.v60-head{display:grid;gap:10px}.v60-head h3{font-size:31px}.v60-head-actions{justify-content:flex-start}.v60-summary-grid{grid-template-columns:1fr;gap:10px}.v60-card,.v60-panel{padding:15px!important;border-radius:17px!important}.v60-net-card{min-height:0}.v60-net-value{font-size:50px}.v60-mini{min-height:0}.v60-mini-value{font-size:36px}.v60-snapshot-strip{grid-template-columns:1fr}.v60-stat{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center}.v60-stat b{margin-top:0;text-align:right}.v60-actions{display:grid;grid-template-columns:1fr}.v60-actions .btn{width:100%}.v60-content-grid{gap:10px}.v60-panel-head{align-items:center}.v60-spend-row{grid-template-columns:1fr auto;gap:8px 12px;padding:5px 0}.v60-spend-label{min-width:0}.v60-bar-track{grid-column:1/-1;grid-row:2}.v60-spend-amount{grid-column:2;grid-row:1}.v60-row{min-height:56px}.v60-row span{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.v60-budget-top{grid-template-columns:1fr auto}.v60-budget-actions{justify-content:flex-start}.v60-budget-actions .btn{flex:1 1 130px}.tx-card-list{display:grid!important;gap:10px!important}#view-transactions .table-wrap{display:none!important}.v60-tx-card{grid-template-columns:40px minmax(0,1fr) auto;padding:12px}.v60-tx-avatar{width:40px;height:40px}.page-head,.card-header{display:grid!important}.drawer-panel{inset:0!important;width:100vw!important;height:100dvh!important;border-radius:0!important}.drawer-actions .btn{width:100%!important}.first-run{align-items:flex-start!important;overflow:auto!important;padding:10px!important}.first-run-panel{border-radius:22px!important;padding:20px!important}.first-run-head h2{font-size:38px!important;line-height:.95!important}.start-grid{grid-template-columns:1fr!important}}
+@media(max-width:420px){.main{padding-left:10px!important;padding-right:10px!important}.topbar{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}.v60-net-value{font-size:44px}.v60-tx-card{grid-template-columns:38px minmax(0,1fr);gap:10px}.v60-tx-right{grid-column:2;justify-items:start;display:flex;gap:8px;align-items:center}.v60-tx-avatar{width:38px;height:38px}.mobile-bar button{flex-basis:66px;min-width:66px}.mobile-bar span:last-child{font-size:9px}.v60-head h3{font-size:28px}}
+</style>
+
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
 <div class="app-shell" id="appShell">
@@ -3735,6 +3806,103 @@ const _v59ShowView = showView;
 showView = function(id){ _v59ShowView(id); requestAnimationFrame(v59AfterRender); };
 window.addEventListener('resize',()=>requestAnimationFrame(v59AfterRender),{passive:true});
 /* ---- end v5.9 executive usability + dark mode landing page ---- */
+
+
+/* ---- v6.0 mobile-first refresh ---- */
+function v60Money(value){ return typeof v54FriendlyMoney === 'function' ? v54FriendlyMoney(value) : money(value); }
+function v60ClampPct(n){ return Math.min(100, Math.max(0, Number(n)||0)); }
+function v60StatusClass(pct){ return pct>=100?'bad':pct>=85?'warn':'good'; }
+function v60Row(title,value,sub,cls,fn){
+  const attr=fn?` onclick="${fn}"`:'';
+  return `<button type="button" class="v60-row"${attr}><div><b>${escapeHtml(title)}</b><span>${escapeHtml(sub||'')}</span></div><strong class="${cls||''}">${escapeHtml(String(value||''))}<span class="v60-arrow">›</span></strong></button>`;
+}
+function v60Mini(title,value,sub,cls,fn,status){
+  return `<button type="button" class="v60-card v60-mini v60-card-click" onclick="${fn}" aria-label="Open ${escapeHtml(title)}"><div class="v60-kicker">${escapeHtml(title)}</div><div class="v60-mini-value ${cls||''}">${escapeHtml(String(value))}</div><div class="v60-mini-copy">${escapeHtml(sub||'')}</div>${status?`<span class="v60-chip ${status.cls||''}">${escapeHtml(status.label)}</span>`:''}</button>`;
+}
+function v60SpendingRows(cats, totalSpend){
+  if(!cats.length) return emptyMini('No spending yet','Import transactions to build a readable spending map.','Import CSV','showView(\'import\')');
+  const max=Math.max(...cats.map(([,v])=>Number(v)||0),1);
+  return `<div class="v60-spend-list">${cats.slice(0,7).map(([cat,val],i)=>{
+    const pct=Math.round((Number(val)||0)/(totalSpend||1)*100);
+    const w=Math.max(3, Math.round((Number(val)||0)/max*100));
+    return `<button type="button" class="v60-spend-row" onclick="showCategoryTransactions('${escapeJs(cat)}')" aria-label="Open ${escapeHtml(cat)} spending"><div class="v60-spend-label"><b>${escapeHtml(cat)}</b><span>${pct}% of spending</span></div><div class="v60-bar-track"><div class="v60-bar" style="width:${w}%"></div></div><div class="v60-spend-amount">${v60Money(val)}</div></button>`;
+  }).join('')}</div>`;
+}
+function v60BudgetCard(b){
+  const cls=v60StatusClass(b.pct); const left=Math.max(0,Number(b.remaining)||0); const pct=v60ClampPct(b.pct);
+  return `<div class="v60-budget-row"><button type="button" class="v60-budget-top" onclick="showCategoryTransactions('${escapeJs(b.category)}')" aria-label="Open ${escapeHtml(b.category)} transactions"><div><div class="v60-budget-name">${escapeHtml(b.category)}</div><div class="v60-budget-meta">${v60Money(b.spent)} spent · ${v60Money(b.limit)} budget</div></div><div><div class="v60-budget-pct ${cls}">${b.pct}%</div><div class="v60-budget-left">${v60Money(left)} left</div></div></button><div class="v60-budget-track"><div class="v60-budget-fill ${cls}" style="width:${pct}%"></div></div><div class="v60-budget-actions"><button type="button" class="btn btn-small" onclick="showCategoryTransactions('${escapeJs(b.category)}')">Transactions</button><button type="button" class="btn btn-small" onclick="editBudget('${b.id}')">Edit</button></div></div>`;
+}
+budgetRowHtml = function(b){ return v60BudgetCard(b); };
+renderV5CommandBoard = function(){
+  const el=document.getElementById('v5CommandBoard'); if(!el) return;
+  const p=spendingPace();
+  const stats=budgetStats().sort((a,b)=>b.pct-a.pct);
+  const over=stats.filter(b=>b.pct>100);
+  const unreviewed=(state.transactions||[]).filter(t=>!t.reviewed).length;
+  const net=netWorthBreakdown();
+  const snapshots=(state.netWorthHistory||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  const saved=snapshots[0]||null;
+  const savedDelta=saved ? Number(net.netWorth||0)-Number(saved.netWorth||0) : null;
+  const goals=(state.goals||[]).filter(g=>Number(g.target)>0);
+  const goalAvg=goals.length?Math.round(goals.reduce((a,g)=>a+Math.min(100,Number(g.current||0)/Number(g.target||1)*100),0)/goals.length):0;
+  const debt=(state.debts||[]).reduce((a,d)=>a+Number(d.balance||0),0);
+  const holdings=(state.holdings||[]).reduce((a,h)=>a+Number(h.quantity||0)*Number(h.price||0),0);
+  const cats=byCategory(monthTransactions(currentMonth())).slice(0,7);
+  const safeDaily=p.remainingBudget>0?`${v60Money(p.safeToSpend)}/day`:'$0/day';
+  const month=typeof monthScopeLabel==='function'?monthScopeLabel():'This month';
+  const reviewMode=unreviewed?'warn':(over.length?'bad':'good');
+  const budgetMode=!p.totalBudget?'warn':p.pacePct>105?'bad':p.pacePct>90?'warn':'good';
+  const savedDeltaText=savedDelta===null?'Save today’s value':`${savedDelta>=0?'+':''}${v60Money(savedDelta)} vs saved`;
+  const savedDeltaCls=savedDelta===null?'':savedDelta>=0?'good':'bad';
+  const budgetRows=stats.length?`<div class="v60-budget-list">${stats.slice(0,4).map(v60BudgetCard).join('')}</div>`:emptyMini('No budgets yet','Create simple caps for the categories you care about.','Add budget','openDrawer(\'budget\')');
+  const nextRows=(unreviewed?v60Row('Review transactions',unreviewed,'Approve, hide, or fix categories','warn','startWeeklyReview()'):(over.length?v60Row('Fix over-budget categories',over.length,'Decide what changed or adjust limits','bad','showView(\'budgets\')'):v60Row('Export report','Ready','Monthly summary is current','good','exportMonthlyReport()'))) + v60Row('Backup','JSON',`Last: ${state.settings?.lastBackup?dateFmt(state.settings.lastBackup.slice(0,10)):'never'}`,'','exportBackup()');
+  el.innerHTML=`<div class="v60-dashboard">
+    <div class="v60-head"><div><h3>MoneyMap</h3><p>One clean mobile-first view for net worth, spending, budgets, and the next action.</p></div><div class="v60-head-actions"><span class="v60-chip">${escapeHtml(month)}</span><button type="button" class="btn btn-small" onclick="openCommandPalette()">Commands</button></div></div>
+    <div class="v60-summary-grid">
+      <section class="v60-card v60-net-card" aria-label="Current net worth snapshot"><div class="v60-kicker">Current net worth snapshot</div><div class="v60-net-value ${net.netWorth>=0?'good':'bad'}" title="${money(net.netWorth)}">${v60Money(net.netWorth)}</div><div class="v60-sub">Assets, liabilities, debts, and holdings combined into one saved snapshot. ${saved?`Last saved ${dateFmt(saved.date)}.`:'Save when balances look right.'}</div><div class="v60-snapshot-strip"><div class="v60-stat"><span>Assets</span><b class="good">${v60Money(net.assets)}</b></div><div class="v60-stat"><span>Liabilities</span><b class="bad">${v60Money(net.liabilities)}</b></div><div class="v60-stat"><span>Delta</span><b class="${savedDeltaCls}">${escapeHtml(savedDeltaText)}</b></div></div><div class="v60-actions"><button type="button" class="btn btn-primary" onclick="saveNetWorthSnapshot()">Save snapshot</button><button type="button" class="btn" onclick="showView('networth')">Update balances</button></div></section>
+      ${v60Mini('Cash flow',v60Money(p.net),`${v60Money(p.income)} income · ${v60Money(p.spend)} spent · ${safeDaily} safe`,p.net>=0?'good':'bad',"showView('budgets')",{label:`${p.pacePct||0}% pace`,cls:budgetMode})}
+      ${v60Mini('Review',unreviewed,unreviewed?'Transactions need cleanup':'No cleanup waiting',unreviewed?'warn':'good','startWeeklyReview()',{label:unreviewed?'Needs review':'Clean',cls:unreviewed?'warn':'good'})}
+      ${v60Mini('Planning',`${goalAvg}%`,`Goals · ${v60Money(debt)} debt · ${v60Money(holdings)} invested`,'',"showView('goals')",{label:goalAvg?'Open plan':'Set goals',cls:goalAvg?'':'warn'})}
+    </div>
+    <div class="v60-content-grid">
+      <section class="v60-panel wide"><div class="v60-panel-head"><div><b>Spending map</b><span> Ranked by amount this month</span></div><button type="button" class="btn btn-small" onclick="showView('transactions')">View all</button></div>${v60SpendingRows(cats,p.spend)}</section>
+      <section class="v60-panel"><div class="v60-panel-head"><div><b>Budget heat</b><span> Closest to limit</span></div><button type="button" class="btn btn-small" onclick="showView('budgets')">Manage</button></div>${budgetRows}</section>
+      <section class="v60-panel"><div class="v60-panel-head"><div><b>Next best move</b><span> ${reviewMode==='good'?'Clean':'Needs attention'}</span></div><span class="v60-chip ${reviewMode}">${reviewMode==='good'?'Clean':reviewMode==='warn'?'Review':'Action'}</span></div><div class="v60-row-list">${nextRows}</div></section>
+    </div>
+  </div>`;
+};
+renderBudgets = function(){
+  const board=document.getElementById('budgetBoard'); if(!board) return;
+  const stats=budgetStats().sort((a,b)=>b.pct-a.pct);
+  board.innerHTML=stats.length?`<div class="budget-board-list">${stats.map(v60BudgetCard).join('')}</div>`:emptyMini('No budgets yet','Create monthly category limits for quick guardrails.','Add budget','openDrawer(\'budget\')');
+  const summary=document.getElementById('budgetSummary');
+  if(summary){
+    const totalLimit=stats.reduce((a,b)=>a+b.limit,0); const totalSpent=stats.reduce((a,b)=>a+b.spent,0); const over=stats.filter(b=>b.pct>100).length;
+    summary.innerHTML=`<div class="mini-item"><div><b>Total budgeted</b><br><span>This month</span></div><strong>${v60Money(totalLimit)}</strong></div><div class="mini-item"><div><b>Spent against budgets</b><br><span>${totalLimit?Math.round(totalSpent/totalLimit*100):0}% used</span></div><strong>${v60Money(totalSpent)}</strong></div><div class="mini-item"><div><b>Over limit</b><br><span>Categories needing attention</span></div><strong class="${over?'bad':'good'}">${over}</strong></div>`;
+  }
+  const sugg=document.getElementById('budgetSuggestions');
+  if(sugg){ const existing=new Set((state.budgets||[]).map(b=>b.category)); const rows=byCategory(monthTransactions(currentMonth())).filter(([cat])=>!existing.has(cat)).slice(0,4); sugg.innerHTML=rows.length?rows.map(([cat,val])=>`<button type="button" class="mini-item" onclick="openDrawer('budget',{category:'${escapeJs(cat)}',limit:${Math.ceil(val*1.15/10)*10}})"><div><b>${escapeHtml(cat)}</b><br><span>Based on ${v60Money(val)} current spend</span></div><strong>${v60Money(Math.ceil(val*1.15/10)*10)}</strong></button>`).join(''):emptyMini('No suggestions','Import more spending or all active categories already have budgets.'); }
+};
+function renderTxCardsV60(txns){
+  const el=document.getElementById('transactionCards'); if(!el) return;
+  if(!txns.length){ el.innerHTML='<div class="empty" style="min-height:160px"><div><strong>No matching transactions.</strong><p>Import a CSV, add a transaction manually, or change the filters.</p><div class="empty-actions"><button type="button" class="btn btn-primary" onclick="showView(\'import\')">Import CSV</button><button type="button" class="btn" onclick="openDrawer(\'quickAdd\')">Add manually</button></div></div></div>'; return; }
+  el.innerHTML=txns.map(t=>{ const amt=Number(t.amount); const initial=String(t.description||'?').trim()[0]?.toUpperCase()||'?'; const badge=t.hidden?'<span class="v60-tx-badge hidden">Hidden</span>':(t.reviewed?'<span class="v60-tx-badge reviewed">Reviewed</span>':'<span class="v60-tx-badge needs-review">Review</span>'); return `<button type="button" class="v60-tx-card" onclick="editTransaction('${t.id}')" aria-label="Edit ${escapeHtml(t.description)}"><div class="v60-tx-avatar">${escapeHtml(initial)}</div><div class="v60-tx-main"><div class="v60-tx-merchant">${escapeHtml(t.description)}</div><div class="v60-tx-meta">${dateFmt(t.date)} · ${escapeHtml(t.category||'Other')} · ${escapeHtml(t.account||'General')}</div></div><div class="v60-tx-right"><span class="v60-tx-amount ${amt<0?'bad':'good'}">${money(amt)}</span>${badge}</div></button>`; }).join('');
+}
+const _v60RenderTransactions = renderTransactions;
+renderTransactions = function(){ _v60RenderTransactions(); renderTxCardsV60(visibleTransactions()); };
+function v60AfterRender(){
+  document.title='MoneyMap';
+  document.querySelectorAll('button:not([type])').forEach(btn=>{ btn.type='button'; });
+  document.body.classList.toggle('transactions-view', activeView === 'transactions');
+  const nav=document.getElementById('mobileNav'); const active=nav?.querySelector('button.active');
+  if(active && window.matchMedia('(max-width: 900px)').matches){ try{ active.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){} }
+}
+const _v60RenderAll = renderAll;
+renderAll = function(){ _v60RenderAll(); requestAnimationFrame(v60AfterRender); };
+const _v60ShowView = showView;
+showView = function(id){ _v60ShowView(id); requestAnimationFrame(v60AfterRender); };
+window.addEventListener('resize',()=>requestAnimationFrame(v60AfterRender),{passive:true});
+/* ---- end v6.0 mobile-first refresh ---- */
 
 init();
 requestAnimationFrame(()=>{ ensureTransactionFilterExtras(); renderAll(); });
