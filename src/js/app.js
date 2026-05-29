@@ -2346,3 +2346,121 @@ window.addEventListener('keydown', event => {
   window.addEventListener('resize',soon,{passive:true});
   soon();
 })();
+
+
+/* ---- MoneyMap QA3 hard responsive shell and overlay lock ---- */
+(function(){
+  const BUILD='qa3-20260529';
+  try{ document.documentElement.setAttribute('data-moneymap-build', BUILD); }catch(e){}
+  const css=`
+    :root{--mm-qa3-safe-bottom:env(safe-area-inset-bottom,0px)}
+    html,body{max-width:100%!important;overflow-x:hidden!important}
+    .app-shell,.main,.view,.card,.metric-card,.table-wrap,.topbar,.searchbar,.actions{min-width:0!important;box-sizing:border-box!important}
+    .first-run{z-index:4000!important}.drawer{z-index:3500!important}.drawer-panel{z-index:3501!important}.command-palette{z-index:3600!important}.mobile-more-sheet{z-index:3000!important}.toast{z-index:4100!important}
+    body.first-run-open .topbar,body.first-run-open .mobile-bar,body.first-run-open .mobile-more-sheet{display:none!important}
+    @media(max-width:1180px){
+      body .app-shell{display:block!important;grid-template-columns:1fr!important;width:100%!important;overflow-x:hidden!important}
+      body .sidebar{display:none!important}
+      body .main{width:100%!important;max-width:1040px!important;margin:0 auto!important;padding:16px 14px calc(82px + var(--mm-qa3-safe-bottom))!important;overflow-x:hidden!important}
+      body .topbar{position:sticky!important;top:0!important;z-index:120!important;display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;align-items:center!important;gap:8px!important;margin:-16px -14px 14px!important;padding:10px 14px!important;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)!important;background:color-mix(in srgb,var(--bg) 96%,transparent)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;overflow:visible!important}
+      body .searchbar{grid-column:auto!important;width:100%!important;max-width:none!important;min-width:0!important;height:42px!important;min-height:42px!important;overflow:hidden!important}
+      body .searchbar input{min-width:0!important;text-overflow:ellipsis!important}
+      body .topbar .actions{display:grid!important;grid-template-columns:max-content 42px!important;align-items:center!important;justify-content:end!important;gap:8px!important;width:auto!important;min-width:0!important;max-width:100%!important;flex-wrap:nowrap!important;margin:0!important}
+      body .topbar .actions .topbar-secondary{display:none!important}
+      body .topbar .actions .btn-primary{display:inline-flex!important;min-width:112px!important;max-width:128px!important;height:42px!important;min-height:42px!important;padding:0 13px!important;border-radius:15px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;line-height:1!important;justify-content:center!important}
+      body .topbar-menu-wrap{display:block!important;position:relative!important;width:42px!important;min-width:42px!important;max-width:42px!important}
+      body .topbar-overflow-btn{display:grid!important;place-items:center!important;width:42px!important;height:42px!important;min-width:42px!important;border-radius:15px!important}
+      body .topbar-menu{right:0!important;left:auto!important;max-width:min(280px,calc(100vw - 24px))!important;z-index:4500!important}
+      body .mobile-bar{display:grid!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:110!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;overflow:hidden!important}
+      body .mobile-bar button{min-width:0!important;overflow:hidden!important}
+    }
+    @media(min-width:761px) and (max-width:1180px){body .topbar .actions .btn-primary{max-width:none!important;width:auto!important}body .topbar{grid-template-columns:minmax(260px,1fr) max-content!important}}
+    @media(max-width:760px){
+      body .main{padding:8px 10px calc(72px + var(--mm-qa3-safe-bottom))!important;max-width:100%!important}
+      body .topbar{grid-template-columns:1fr!important;gap:8px!important;margin:-8px -10px 10px!important;padding:8px 10px 9px!important}
+      body .searchbar{height:40px!important;min-height:40px!important;border-radius:15px!important}
+      body .searchbar span{flex:0 0 auto!important}
+      body .topbar .actions{grid-template-columns:minmax(0,1fr) 42px!important;width:100%!important;justify-content:stretch!important}
+      body .topbar .actions .btn-primary{width:100%!important;max-width:none!important;min-width:0!important;height:42px!important;min-height:42px!important}
+      body .page-head,body .card-header{min-width:0!important;max-width:100%!important;overflow:visible!important}
+      body .page-head .actions,body .card-header .actions{display:grid!important;grid-template-columns:1fr!important;width:100%!important;justify-content:stretch!important;gap:8px!important}
+      body .page-head .actions .btn,body .card-header .actions .btn{width:100%!important;justify-content:center!important;min-width:0!important}
+      body .section-title{overflow-wrap:anywhere!important}
+      body .mobile-bar{height:calc(56px + var(--mm-qa3-safe-bottom))!important;padding:5px 7px calc(5px + var(--mm-qa3-safe-bottom))!important;gap:5px!important;background:color-mix(in srgb,var(--panel) 97%,transparent)!important;backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important;box-shadow:0 -10px 28px rgba(0,0,0,.14)!important}
+      body .mobile-bar button{height:46px!important;min-height:46px!important;border-radius:14px!important;padding:4px 2px!important;gap:1px!important}
+      body .mobile-bar button span:first-child{font-size:17px!important;line-height:1!important}
+      body .mobile-bar button span:last-child{font-size:9.5px!important;line-height:1.05!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+      body .first-run{align-items:flex-start!important;overflow:auto!important;padding:10px!important;background:rgba(4,8,15,.78)!important;backdrop-filter:blur(18px)!important;-webkit-backdrop-filter:blur(18px)!important}
+      body .first-run-panel{width:100%!important;max-width:560px!important;margin:0 auto!important;border-radius:22px!important;padding:18px!important;max-height:none!important;overflow:visible!important}
+      body .first-run-head h2{font-size:clamp(32px,11vw,42px)!important;line-height:.96!important}
+      body .start-grid{grid-template-columns:1fr!important;gap:10px!important}
+      body .start-option{min-height:auto!important;padding:16px!important}
+      body .first-run-footer,body .first-run-footer .actions{display:grid!important;grid-template-columns:1fr!important;width:100%!important;gap:8px!important}
+      body .first-run-footer .btn{width:100%!important}
+      body .drawer-panel{inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;border-radius:0!important}
+    }
+    @media(max-width:390px){body .topbar .actions .btn-primary{font-size:0!important}body .topbar .actions .btn-primary::after{content:'Import';font-size:13px!important;font-weight:850!important}body .searchbar{padding-left:10px!important;padding-right:10px!important}body .searchbar input{font-size:15px!important}}
+  `;
+  function ensureStyle(){
+    let s=document.getElementById('qa3-responsive-lock');
+    if(!s){ s=document.createElement('style'); s.id='qa3-responsive-lock'; document.head.appendChild(s); }
+    if(s.textContent!==css) s.textContent=css;
+  }
+  function markBuild(){
+    try{ document.documentElement.setAttribute('data-moneymap-build', BUILD); document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{el.textContent='Pre-v1 alpha · '+BUILD;}); }catch(e){}
+  }
+  function syncOverlayState(){
+    const first=document.getElementById('firstRun');
+    const drawer=document.getElementById('drawer');
+    document.body.classList.toggle('first-run-open', !!first?.classList.contains('active'));
+    document.body.classList.toggle('drawer-open', !!drawer?.classList.contains('active'));
+    markBuild();
+  }
+  function after(){ ensureStyle(); requestAnimationFrame(()=>{ syncOverlayState(); requestAnimationFrame(syncOverlayState); }); }
+  ['openFirstRun','closeFirstRun','completeFirstRun','openDrawer','closeDrawer','toggleMobileMore','showView','renderAll','renderSettings'].forEach(name=>{
+    const fn=window[name];
+    if(typeof fn==='function' && !fn.__qa3OverlayWrapped){
+      const wrapped=function(){ const out=fn.apply(this,arguments); after(); return out; };
+      wrapped.__qa3OverlayWrapped=true;
+      window[name]=wrapped;
+    }
+  });
+  document.addEventListener('DOMContentLoaded',after);
+  window.addEventListener('resize',after,{passive:true});
+  window.addEventListener('orientationchange',after,{passive:true});
+  ensureStyle(); after();
+})();
+
+
+/* ---- MoneyMap QA3.1 high-specificity topbar override ---- */
+(function(){
+  const css=`
+  @media(max-width:1180px){
+    body .app-shell .main>.topbar{display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;align-items:center!important;gap:8px!important;margin:-16px -14px 14px!important;padding:10px 14px!important;min-height:62px!important;height:auto!important;overflow:visible!important}
+    body .app-shell .main>.topbar>.searchbar{grid-column:1!important;grid-row:1!important;width:100%!important;max-width:none!important;min-width:0!important;height:42px!important;min-height:42px!important}
+    body .app-shell .main>.topbar>.actions{display:grid!important;grid-template-columns:max-content 42px!important;grid-column:2!important;grid-row:1!important;align-items:center!important;justify-content:end!important;gap:8px!important;width:auto!important;min-width:0!important;max-width:100%!important;margin:0!important;order:0!important}
+    body .app-shell .main>.topbar .topbar-secondary{display:none!important}
+    body .app-shell .main>.topbar>.actions>.btn-primary{grid-column:1!important;grid-row:1!important;justify-self:stretch!important;align-self:center!important;display:inline-flex!important;width:auto!important;min-width:112px!important;max-width:132px!important;height:42px!important;min-height:42px!important;padding:0 13px!important;border-radius:15px!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:12.5px!important;line-height:1!important;justify-content:center!important}
+    body .app-shell .main>.topbar .topbar-menu-wrap{grid-column:2!important;grid-row:1!important;justify-self:stretch!important;align-self:center!important;width:42px!important;min-width:42px!important;max-width:42px!important;height:42px!important;min-height:42px!important;display:block!important;position:relative!important}
+    body .app-shell .main>.topbar .topbar-overflow-btn{width:42px!important;min-width:42px!important;height:42px!important;min-height:42px!important;border-radius:15px!important;display:inline-grid!important;place-items:center!important}
+  }
+  @media(min-width:761px) and (max-width:1180px){body .app-shell .main>.topbar>.actions>.btn-primary{max-width:none!important;width:auto!important}}
+  @media(max-width:760px){
+    body .app-shell .main>.topbar{grid-template-columns:1fr!important;gap:8px!important;margin:-8px -10px 10px!important;padding:8px 10px 9px!important;min-height:0!important}
+    body .app-shell .main>.topbar>.searchbar{grid-column:1!important;grid-row:1!important}
+    body .app-shell .main>.topbar>.actions{grid-column:1!important;grid-row:2!important;grid-template-columns:minmax(0,1fr) 42px!important;width:100%!important;justify-content:stretch!important}
+    body .app-shell .main>.topbar>.actions>.btn-primary{width:100%!important;min-width:0!important;max-width:none!important}
+  }
+  @media(max-width:390px){body .app-shell .main>.topbar>.actions>.btn-primary{font-size:0!important}body .app-shell .main>.topbar>.actions>.btn-primary::after{content:'Import';font-size:13px!important;font-weight:850!important}}
+  `;
+  function apply(){ let s=document.getElementById('qa3-topbar-override'); if(!s){s=document.createElement('style'); s.id='qa3-topbar-override'; document.head.appendChild(s);} s.textContent=css; }
+  apply(); document.addEventListener('DOMContentLoaded',apply); window.addEventListener('resize',apply,{passive:true});
+})();
+
+
+/* ---- MoneyMap QA3.2 tablet transaction list guard ---- */
+(function(){
+  const css=`@media(max-width:820px){body #view-transactions .table-wrap{display:none!important}body #view-transactions .tx-card-list{display:grid!important;gap:10px!important;margin-top:10px!important}}`;
+  function apply(){let s=document.getElementById('qa3-transaction-guard'); if(!s){s=document.createElement('style'); s.id='qa3-transaction-guard'; document.head.appendChild(s);} s.textContent=css;}
+  apply(); document.addEventListener('DOMContentLoaded',apply); window.addEventListener('resize',apply,{passive:true});
+})();
