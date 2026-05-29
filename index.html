@@ -1414,8 +1414,12 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
 </div>
 
 <script>
-const STORAGE_KEY = 'moneymap_sick_v1';
-const APP_BUILD_ID = 'v5.6-responsive-ui-polish';
+const STORAGE_KEY = 'moneymap_v1';
+const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
+const APP_BUILD_ID = 'v6.0-phase0-stabilization';
+let storageWriteFailed = false;
+let storageWarningShown = false;
+let storageMigrationNotice = null;
 const COLORS = ['#1aa6b7','#7556d9','#f2bd2e','#e86f31','#46a758','#d84f68','#7c8b9a','#9b744e'];
 let creditChartHoverIndex=null;
 let creditChartModel=null;
@@ -1439,7 +1443,32 @@ let reviewIndex = 0;
 let chartsReady = false;
 function clone(x){ return JSON.parse(JSON.stringify(x)); }
 function loadState(){
-  try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ return mergeState(defaultState, JSON.parse(raw)); } }catch(e){}
+  const readJson = key => {
+    try{
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : null;
+    }catch(e){
+      console.warn(`MoneyMap could not read ${key}.`, e);
+      return null;
+    }
+  };
+  const current = readJson(STORAGE_KEY);
+  if(current) return mergeState(defaultState, current);
+  for(const key of OLD_STORAGE_KEYS){
+    const legacy = readJson(key);
+    if(!legacy) continue;
+    const migrated = mergeState(defaultState, legacy);
+    try{
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      localStorage.removeItem(key);
+      storageMigrationNotice = `Migrated local workspace from ${key} to ${STORAGE_KEY}.`;
+    }catch(e){
+      storageWriteFailed = true;
+      storageMigrationNotice = `Loaded legacy workspace from ${key}, but could not save the new storage key. Export a backup now.`;
+      console.warn('MoneyMap storage migration could not be saved.', e);
+    }
+    return migrated;
+  }
   return clone(defaultState);
 }
 function mergeState(base, saved){
@@ -1466,8 +1495,43 @@ function mergeState(base, saved){
   out.recurring = saved.recurring || [];
   return out;
 }
-function saveState(){ try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){ window.__moneyMapMemoryState = JSON.stringify(state); } }
-function storageSizeKb(){ try{ return Math.round(((localStorage.getItem(STORAGE_KEY)||'').length)/1024); }catch(e){ return Math.round((window.__moneyMapMemoryState||JSON.stringify(state)||'').length/1024); } }
+function storageSnapshot(){ return JSON.stringify(state); }
+function notifyStorageProblem(message='Storage is full or unavailable. Export a backup now.'){
+  storageWriteFailed = true;
+  window.__moneyMapMemoryState = storageSnapshot();
+  if(storageWarningShown) return;
+  storageWarningShown = true;
+  console.warn(message);
+  requestAnimationFrame(()=>{
+    if(typeof toast === 'function') toast(message);
+    const badge=document.getElementById('storageUsage');
+    if(badge) badge.textContent='Save failed';
+  });
+}
+function saveState(){
+  try{
+    localStorage.setItem(STORAGE_KEY, storageSnapshot());
+    storageWriteFailed = false;
+    return true;
+  }catch(e){
+    notifyStorageProblem('Storage is full or unavailable. Export a backup now.');
+    console.warn('MoneyMap saveState failed.', e);
+    return false;
+  }
+}
+function storageSizeKb(){ try{ return Math.round(((localStorage.getItem(STORAGE_KEY)||'').length)/1024); }catch(e){ return Math.round((window.__moneyMapMemoryState||storageSnapshot()||'').length/1024); } }
+function storageStatusText(){
+  if(storageWriteFailed) return 'Save failed';
+  const kb = storageSizeKb();
+  if(kb >= 4800) return `${kb} KB · near browser limit`;
+  if(kb >= 3000) return `${kb} KB · export backup soon`;
+  return `${kb} KB`;
+}
+function checkStorageHealth(){
+  const kb=storageSizeKb();
+  if(storageWriteFailed) notifyStorageProblem('Storage is full or unavailable. Export a backup now.');
+  else if(kb>=4800 && !storageWarningShown){ storageWarningShown=true; requestAnimationFrame(()=>toast('Workspace storage is near the browser limit. Export a backup.')); }
+}
 function money(n, opts={}){
   const currency = state.settings.currency || 'USD';
   const cents = opts.cents ?? state.settings.showCents;
@@ -1513,7 +1577,7 @@ function init(){
   applyAppearance();
   ensureAutomationDefaults();
   buildNav(); buildMobileNav(); setupImport(); setupKeyboard(); document.getElementById('commandPalette')?.addEventListener('click',e=>{ if(e.target.id==='commandPalette') closeCommandPalette(); }); ensureStarterContent(); renderAll();
-  requestAnimationFrame(()=>{ chartsReady = true; renderCharts(); openFirstRunIfNeeded(); });
+  requestAnimationFrame(()=>{ if(storageMigrationNotice) toast(storageMigrationNotice); checkStorageHealth(); chartsReady = true; renderCharts(); openFirstRunIfNeeded(); });
 }
 function applyMonarchPolishDefaults(){
   state.settings = {...defaultState.settings, ...(state.settings||{})};
@@ -2666,12 +2730,12 @@ function backupFreshnessLabel(){
 }
 function backupSummaryHtml(){
   const s=backupSummary(); const kb=Math.max(1,storageSizeKb());
-  return `<div class="mini-item"><div><b>Last backup</b><br><span id="lastBackupLabelDrawer">${escapeHtml(lastBackupText())}</span></div><span class="pill">${escapeHtml(backupFreshnessLabel())}</span></div><div class="mini-item"><div><b>Workspace size</b><br><span>Approximate localStorage footprint</span></div><strong>${kb} KB</strong></div><div class="mini-item"><div><b>Records included</b><br><span>${s.transactions} transactions · ${s.accounts} accounts · ${s.goals} goals</span></div><strong>${s.debts + s.holdings + s.creditLogs}</strong></div><div class="mini-item"><div><b>Portability coverage</b><br><span>Transactions, rules, budgets, trackers, settings, imports, mappings, and history.</span></div><strong class="good">Full</strong></div>`;
+  return `<div class="mini-item"><div><b>Last backup</b><br><span id="lastBackupLabelDrawer">${escapeHtml(lastBackupText())}</span></div><span class="pill">${escapeHtml(backupFreshnessLabel())}</span></div><div class="mini-item"><div><b>Workspace size</b><br><span>Approximate localStorage footprint</span></div><strong>${escapeHtml(storageStatusText())}</strong></div><div class="mini-item"><div><b>Records included</b><br><span>${s.transactions} transactions · ${s.accounts} accounts · ${s.goals} goals</span></div><strong>${s.debts + s.holdings + s.creditLogs}</strong></div><div class="mini-item"><div><b>Portability coverage</b><br><span>Transactions, rules, budgets, trackers, settings, imports, mappings, and history.</span></div><strong class="good">Full</strong></div>`;
 }
 function backupPayload(exportedAt=new Date().toISOString()){
   const data=clone(state);
   data.settings={...defaultState.settings, ...(data.settings||{}), lastBackup:exportedAt};
-  return {app:'MoneyMap Pro', kind:'full-backup', build:APP_BUILD_ID, storageKey:STORAGE_KEY, schemaVersion:data.version||defaultState.version, exportedAt, summary:backupSummary(), data};
+  return {app:'MoneyMap', kind:'full-backup', build:APP_BUILD_ID, storageKey:STORAGE_KEY, schemaVersion:data.version||defaultState.version, exportedAt, summary:backupSummary(), data};
 }
 function exportBackup(){
   const exportedAt=new Date().toISOString();
@@ -2723,6 +2787,7 @@ function resetAllData(){
   if(!confirm('Final confirmation: this clears transactions, budgets, trackers, imports, rules, and settings from localStorage.')) return;
   state=clone(defaultState);
   ensureStarterContent();
+  try{ OLD_STORAGE_KEYS.forEach(key=>localStorage.removeItem(key)); }catch(e){}
   saveState();
   closeDrawer();
   toast('Local data reset.');
@@ -2908,6 +2973,9 @@ function exportPeriodReport(kind='month'){
   downloadBlob(new Blob([reportCsv(data)],{type:'text/csv'}),`moneymap-${data.range.slug}-report.csv`);
   toast(`${data.range.kind==='week'?'Weekly':'Monthly'} report exported.`);
 }
+function exportMonthlyReport(){ return exportPeriodReport('month'); }
+function exportWeeklyReport(){ return exportPeriodReport('week'); }
+function exportBackupJson(){ return exportBackup(); }
 function downloadSampleCsv(){ const csv=`Date,Description,Amount,Account\n2026-01-02,PUBLIX,-84.22,Checking\n2026-01-03,Payroll Deposit,2650.00,Checking\n2026-01-05,NETFLIX,-15.49,Credit Card\n2026-01-06,SHELL GAS,-42.10,Credit Card\n2026-01-07,TRANSFER TO SAVINGS,-500.00,Checking`; downloadBlob(new Blob([csv],{type:'text/csv'}),'moneymap-sample.csv'); }
 function loadDemoData(){
   const today=new Date(); const dates=[]; for(let m=0;m<3;m++){ for(let i=1;i<=28;i+=4){ const d=new Date(today.getFullYear(),today.getMonth()-m,i); dates.push(d.toISOString().slice(0,10)); } }
