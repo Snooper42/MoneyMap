@@ -1512,7 +1512,7 @@ td,th{white-space:nowrap}.table-wrap{position:relative}.table-wrap:after{content
 <script>
 const STORAGE_KEY = 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = 'v0.9.6-alpha';
+const APP_BUILD_ID = 'v0.9.7-alpha';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;
@@ -5264,6 +5264,270 @@ window.addEventListener('keydown', event => {
   setTimeout(afterRender,300);
 })();
 </script>
+
+
+
+<!-- v0.9.7-alpha declutter + spending chart hit-test fixes -->
+<style id="mm-v097-declutter-css">
+  :root{
+    --mm-soft-surface: color-mix(in srgb,var(--panel) 94%,transparent);
+    --mm-line-soft: color-mix(in srgb,var(--line) 68%,transparent);
+  }
+
+  /* Less chrome, more content */
+  .card,.metric-card,.hero-metric,.tracker-stat,.week-card{
+    box-shadow:0 10px 28px rgba(0,0,0,.08)!important;
+  }
+  :root[data-theme="light"] .card,
+  :root[data-theme="light"] .metric-card,
+  :root[data-theme="light"] .hero-metric,
+  :root[data-theme="light"] .tracker-stat,
+  :root[data-theme="light"] .week-card{
+    box-shadow:0 8px 22px rgba(31,42,68,.045)!important;
+  }
+  .card-header{align-items:center!important}.card-subtitle{font-size:12.5px!important;color:var(--soft)!important}.pill{font-size:10.5px!important;padding:6px 10px!important}
+  .split-line{margin:12px 0!important;opacity:.8}.chart-hover-note{display:none!important}
+
+  /* Cleaner chart surface and legends */
+  .canvas-wrap.mm-chart-card,.canvas-wrap.chart-interactive{
+    border-radius:20px!important;
+    background:linear-gradient(180deg,color-mix(in srgb,var(--panel2) 76%,transparent),color-mix(in srgb,var(--panel) 96%,transparent))!important;
+    box-shadow:inset 0 0 0 1px var(--mm-line-soft)!important;
+  }
+  .canvas-wrap:before{opacity:.35!important}
+  .chart-legend{
+    display:flex!important;
+    align-items:center!important;
+    gap:7px!important;
+    margin-top:8px!important;
+    flex-wrap:wrap!important;
+  }
+  .chart-legend-title{
+    flex:0 0 auto!important;
+    margin-right:2px!important;
+    font-size:9.5px!important;
+    letter-spacing:.16em!important;
+    color:var(--soft)!important;
+  }
+  .legend-chip{
+    min-height:30px!important;
+    padding:6px 9px!important;
+    border-radius:999px!important;
+    gap:7px!important;
+    background:color-mix(in srgb,var(--panel2) 72%,transparent)!important;
+    box-shadow:none!important;
+    max-width:100%!important;
+  }
+  .legend-chip span:not(.chart-swatch){min-width:0!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+  .legend-chip b{font-size:12px!important;font-variant-numeric:tabular-nums!important}
+  .chart-swatch{width:8px!important;height:8px!important;box-shadow:none!important;flex:0 0 auto!important}
+
+  /* Sidebar nav: simpler, less toy-like */
+  .nav-btn{min-height:52px!important;padding:10px 11px!important;border-radius:14px!important}.nav-icon{width:24px!important;height:24px!important;border-radius:9px!important;background:color-mix(in srgb,var(--panel3) 58%,transparent)!important}.nav-copy strong{font-size:13px!important}.nav-copy span{font-size:10.5px!important;color:var(--soft)!important}.nav-kicker{font-size:9.5px!important;margin:14px 0 6px!important}.sidebar{padding-top:16px!important}.brand{margin-bottom:14px!important}
+
+  /* Accounts mobile: reduce repeated heavy boxes */
+  .account-mobile-card,.debt-mobile-card,.holding-card{
+    border-radius:18px!important;
+    box-shadow:0 8px 22px rgba(0,0,0,.055)!important;
+  }
+  .account-mobile-card .account-mobile-actions,
+  .debt-mobile-card .debt-mobile-actions,
+  .holding-card-actions{gap:7px!important}
+
+  /* Mobile chrome: keep top actions compact and reduce visual clutter */
+  @media(max-width:760px){
+    body{background-size:auto!important}
+    .main{padding-left:12px!important;padding-right:12px!important}
+    .topbar{
+      grid-template-columns:minmax(0,1fr) auto auto!important;
+      align-items:center!important;
+      gap:8px!important;
+      padding:8px 10px!important;
+      margin:-12px -12px 10px!important;
+      min-height:58px!important;
+    }
+    .searchbar{
+      grid-column:auto!important;
+      min-width:0!important;
+      height:40px!important;
+      min-height:40px!important;
+      border-radius:999px!important;
+      padding:7px 11px!important;
+    }
+    .searchbar input{font-size:14px!important;text-overflow:ellipsis!important}
+    .topbar .actions{
+      display:contents!important;
+      width:auto!important;
+    }
+    .topbar .actions .btn:not(.btn-primary):not(.btn-square){display:none!important}
+    .topbar .actions .btn-primary{
+      width:42px!important;
+      min-width:42px!important;
+      height:42px!important;
+      padding:0!important;
+      border-radius:999px!important;
+      font-size:0!important;
+    }
+    .topbar .actions .btn-primary:before{content:'+';font-size:28px;line-height:1;font-weight:850;color:#071015}
+    .topbar .actions .btn-square{width:42px!important;height:42px!important;border-radius:999px!important}
+
+    .card{padding:15px!important}.card-header{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:10px!important}.card-header .pill{align-self:flex-start!important}
+    .canvas-wrap{height:198px!important;min-height:198px!important;padding:10px!important}.canvas-wrap.mm-chart-card{padding:10px!important}
+    .chart-legend{display:grid!important;grid-template-columns:1fr!important;gap:6px!important;margin-top:7px!important}
+    .legend-chip{min-height:32px!important;padding:7px 9px!important;justify-content:space-between!important}
+    .legend-chip .chart-swatch + span{margin-right:auto!important}
+
+    .mobile-bar{height:calc(60px + env(safe-area-inset-bottom))!important;padding-top:5px!important;border-top-color:color-mix(in srgb,var(--line) 55%,transparent)!important}
+    .mobile-bar button{min-height:48px!important;border-radius:13px!important;padding:5px 2px!important}
+    .mobile-bar button.active{box-shadow:none!important;background:rgba(var(--accent-rgb),.12)!important}
+    .mobile-bar svg{width:20px!important;height:20px!important;stroke-width:2!important}.mobile-bar button span:last-child{font-size:9.5px!important;font-weight:800!important}
+
+    .metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid{gap:8px!important}.metric-card,.tracker-stat,.week-card{min-height:88px!important;padding:12px!important}
+    .metric-value{font-size:23px!important}.metric-label{font-size:8px!important}.metric-sub{font-size:10.5px!important}
+  }
+
+  @media(max-width:420px){
+    .main{padding-left:10px!important;padding-right:10px!important}
+    .topbar{margin-left:-10px!important;margin-right:-10px!important}
+    .searchbar span{display:none!important}.searchbar input{font-size:13px!important}
+    .canvas-wrap{height:188px!important;min-height:188px!important}.legend-chip b{font-size:11.5px!important}
+  }
+</style>
+<script id="mm-v097-declutter-js">
+(function(){
+  const BUILD='v0.9.7-alpha';
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+  function appFont(){ return getComputedStyle(document.body).fontFamily; }
+  function setupCanvas(canvas,minW=620,minH=220){
+    const wrap=canvas.parentElement;
+    const rect=wrap.getBoundingClientRect();
+    const dpr=window.devicePixelRatio||1;
+    canvas.width=Math.max(minW,Math.floor(rect.width*dpr));
+    canvas.height=Math.max(minH,Math.floor(rect.height*dpr));
+    const ctx=canvas.getContext('2d');
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    const w=canvas.width/dpr,h=canvas.height/dpr;
+    ctx.clearRect(0,0,w,h);
+    return {ctx,w,h,wrap};
+  }
+  function compactMoney(value){ return typeof money==='function' ? money(value) : ('$'+Math.round(value).toLocaleString()); }
+  function compactPct(value){ return typeof pctFmt==='function' ? pctFmt(value) : (Math.round(value*10)/10)+'%'; }
+  function updateLegend(id,items,title){
+    const el=document.getElementById(id); if(!el) return;
+    if(!items.length){ el.innerHTML=''; return; }
+    el.innerHTML=`<span class="chart-legend-title">${escapeHtml(title||'Selected')}</span>`+items.map(item=>`<span class="legend-chip"><span class="chart-swatch" style="background:${escapeHtml(item.color)};color:${escapeHtml(item.color)}"></span><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b></span>`).join('');
+  }
+  function chartTip(id,canvas,x,y,title,rows){
+    const tip=document.getElementById(id); if(!tip) return;
+    tip.innerHTML=`<div class="chart-tip-title"><b>${escapeHtml(title)}</b><span>Detail</span></div>`+rows.map(row=>`<div class="chart-tip-row"><span class="chart-tip-label"><span class="chart-swatch" style="background:${escapeHtml(row.color)};color:${escapeHtml(row.color)}"></span>${escapeHtml(row.label)}</span><b>${escapeHtml(row.value)}</b></div>`).join('');
+    const wrap=canvas.parentElement;
+    tip.style.left=Math.max(10,Math.min(wrap.clientWidth-260,x+12))+'px';
+    tip.style.top=Math.max(10,Math.min(wrap.clientHeight-120,y-12))+'px';
+    tip.classList.add('visible'); tip.setAttribute('aria-hidden','false');
+  }
+  function hideTip(id){ const tip=document.getElementById(id); if(tip){ tip.classList.remove('visible'); tip.setAttribute('aria-hidden','true'); } }
+
+  // Fixes spending map selection: hit testing now uses the row's Y-band first,
+  // so tapping a category bar always selects that exact category instead of the nearest bar endpoint.
+  window.renderSpendChart=function(activeIndex=null){
+    const canvas=document.getElementById('spendCanvas'); if(!canvas) return;
+    const {ctx,w,h}=setupCanvas(canvas,620,220);
+    const cats=byCategory(monthTransactions(currentMonth())).slice(0,7);
+    const tipId='spendChartTip';
+    if(!cats.length){
+      ctx.fillStyle=cssVar('--muted'); ctx.font='13px '+appFont();
+      ctx.fillText('Import transactions to draw the spending map.',18,34);
+      updateLegend('spendLegend',[], 'Spending'); return;
+    }
+    const total=cats.reduce((sum,row)=>sum+nval(row[1]),0);
+    const max=Math.max(...cats.map(row=>nval(row[1])),1);
+    const mobile=w<520;
+    const pad={l:mobile?12:18,r:mobile?12:20,t:mobile?12:16,b:mobile?12:16};
+    const labelW=mobile?Math.min(120,Math.max(86,w*.33)):Math.min(150,Math.max(108,w*.24));
+    const valueW=mobile?48:68;
+    const rowGap=mobile?7:8;
+    const rowH=(h-pad.t-pad.b-(cats.length-1)*rowGap)/cats.length;
+    const barH=Math.max(10,Math.min(mobile?18:22,rowH*.58));
+    const x0=pad.l+labelW;
+    const trackW=Math.max(88,w-x0-pad.r-valueW);
+    const items=[];
+    ctx.textBaseline='middle';
+    cats.forEach(([cat,rawVal],i)=>{
+      const val=nval(rawVal);
+      const y=pad.t+i*(rowH+rowGap)+(rowH-barH)/2;
+      const color=COLORS[i%COLORS.length];
+      const selected=i===activeIndex;
+      const bw=Math.max(3,trackW*(val/max));
+      ctx.fillStyle=selected?'rgba(148,163,184,.18)':'rgba(148,163,184,.08)';
+      roundRect(ctx,x0,y,trackW,barH,999); ctx.fill();
+      const grad=ctx.createLinearGradient(x0,y,x0+bw,y);
+      grad.addColorStop(0,color);
+      grad.addColorStop(1,COLORS[(i+1)%COLORS.length]||cssVar('--accent2')||color);
+      ctx.fillStyle=grad; roundRect(ctx,x0,y,bw,barH,999); ctx.fill();
+      const clean=String(cat||'Uncategorized');
+      const label=clean.length>(mobile?13:18)?clean.slice(0,mobile?12:17)+'…':clean;
+      ctx.fillStyle=cssVar('--text'); ctx.font='800 '+(mobile?11:12)+'px '+appFont();
+      ctx.fillText(label,pad.l,y+barH/2);
+      ctx.fillStyle=cssVar('--muted'); ctx.font=(mobile?'11':'12')+'px '+appFont();
+      ctx.fillText(compactMoney(val),x0+bw+8,y+barH/2);
+      items.push({index:i,cat:clean,val,color,pct:total?val/total*100:0,x1:x0,y1:y-rowGap/2,x2:x0+trackW,y2:y+barH+rowGap/2,cx:x0+bw,cy:y+barH/2});
+    });
+    window.spendChartModel={items,total};
+    const chosen=items[activeIndex==null?0:activeIndex]||items[0];
+    if(chosen){
+      updateLegend('spendLegend',[
+        {label:chosen.cat,value:compactMoney(chosen.val),color:chosen.color},
+        {label:'Share',value:compactPct(chosen.pct),color:cssVar('--accent2')||chosen.color},
+        {label:'Month',value:compactMoney(total),color:cssVar('--accent3')||chosen.color}
+      ],'Spending');
+      if(activeIndex!==null) chartTip(tipId,canvas,chosen.cx,chosen.cy,chosen.cat,[
+        {label:'Amount',value:compactMoney(chosen.val),color:chosen.color},
+        {label:'Share',value:compactPct(chosen.pct),color:cssVar('--accent2')||chosen.color}
+      ]);
+    }
+    if(!canvas.dataset.v097SpendHitTest){
+      canvas.dataset.v097SpendHitTest='1';
+      const pick=(event)=>{
+        const model=window.spendChartModel; if(!model?.items?.length) return;
+        const rect=canvas.getBoundingClientRect();
+        const x=event.clientX-rect.left, y=event.clientY-rect.top;
+        let item=model.items.find(it=>y>=it.y1 && y<=it.y2);
+        if(!item){
+          item=model.items.reduce((best,it)=> Math.abs(y-it.cy)<Math.abs(best.cy-y)?it:best, model.items[0]);
+        }
+        window.renderSpendChart(item.index);
+      };
+      canvas.addEventListener('mousemove',pick);
+      canvas.addEventListener('click',pick);
+      canvas.addEventListener('touchstart',event=>{ if(event.touches?.[0]) pick(event.touches[0]); },{passive:true});
+      canvas.addEventListener('mouseleave',()=>{ hideTip(tipId); window.renderSpendChart(null); });
+      canvas.addEventListener('blur',()=>{ hideTip(tipId); window.renderSpendChart(null); });
+      canvas.addEventListener('focus',()=>window.renderSpendChart(0));
+    }
+  };
+
+  const oldRenderCharts=window.renderCharts;
+  if(typeof oldRenderCharts==='function'){
+    window.renderCharts=function(){
+      window.renderSpendChart?.();
+      window.renderCreditChart?.();
+      window.renderNetWorthChart?.();
+      window.renderInvestmentChart?.();
+    };
+  }
+
+  const oldSettings=window.renderSettings;
+  if(typeof oldSettings==='function'){
+    window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent='Pre-v1 alpha · '+BUILD; };
+  }
+  const oldBackup=window.backupPayload;
+  if(typeof oldBackup==='function'){
+    window.backupPayload=function(){ const payload=oldBackup(); payload.build=BUILD; payload.releaseStage='pre-v1-alpha'; return payload; };
+  }
+  window.addEventListener('resize',()=>{ if(window.chartsReady!==false) requestAnimationFrame(()=>window.renderCharts?.()); });
+})();
+</script>
+<!-- end v0.9.7-alpha declutter + spending chart hit-test fixes -->
 
 </body>
 </html>
