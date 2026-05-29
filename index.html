@@ -847,6 +847,90 @@ body:before{opacity:.38!important}.main{max-width:var(--page-max)!important;widt
 @media(max-width:390px){.main{padding-left:10px!important;padding-right:10px!important}.topbar{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}.mobile-bar button{flex-basis:62px!important;min-width:62px!important}.mobile-bar button span:last-child{font-size:8.75px!important}.v5-big{font-size:29px!important}.card,.metric-card,.hero-metric,.v5-control-card,.v5-panel{padding:13px!important}.tx-card{grid-template-columns:34px minmax(0,1fr)!important}.tx-card-right{grid-column:2!important;justify-items:start!important;display:flex!important;gap:8px!important;align-items:center!important}.tx-card-avatar{width:34px!important;height:34px!important}}
 </style>
 
+
+<style id="v59-executive-mobile-dark-fix">
+/* v5.9 executive product pass: contrast-safe dark mode, cleaner landing page, better touch layout. */
+:root:not([data-theme="light"]){
+  color-scheme: dark;
+  --bg:#08111f;
+  --bg2:#0b1422;
+  --panel:#111c2c;
+  --panel2:#0d1726;
+  --panel3:#1a2940;
+  --elev:#132034;
+  --line:rgba(203,213,225,.115);
+  --line2:rgba(203,213,225,.22);
+  --text:#f8fafc;
+  --muted:#b7c2d3;
+  --soft:#8796aa;
+  --shadow:0 18px 60px rgba(0,0,0,.24);
+  --shadow2:0 1px 0 rgba(255,255,255,.025),0 10px 30px rgba(0,0,0,.16);
+}
+:root[data-theme="light"]{
+  --bg:#fbf8f1;
+  --bg2:#f4efe5;
+  --panel:#fffdf8;
+  --panel2:#f7f3eb;
+  --panel3:#ede7dc;
+  --line:rgba(30,41,59,.10);
+  --line2:rgba(30,41,59,.18);
+  --text:#1f2937;
+  --muted:#647083;
+  --soft:#8a95a6;
+}
+html{background:var(--bg)!important;min-width:320px!important}
+body{
+  background:
+    radial-gradient(900px 520px at -18% -22%,rgba(var(--accent-rgb),.105),transparent 62%),
+    linear-gradient(180deg,var(--bg),var(--bg2))!important;
+  color:var(--text)!important;
+  letter-spacing:0!important;
+}
+body:before{opacity:.12!important;background-size:56px 56px!important}
+*{scrollbar-color:color-mix(in srgb,var(--muted) 35%,transparent) transparent}
+.main{max-width:1280px!important;padding:22px 20px 84px!important}
+.topbar{background:color-mix(in srgb,var(--bg) 90%,transparent)!important;border-bottom:1px solid var(--line)!important}
+.searchbar,.input,select,textarea{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important}
+.searchbar input{color:var(--text)!important}.searchbar input::placeholder,.input::placeholder,textarea::placeholder{color:color-mix(in srgb,var(--muted) 68%,transparent)!important}
+.btn{background:var(--panel2)!important;color:var(--text)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+.btn:hover{border-color:var(--line2)!important;background:var(--panel3)!important}.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2))!important;color:#071018!important;border-color:transparent!important;font-weight:860!important}.btn-danger{color:var(--red)!important;background:transparent!important}
+.card,.metric-card,.hero-metric,.v5-control-card,.v5-panel,.tracker-stat,.week-card,.monthly-plan-card,.v52-card,.bench-card,.monarch-focus-card,.bureau-card,.automation-stat,.payoff-focus{
+  background:var(--panel)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:var(--shadow2)!important;
+}
+.card-title,.section-title,.v5-section-head h3,.v5-panel-title b,.metric-value,.v5-big{color:var(--text)!important}.muted,.section-sub,.card-subtitle,.metric-sub,.v5-section-head p,.v5-subline{color:var(--muted)!important}
+.good{color:var(--good)!important}.bad{color:var(--red)!important}.warn{color:var(--orange)!important}.blue{color:var(--blue)!important}.purple{color:var(--purple)!important}.gold{color:var(--gold)!important}
+
+/* First-run modal was the most obvious dark-mode failure. Make it theme-safe and readable. */
+.first-run{background:rgba(4,9,18,.76)!important;backdrop-filter:blur(18px)!important}
+.first-run-panel{
+  width:min(980px,calc(100vw - 28px))!important;
+  background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--panel2) 82%,var(--panel)))!important;
+  color:var(--text)!important;
+  border:1px solid var(--line)!important;
+  border-radius:28px!important;
+  padding:clamp(20px,3.5vw,44px)!important;
+  box-shadow:0 32px 110px rgba(0,0,0,.38)!important;
+}
+:root[data-theme="light"] .first-run-panel{box-shadow:0 28px 80px rgba(30,41,59,.16)!important}
+.first-run-panel:after{opacity:.65!important}.first-run-head h2{color:var(--text)!important;font-size:clamp(36px,6vw,72px)!important;letter-spacing:-.07em!important;line-height:.9!important;max-width:760px!important}.first-run-head p{color:var(--muted)!important;max-width:760px!important}.eyebrow{color:var(--accent)!important}.start-option{background:var(--panel2)!important;color:var(--text)!important;border-color:var(--line)!important;border-radius:18px!important;min-height:152px!important}.start-option:hover{border-color:rgba(var(--accent-rgb),.42)!important;background:color-mix(in srgb,var(--accent) 8%,var(--panel2))!important}.start-option span,.first-run-footer{color:var(--muted)!important}.drawer-close,.dismiss-btn{background:var(--panel3)!important;color:var(--text)!important;border-color:var(--line)!important}
+
+/* New landing page layout */
+#view-overview>.metric-grid,#monarchUsabilityPanel,#v52ParityPanel{display:none!important}.v5-command-board{gap:16px!important}.v5-section-head{align-items:flex-end!important;margin-bottom:0!important}.v58-head-actions,.v59-head-actions{display:flex!important;gap:8px!important;align-items:center!important;justify-content:flex-end!important;flex-wrap:wrap!important}.section-chip,.v59-chip,.v5-status{background:var(--panel2)!important;border:1px solid var(--line)!important;color:var(--muted)!important}
+.v59-command{display:grid;gap:16px}.v59-head{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}.v59-head h3{margin:0;font-size:clamp(26px,3vw,38px);line-height:1;letter-spacing:-.055em}.v59-head p{margin:8px 0 0;color:var(--muted);font-size:14px;line-height:1.42}.v59-chip{display:inline-flex;align-items:center;min-height:30px;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:820;white-space:nowrap}
+.v59-hero-grid{display:grid;grid-template-columns:minmax(0,1.45fr) repeat(3,minmax(0,.78fr));gap:12px;align-items:stretch}.v59-card{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:20px;background:var(--panel);box-shadow:var(--shadow2);color:var(--text);text-align:left}.v59-card button{font:inherit}.v59-card-click{cursor:pointer;transition:border-color .15s ease,background .15s ease}.v59-card-click:hover{border-color:var(--line2);background:color-mix(in srgb,var(--panel3) 28%,var(--panel))}.v59-net-card{padding:22px;display:grid;gap:14px;min-height:190px}.v59-net-card:after{content:"";position:absolute;right:-70px;bottom:-95px;width:240px;height:240px;border-radius:999px;background:radial-gradient(circle,rgba(var(--accent-rgb),.15),transparent 68%);pointer-events:none}.v59-kicker{font-size:12px;font-weight:850;color:var(--muted);letter-spacing:.01em}.v59-net-value{font-size:clamp(42px,5.6vw,76px);font-weight:900;letter-spacing:-.075em;line-height:.88;color:var(--text)}.v59-net-sub{color:var(--muted);font-size:13px;line-height:1.38;max-width:62ch}.v59-snapshot-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:auto;position:relative;z-index:1}.v59-stat{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:10px 11px;min-width:0}.v59-stat span{display:block;color:var(--soft);font-size:11px;font-weight:800}.v59-stat b{display:block;margin-top:4px;font-size:15px;line-height:1.1;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v59-quick-actions{display:flex;gap:8px;flex-wrap:wrap;position:relative;z-index:1}.v59-mini-card{padding:18px;display:flex;flex-direction:column;gap:8px;min-height:190px}.v59-mini-card .v59-value{font-size:clamp(28px,3vw,44px);font-weight:870;letter-spacing:-.06em;line-height:.95}.v59-mini-card .v59-copy{color:var(--muted);font-size:12.5px;line-height:1.35}.v59-mini-card .v5-status{margin-top:auto;align-self:flex-start}.v59-meter{height:6px;border-radius:999px;background:var(--panel3);overflow:hidden;margin-top:2px}.v59-meter span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent2))}.v59-content-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.v59-panel{border:1px solid var(--line);border-radius:20px;background:var(--panel);box-shadow:var(--shadow2);padding:18px;min-width:0}.v59-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--line);margin-bottom:2px}.v59-panel-head b{font-size:15px;letter-spacing:-.02em}.v59-list{display:grid}.v59-row{width:100%;min-height:54px;border:0;border-bottom:1px solid var(--line);border-radius:0;background:transparent;color:var(--text);display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center;text-align:left;padding:11px 0;cursor:pointer}.v59-row:last-child{border-bottom:0}.v59-row:hover{background:transparent}.v59-row b{display:block;font-size:13.5px;font-weight:820;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v59-row span{display:block;margin-top:2px;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v59-row strong{font-size:13.5px;font-weight:880;white-space:nowrap;text-align:right}.v59-arrow{color:var(--soft);font-weight:900;margin-left:4px}.v59-empty{padding:26px 8px;text-align:center;color:var(--muted)}
+
+/* Clean up older row/card leftovers in dark mode. */
+.v5-plan-row,.budget-row,.mini-item,.snapshot-row,.monthly-plan-item{background:transparent!important;color:var(--text)!important}.mini-item,.snapshot-row,.monthly-plan-item{background:var(--panel2)!important;border-color:var(--line)!important}.v5-plan-row{border-color:var(--line)!important}.v5-plan-row:hover,.budget-row:hover{background:transparent!important}.progress,.budget-progress,.allocation-bar{background:var(--panel3)!important}.progress>span,.budget-progress>span{background:linear-gradient(90deg,var(--accent),var(--accent2))!important}.table-wrap{background:var(--panel)!important;border-color:var(--line)!important}th{background:var(--panel2)!important;color:var(--muted)!important}td{color:var(--text)!important}tbody tr:hover{background:rgba(var(--accent-rgb),.045)!important}.category-chip,.balance-badge,.confidence-pill,.cleanup-badge,.goal-chip{background:var(--panel2)!important;border-color:var(--line)!important;color:var(--muted)!important}.empty strong{color:var(--text)!important}.empty p{color:var(--muted)!important}.canvas-wrap{background:var(--panel2)!important;border-color:var(--line)!important}
+
+/* Touch/mobile pass */
+@media(max-width:1180px){.main{max-width:none!important;width:100%!important}.v59-hero-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v59-net-card{grid-column:1/-1}.v59-content-grid{grid-template-columns:1fr}.v59-panel{padding:16px}.v59-snapshot-strip{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.main{padding:14px 12px calc(92px + env(safe-area-inset-bottom))!important}.topbar{margin:-14px -12px 14px!important;padding:10px 12px!important}.mobile-bar{background:color-mix(in srgb,var(--panel) 94%,transparent)!important;border-top-color:var(--line)!important}.mobile-bar button{color:var(--muted)!important}.mobile-bar button.active{color:var(--accent)!important;background:rgba(var(--accent-rgb),.12)!important}.drawer-panel{background:var(--panel)!important}.drawer-head,.drawer-actions{background:color-mix(in srgb,var(--panel) 94%,transparent)!important}.drawer-actions .btn{min-height:46px!important}}
+@media(max-width:720px){:root{--card-pad:14px;--gap:12px;--radius:16px}.v59-head{display:grid;gap:10px}.v59-head-actions,.v58-head-actions{justify-content:flex-start!important}.v59-hero-grid{grid-template-columns:1fr;gap:10px}.v59-net-card{min-height:0;padding:18px;border-radius:18px}.v59-mini-card{min-height:0;padding:15px;border-radius:16px}.v59-net-value{font-size:48px}.v59-snapshot-strip{grid-template-columns:1fr}.v59-stat{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:8px}.v59-stat b{margin-top:0;text-align:right}.v59-quick-actions{display:grid;grid-template-columns:1fr}.v59-quick-actions .btn{width:100%}.v59-panel{border-radius:16px;padding:15px}.v59-panel-head{align-items:center}.v59-row{min-height:58px}.v59-row span{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.first-run{align-items:flex-start!important;overflow:auto!important;padding:10px!important}.first-run-panel{width:100%!important;border-radius:22px!important;padding:20px!important}.first-run-head h2{font-size:42px!important}.start-grid{grid-template-columns:1fr!important}.first-run-footer{display:grid!important}.first-run-footer .actions{display:grid!important;grid-template-columns:1fr!important}.first-run-footer .btn{width:100%!important}.drawer-close{width:42px!important;height:42px!important}.card,.metric-card,.hero-metric,.v5-panel,.v5-control-card,.tracker-stat,.week-card{border-radius:16px!important}.budget-row-actions .btn{flex:1 1 120px!important}.table-wrap{margin-inline:-2px!important}table{min-width:680px!important}.tx-card-list{display:grid!important}#view-transactions .table-wrap{display:none!important}}
+@media(max-width:420px){.main{padding-left:10px!important;padding-right:10px!important}.topbar{margin-left:-10px!important;margin-right:-10px!important;padding-left:10px!important;padding-right:10px!important}.v59-net-value{font-size:42px}.v59-mini-card .v59-value{font-size:32px}.v59-row{grid-template-columns:1fr}.v59-row strong{text-align:left}.mobile-bar button{flex-basis:62px!important;min-width:62px!important}.first-run-head h2{font-size:36px!important}}
+</style>
+
 <body>
 <a class="skip-link" href="#mainContent">Skip to main content</a>
 <div class="app-shell" id="appShell">
@@ -3554,6 +3638,91 @@ renderAll = function(){ _v58RenderAll(); requestAnimationFrame(v58AfterRender); 
 const _v58ShowView = showView;
 showView = function(id){ _v58ShowView(id); requestAnimationFrame(v58AfterRender); };
 /* ---- end v5.8 executive UI and mobile polish ---- */
+
+
+/* ---- v5.9 executive usability + dark mode landing page ---- */
+function v59Money(value){ return typeof v54FriendlyMoney === 'function' ? v54FriendlyMoney(value) : money(value); }
+function v59Number(value){ return Number(value||0); }
+function v59PctWidth(n){ return Math.min(100, Math.max(0, Number(n)||0)); }
+function v59Row(title,value,sub,cls,fn){
+  const attr = fn ? ` onclick="${fn}"` : '';
+  return `<button type="button" class="v59-row"${attr}><div><b>${escapeHtml(title)}</b><span>${escapeHtml(sub||'')}</span></div><strong class="${cls||''}">${escapeHtml(String(value||''))}<span class="v59-arrow">›</span></strong></button>`;
+}
+function v59Mini(title,value,sub,cls,fn,status){
+  return `<button type="button" class="v59-card v59-mini-card v59-card-click" onclick="${fn}" aria-label="Open ${escapeHtml(title)}"><div class="v59-kicker">${escapeHtml(title)}</div><div class="v59-value ${cls||''}">${escapeHtml(String(value))}</div><div class="v59-copy">${escapeHtml(sub||'')}</div>${status?`<span class="v5-status ${status.cls||''}">${escapeHtml(status.label)}</span>`:''}</button>`;
+}
+function v59LastSnapshotLabel(snapshot){ return snapshot ? `Saved ${dateFmt(snapshot.date)}` : 'No saved snapshot yet'; }
+renderUsabilityPanel = function(){ const panel=document.getElementById('monarchUsabilityPanel'); if(panel) panel.innerHTML=''; const plan=document.getElementById('monthlyPlanCard'); if(plan) plan.innerHTML=''; };
+renderV52ParityPanel = function(){ const el=document.getElementById('v52ParityPanel'); if(el) el.innerHTML=''; };
+renderV5CommandBoard = function(){
+  const el=document.getElementById('v5CommandBoard'); if(!el) return;
+  const p=spendingPace();
+  const stats=budgetStats().sort((a,b)=>b.pct-a.pct);
+  const over=stats.filter(b=>b.pct>100);
+  const unreviewed=(state.transactions||[]).filter(t=>!t.reviewed).length;
+  const net=netWorthBreakdown();
+  const snapshots=(state.netWorthHistory||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  const saved=snapshots[0]||null;
+  const savedDelta=saved ? net.netWorth - v59Number(saved.netWorth) : null;
+  const reviewMode=unreviewed?'bad':(over.length?'warn':'good');
+  const budgetMode=!p.totalBudget?'warn':p.pacePct>105?'bad':p.pacePct>90?'warn':'good';
+  const goals=(state.goals||[]).filter(g=>Number(g.target)>0);
+  const goalAvg=goals.length?Math.round(goals.reduce((a,g)=>a+Math.min(100,Number(g.current||0)/Number(g.target||1)*100),0)/goals.length):0;
+  const debt=(state.debts||[]).reduce((a,d)=>a+Number(d.balance||0),0);
+  const holdings=(state.holdings||[]).reduce((a,h)=>a+Number(h.quantity||0)*Number(h.price||0),0);
+  const cats=byCategory(monthTransactions(currentMonth())).slice(0,4);
+  const safeDaily=p.remainingBudget>0?`${v59Money(p.safeToSpend)}/day`:'$0/day';
+  const month=typeof monthScopeLabel==='function'?monthScopeLabel():'This month';
+  const budgetRows=stats.length?stats.slice(0,4).map(b=>v59Row(b.category,`${b.pct}%`,`${v59Money(Math.max(0,b.remaining))} left of ${v59Money(b.limit)}`,b.pct>=100?'bad':b.pct>=85?'warn':'good',`showCategoryTransactions('${escapeJs(b.category)}')`)).join(''):emptyMini('No budgets yet','Create category limits for calmer spending.','Add budget','openDrawer(\'budget\')');
+  const spendRows=cats.length?cats.slice(0,4).map(([cat,val],i)=>v59Row(cat,v59Money(val),`${Math.round(val/(p.spend||1)*100)}% of spending`,i===0&&p.spend?'warn':'',`showCategoryTransactions('${escapeJs(cat)}')`)).join(''):emptyMini('No spending yet','Import transactions to populate spending.','Import CSV','showView(\'import\')');
+  const nextRows=(unreviewed?v59Row('Review transactions',unreviewed,'Approve, hide, or fix categories','warn','startWeeklyReview()'):(over.length?v59Row('Fix budgets',over.length,'Over-limit categories need a decision','bad','showView(\'budgets\')'):v59Row('Export report','Ready','Monthly summary is current','good','exportMonthlyReport()'))) + v59Row('Backup','JSON',`Last: ${state.settings?.lastBackup?dateFmt(state.settings.lastBackup.slice(0,10)):'never'}`,'','exportBackup()');
+  const savedDeltaText=savedDelta===null?'Save today’s value':`${savedDelta>=0?'+':''}${v59Money(savedDelta)} vs saved`;
+  const savedDeltaCls=savedDelta===null?'':savedDelta>=0?'good':'bad';
+  const reviewStatus=unreviewed?{label:'Needs review',cls:'warn'}:{label:'Clean',cls:'good'};
+  const planStatus=goalAvg?{label:'Open plan',cls:''}:{label:'Set goals',cls:'warn'};
+  el.innerHTML=`<div class="v59-command">
+    <div class="v59-head">
+      <div><h3>Control center</h3><p>A calm snapshot of net worth, cash flow, review work, and the next decision.</p></div>
+      <div class="v59-head-actions"><span class="v59-chip">${escapeHtml(month)}</span><button type="button" class="btn btn-small" onclick="openCommandPalette()">Commands</button></div>
+    </div>
+    <div class="v59-hero-grid">
+      <section class="v59-card v59-net-card" aria-label="Current net worth snapshot">
+        <div class="v59-kicker">Current net worth snapshot</div>
+        <div class="v59-net-value ${net.netWorth>=0?'good':'bad'}" title="${money(net.netWorth)}">${v59Money(net.netWorth)}</div>
+        <div class="v59-net-sub">Calculated from included manual accounts, debts, and holdings. ${saved?v59LastSnapshotLabel(saved):'Save a snapshot when balances look right.'}</div>
+        <div class="v59-snapshot-strip">
+          <div class="v59-stat"><span>Assets</span><b class="good">${v59Money(net.assets)}</b></div>
+          <div class="v59-stat"><span>Liabilities</span><b class="bad">${v59Money(net.liabilities)}</b></div>
+          <div class="v59-stat"><span>Snapshot delta</span><b class="${savedDeltaCls}">${escapeHtml(savedDeltaText)}</b></div>
+        </div>
+        <div class="v59-quick-actions"><button type="button" class="btn btn-primary" onclick="saveNetWorthSnapshot()">Save snapshot</button><button type="button" class="btn" onclick="showView('networth')">Update balances</button></div>
+      </section>
+      ${v59Mini('Cash flow',v59Money(p.net),`${v59Money(p.income)} income · ${v59Money(p.spend)} spent · ${safeDaily} safe`,p.net>=0?'good':'bad',"showView('budgets')",{label:`${p.pacePct||0}% pace`,cls:budgetMode})}
+      ${v59Mini('Review',unreviewed,unreviewed?'Transactions need approval':'No cleanup waiting',unreviewed?'warn':'good','startWeeklyReview()',reviewStatus)}
+      ${v59Mini('Planning',`${goalAvg}%`,`Goals · ${v59Money(debt)} debt · ${v59Money(holdings)} invested`,'',"showView('goals')",planStatus)}
+    </div>
+    <div class="v59-content-grid">
+      <section class="v59-panel"><div class="v59-panel-head"><b>Budget watchlist</b><button type="button" class="btn btn-small" onclick="showView('budgets')">Manage</button></div><div class="v59-list">${budgetRows}</div></section>
+      <section class="v59-panel"><div class="v59-panel-head"><b>Next best move</b><span class="v5-status ${reviewMode}">${reviewMode==='good'?'Clean':reviewMode==='warn'?'Watch':'Action'}</span></div><div class="v59-list">${nextRows}</div></section>
+      <section class="v59-panel"><div class="v59-panel-head"><b>Spending radar</b><button type="button" class="btn btn-small" onclick="showView('transactions')">View all</button></div><div class="v59-list">${spendRows}</div></section>
+    </div>
+  </div>`;
+};
+function v59AfterRender(){
+  document.documentElement.style.setProperty('--vh', `${window.innerHeight * 0.01}px`);
+  document.querySelectorAll('button:not([type])').forEach(btn=>{ btn.type='button'; });
+  document.body.classList.toggle('transactions-view', activeView === 'transactions');
+  const firstRun=document.getElementById('firstRun');
+  if(firstRun?.classList.contains('active')) document.body.classList.add('first-run-open'); else document.body.classList.remove('first-run-open');
+  const nav=document.getElementById('mobileNav'); const active=nav?.querySelector('button.active');
+  if(active && window.matchMedia('(max-width: 900px)').matches){ try{ active.scrollIntoView({block:'nearest',inline:'center'}); }catch(e){} }
+}
+const _v59RenderAll = renderAll;
+renderAll = function(){ _v59RenderAll(); requestAnimationFrame(v59AfterRender); };
+const _v59ShowView = showView;
+showView = function(id){ _v59ShowView(id); requestAnimationFrame(v59AfterRender); };
+window.addEventListener('resize',()=>requestAnimationFrame(v59AfterRender),{passive:true});
+/* ---- end v5.9 executive usability + dark mode landing page ---- */
 
 init();
 requestAnimationFrame(()=>{ ensureTransactionFilterExtras(); renderAll(); });
