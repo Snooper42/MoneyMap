@@ -5,16 +5,16 @@ Use this before pushing the Phase 0 build to GitHub Pages.
 ## Smoke test
 
 - [X] Open the app in a clean browser profile with no existing MoneyMap data.
-- [ ] Confirm first-run screen appears.
-- [ ] Choose Demo mode and confirm dashboard renders.
-- [ ] Export a backup JSON from Settings.
-- [ ] Export a monthly report from dashboard or command palette.
-- [ ] Export a weekly report from Settings.
-- [ ] Reset all local data, then confirm first-run appears again.
-- [ ] Import the sample CSV and confirm transaction rows appear.
-- [ ] Edit one transaction and confirm the change survives page refresh.
-- [ ] Add one budget and confirm the dashboard updates.
-- [ ] Switch light/dark theme and confirm preference persists.
+- [X] Confirm first-run screen appears.
+- [X] Choose Demo mode and confirm dashboard renders.
+- [X] Export a backup JSON from Settings.
+- [X] Export a monthly report from dashboard or command palette.
+- [X] Export a weekly report from Settings.
+- [X] Reset all local data, then confirm first-run appears again.
+- [X] Import the sample CSV and confirm transaction rows appear.
+- [X] Edit one transaction and confirm the change survives page refresh.
+- [X] Add one budget and confirm the dashboard updates.
+- [X] Switch light/dark theme and confirm preference persists.
 - [ ] Test at mobile width below 760px.
 
 ## Migration test
