@@ -2304,3 +2304,45 @@ window.addEventListener('keydown', event => {
   window.addEventListener('resize',afterPaint,{passive:true});
   afterPaint();
 })();
+
+
+/* ---- MoneyMap QA2 verification and responsive relabel pass ---- */
+(function(){
+  const BUILD='qa2-20260529';
+  try{ document.documentElement.setAttribute('data-moneymap-build', BUILD); }catch(e){}
+  function markBuild(){
+    try{
+      document.querySelectorAll('#appBuildLabel').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+    }catch(e){}
+  }
+  function tableLabels(){
+    const maps={
+      accountRows:['Account','Type','Updated','Status','Balance','Actions'],
+      debtRows:['Debt','APR','Min','Extra','Include','Balance','Actions'],
+      holdingRows:['Holding','Account','Class','Qty','Price','Value','Gain','Actions'],
+      creditRows:['Month','Experian','Equifax','TransUnion','Average','Utilization','Source','Note','Actions']
+    };
+    Object.keys(maps).forEach(id=>{
+      const body=document.getElementById(id); if(!body) return;
+      const table=body.closest('table'); const wrap=body.closest('.table-wrap');
+      if(wrap) wrap.classList.add('responsive-cards','qa-responsive-cards');
+      const heads=table?[...table.querySelectorAll('thead th')].map(th=>(th.textContent||'').trim()).filter(Boolean):[];
+      const labels=heads.length?heads:maps[id];
+      [...body.rows].forEach(row=>[...row.cells].forEach((cell,i)=>{
+        cell.dataset.label=(cell.colSpan&&cell.colSpan>1)?'':(labels[i]||'Actions');
+      }));
+    });
+  }
+  function apply(){ markBuild(); tableLabels(); }
+  function soon(){ requestAnimationFrame(()=>requestAnimationFrame(apply)); }
+  ['renderAll','showView','renderSettings','renderNetWorth','renderDebt','renderInvestments','renderCredit','renderAccountsDashboard'].forEach(name=>{
+    const fn=window[name];
+    if(typeof fn==='function' && !fn.__qa2Wrapped){
+      const wrapped=function(){ const out=fn.apply(this,arguments); soon(); return out; };
+      wrapped.__qa2Wrapped=true; window[name]=wrapped;
+    }
+  });
+  document.addEventListener('DOMContentLoaded',soon);
+  window.addEventListener('resize',soon,{passive:true});
+  soon();
+})();
