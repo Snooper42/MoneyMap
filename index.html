@@ -1512,7 +1512,7 @@ td,th{white-space:nowrap}.table-wrap{position:relative}.table-wrap:after{content
 <script>
 const STORAGE_KEY = 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = 'v0.9.0-alpha';
+const APP_BUILD_ID = 'v0.9.2-alpha';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;
@@ -4565,6 +4565,330 @@ window.addEventListener('keydown', event => {
 })();
 /* ---- end v0.9.0-alpha deep UI and mobile polish ---- */
 
+
+/* ---- v0.9.2-alpha recursive aggressive UI/UX polish waves ---- */
+(function(){
+  const PREV1_BUILD_LABEL = 'Pre-v1 alpha';
+
+  function addStyle(id, css){
+    let style = document.getElementById(id);
+    if(!style){
+      style = document.createElement('style');
+      style.id = id;
+      document.head.appendChild(style);
+    }
+    style.textContent = css;
+  }
+
+  addStyle('mm-v091-aggressive-ux', `
+    :root{
+      --mm-nav-h:64px;
+      --mm-touch:44px;
+      --mm-safe-bottom:env(safe-area-inset-bottom);
+      --mm-page-pad:clamp(14px,2.4vw,28px);
+      --mm-tight-gap:12px;
+      --mm-card-radius:20px;
+      --mm-ease:cubic-bezier(.2,.8,.2,1);
+    }
+    html{scroll-padding-top:82px}
+    body{overscroll-behavior-y:none}
+    .main{padding-inline:var(--mm-page-pad)!important;max-width:1480px!important}
+    .view{scroll-margin-top:80px}
+    .topbar{position:sticky!important;top:0!important;z-index:45!important;backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+    .searchbar{box-shadow:none!important;border-radius:16px!important;min-height:46px!important}
+    .topbar .actions{gap:8px!important}.btn{min-height:var(--mm-touch);padding-inline:14px!important}
+    .btn-small{min-height:36px!important;padding:8px 10px!important}.btn-square{min-width:42px!important}
+    .hero,.metric-grid,.grid-2,.grid-3,.grid-21,.grid-12,.tracker-grid,.tracker-grid-reverse,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid{gap:var(--mm-tight-gap)!important}
+    .hero{margin-bottom:var(--mm-tight-gap)!important}.card,.metric-card,.hero-metric,.tracker-stat,.week-card,.bureau-card,.goal-card{border-radius:var(--mm-card-radius)!important}
+    .card-header{margin-bottom:14px!important}.card-title{line-height:1.12!important}.card-subtitle{max-width:70ch!important}
+    .metric-card,.tracker-stat,.week-card{min-height:112px!important}.metric-label{letter-spacing:.12em!important}.metric-value{font-variant-numeric:tabular-nums!important}.metric-sub{max-width:42ch}
+    .page-head{margin-bottom:14px!important}.section-title{line-height:.98!important}.section-sub{font-size:14px!important}
+    .mini-list{gap:8px!important}.mini-item,.snapshot-row{border-radius:16px!important;transition:transform .14s var(--mm-ease),border-color .14s var(--mm-ease),background .14s var(--mm-ease)}
+    button.mini-item:hover,.snapshot-row:hover{transform:translateY(-1px)}
+    .input,select,textarea{min-height:46px!important;border-radius:14px!important}.form-field{margin-bottom:10px!important}.form-row,.form-row-3{gap:10px!important}
+    .pill,.category-chip,.balance-badge,.confidence-pill,.cleanup-badge,.goal-chip,.kbd{white-space:nowrap}
+    .table-wrap{border-radius:18px!important;scrollbar-width:thin;position:relative}.table-wrap:after{content:'Swipe →';display:none;position:sticky;right:10px;bottom:8px;float:right;margin-top:-30px;padding:5px 8px;border-radius:999px;background:color-mix(in srgb,var(--panel) 92%,transparent);border:1px solid var(--line);color:var(--muted);font-size:11px;pointer-events:none}
+    th,td{line-height:1.25!important}.amount-cell,.right{font-variant-numeric:tabular-nums}
+    .drawer-panel{max-width:min(720px,calc(100vw - 28px))!important}.drawer-head{padding-block:18px 14px!important}.drawer-actions{gap:8px!important}.drawer-note{border-radius:16px!important}
+    .toast{z-index:240!important}.storage-banner,.storage-warning-banner{position:sticky;top:74px;z-index:42;border-radius:16px!important}
+
+    /* Credit-tracker-inspired chart surface for every chart. */
+    .canvas-wrap{position:relative;border-radius:22px!important;background:radial-gradient(720px 180px at 50% -18%,rgba(var(--accent-rgb),.11),transparent 60%),linear-gradient(180deg,color-mix(in srgb,var(--panel2) 96%,transparent),color-mix(in srgb,var(--panel) 94%,transparent))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)!important;overflow:hidden}
+    .canvas-wrap:before{content:'';position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);pointer-events:none}.canvas-wrap canvas{position:relative;z-index:1}
+    .chart-legend{gap:8px!important}.legend-chip{min-height:34px!important;border-radius:999px!important;background:color-mix(in srgb,var(--panel2) 92%,transparent)!important}
+    .chart-tooltip{border-radius:16px!important;box-shadow:0 18px 50px rgba(0,0,0,.28)!important}
+
+    /* Tablet fix: sidebar disappears around iPad widths, so nav must appear too. */
+    @media(max-width:1180px){
+      .app-shell{display:block!important}.sidebar{display:none!important}
+      .main{padding:16px 16px calc(92px + var(--mm-safe-bottom))!important;max-width:none!important}
+      .topbar{margin:-16px -16px 14px!important;padding:12px 16px!important;border-bottom:1px solid var(--line)!important;display:grid!important;grid-template-columns:minmax(0,1fr) auto!important;gap:10px!important}
+      .mobile-bar{display:grid!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:110!important;height:calc(var(--mm-nav-h) + var(--mm-safe-bottom))!important;padding:6px max(8px,env(safe-area-inset-left)) calc(6px + var(--mm-safe-bottom)) max(8px,env(safe-area-inset-right))!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:6px!important;overflow:visible!important;background:color-mix(in srgb,var(--panel) 94%,transparent)!important;border-top:1px solid var(--line)!important;backdrop-filter:blur(24px)!important;-webkit-backdrop-filter:blur(24px)!important;box-shadow:0 -16px 40px rgba(0,0,0,.18)!important}
+      .mobile-bar button{width:100%!important;min-width:0!important;flex:1 1 auto!important;min-height:50px!important;border-radius:16px!important;padding:6px 4px!important;background:transparent;color:var(--muted);font-weight:850!important}
+      .mobile-bar button span:first-child{font-size:18px!important;line-height:1!important}.mobile-bar button span:last-child{font-size:10.5px!important;line-height:1.05!important;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mobile-bar button.active{color:var(--accent)!important;background:linear-gradient(180deg,rgba(var(--accent-rgb),.18),rgba(var(--accent-rgb),.07))!important;box-shadow:inset 0 0 0 1px rgba(var(--accent-rgb),.22)!important}
+      .mobile-more-sheet{display:none;position:fixed!important;inset:0!important;z-index:150!important;align-items:flex-end!important;justify-content:center!important;background:rgba(2,6,23,.48)!important;backdrop-filter:blur(12px)!important;-webkit-backdrop-filter:blur(12px)!important;padding:12px 12px calc(80px + var(--mm-safe-bottom))!important}.mobile-more-sheet.active{display:flex!important}.mobile-more-panel{width:min(680px,100%)!important;max-height:min(76vh,700px)!important;border-radius:26px!important;padding:14px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 96%,transparent),color-mix(in srgb,var(--panel2) 96%,transparent))!important}.mobile-more-grid{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr))!important;gap:10px!important}.mobile-more-item{min-height:82px!important;border-radius:18px!important;padding:12px!important}.mobile-more-copy strong{font-size:13px!important}.mobile-more-copy span{font-size:11px!important}
+    }
+
+    /* iPad portrait and small tablets. */
+    @media(max-width:900px){
+      .topbar{grid-template-columns:1fr!important}.searchbar{grid-column:1/-1!important;order:1!important}.topbar .actions{order:2!important;grid-column:1/-1!important;display:grid!important;grid-template-columns:minmax(0,1fr) 48px!important;width:100%!important}.topbar .actions>.btn:not(.btn-primary):not(.btn-square){display:none!important}.topbar .btn-primary{width:100%!important}
+      .metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.grid-2,.grid-3,.grid-21,.grid-12,.tracker-grid,.tracker-grid-reverse,.settings-grid,.credit-hero,.bureau-grid{grid-template-columns:1fr!important}
+      .table-wrap:after{display:block}.category-grid{grid-template-columns:repeat(3,minmax(0,1fr))!important}.canvas-wrap{height:230px!important}.more-sections-available .mobile-more-sheet{display:flex}
+    }
+
+    /* iPhone. */
+    @media(max-width:640px){
+      :root{--mm-nav-h:62px;--mm-card-radius:17px;--mm-tight-gap:10px}
+      .main{padding:12px 10px calc(84px + var(--mm-safe-bottom))!important}.topbar{margin:-12px -10px 12px!important;padding:10px!important}.searchbar{height:42px!important;min-height:42px!important}.actions{gap:7px!important}.btn{min-height:40px!important;border-radius:12px!important}.btn span{min-width:0}
+      .hero-card,.command-strip{padding:16px!important;border-radius:18px!important}.command-copy h2,.hero h2{font-size:28px!important;line-height:1!important;max-width:14ch!important}.command-copy p,.hero p{font-size:13px!important;line-height:1.35!important}.hero-row,.command-actions{display:grid!important;grid-template-columns:1fr!important}.hero-row .btn,.command-actions .btn{width:100%!important}
+      .card,.metric-card,.hero-metric,.tracker-stat,.week-card{padding:13px!important;border-radius:17px!important}.card-header{display:grid!important;gap:8px!important;margin-bottom:10px!important}.card-title{font-size:15.5px!important}.card-subtitle{font-size:12px!important}.section-title{font-size:25px!important}.section-sub{font-size:12.5px!important}.page-head{display:grid!important;gap:9px!important}.page-head .actions{margin-top:0!important;justify-content:start!important}
+      .metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid{grid-template-columns:1fr 1fr!important}.metric-card{min-height:94px!important}.metric-label{font-size:8.5px!important;margin-bottom:7px!important}.metric-value{font-size:24px!important}.metric-sub{font-size:10.8px!important;line-height:1.25!important}
+      .canvas-wrap{height:205px!important;padding:11px!important;border-radius:17px!important}.chart-legend{display:grid!important;grid-template-columns:1fr!important}.legend-chip{justify-content:space-between!important;padding:8px 10px!important}.chart-tooltip{display:none!important}
+      .review-transaction{padding:16px!important;border-radius:18px!important}.review-merchant{font-size:22px!important}.review-amount{font-size:31px!important}.review-meta{font-size:12px!important}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.cat-btn{min-height:52px!important;padding:10px!important}
+      .input,select,textarea{min-height:43px!important;font-size:16px!important}.form-row,.form-row-3,.tx-filter-grid,.review-filter-grid,.mapping-tools,.rule-row{grid-template-columns:1fr!important}.theme-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+      .drawer-panel{inset:0!important;width:100vw!important;height:100dvh!important;max-width:none!important;border-radius:0!important;border:0!important}.drawer-head{padding:15px 13px 11px!important}.drawer-head .section-title{font-size:25px!important}#drawerBody{padding:11px 11px calc(18px + var(--mm-safe-bottom))!important}.drawer-actions{position:sticky!important;bottom:calc(-18px - var(--mm-safe-bottom))!important;margin:14px -11px calc(-18px - var(--mm-safe-bottom))!important;padding:10px 11px calc(12px + var(--mm-safe-bottom))!important;background:color-mix(in srgb,var(--panel) 94%,transparent)!important;backdrop-filter:blur(18px)!important}.drawer-actions .btn{flex-basis:100%!important}
+      .mobile-bar{gap:4px!important;padding-left:6px!important;padding-right:6px!important}.mobile-bar button{border-radius:14px!important}.mobile-bar button span:first-child{font-size:16px!important}.mobile-bar button span:last-child{font-size:9.5px!important}.mobile-more-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}.mobile-more-item{min-height:70px!important}
+      .toast{left:10px!important;right:10px!important;bottom:calc(76px + var(--mm-safe-bottom))!important}.toast-item{min-width:0!important}.storage-banner,.storage-warning-banner{top:58px!important}
+    }
+
+    /* Very small phones. */
+    @media(max-width:390px){
+      .metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid{grid-template-columns:1fr!important}.topbar .actions{grid-template-columns:1fr 44px!important}.theme-grid,.mobile-more-grid{grid-template-columns:1fr!important}.command-copy h2,.hero h2{font-size:26px!important}.metric-value{font-size:23px!important}.mobile-bar button{padding-inline:2px!important}.mobile-bar button span:last-child{font-size:9px!important}.canvas-wrap{height:195px!important}
+    }
+
+    @media(hover:none){.btn:hover,.metric-card:hover,.mini-item:hover{transform:none!important}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+    @media(print){.mobile-bar,.mobile-more-sheet,.topbar,.sidebar,.toast,.storage-banner,.storage-warning-banner{display:none!important}.main{padding:0!important}.view{display:block!important}.card,.metric-card{break-inside:avoid}}
+  `);
+
+  function setViewportFlags(){
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    document.documentElement.style.setProperty('--mm-vh', `${h * 0.01}px`);
+    document.body.classList.toggle('mm-phone', w <= 640);
+    document.body.classList.toggle('mm-tablet', w > 640 && w <= 1180);
+    document.body.classList.toggle('mm-desktop', w > 1180);
+  }
+
+  function normalizeBuildLabels(){
+    document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el => {
+      el.textContent = `${PREV1_BUILD_LABEL} · v0.9.2-alpha`;
+    });
+  }
+
+  function markChartSurfaces(){
+    document.querySelectorAll('.canvas-wrap').forEach(wrap => {
+      wrap.classList.add('mm-chart-card','chart-interactive');
+      const canvas = wrap.querySelector('canvas');
+      if(canvas && !canvas.hasAttribute('tabindex')) canvas.setAttribute('tabindex','0');
+    });
+  }
+
+  function closeMoreOnSelection(){
+    const sheet = document.getElementById('mobileMoreSheet');
+    if(!sheet || sheet.dataset.v091Bound) return;
+    sheet.dataset.v091Bound = '1';
+    sheet.addEventListener('click', event => {
+      if(event.target.closest('.mobile-more-item')){
+        setTimeout(()=>window.toggleMobileMore?.(false), 60);
+      }
+    });
+  }
+
+  const baseBuildMobileNav = window.buildMobileNav;
+  window.buildMobileNav = function(){
+    if(typeof baseBuildMobileNav === 'function') baseBuildMobileNav();
+    const nav = document.getElementById('mobileNav');
+    if(!nav) return;
+    const rename = { Home:'Home', Overview:'Home', Review:'Review', Transactions:'Txns', Txns:'Txns', Budgets:'Budget', Budget:'Budget', More:'More' };
+    nav.querySelectorAll('button').forEach(button => {
+      const label = button.querySelector('span:last-child');
+      if(label && rename[label.textContent.trim()]) label.textContent = rename[label.textContent.trim()];
+      button.setAttribute('type','button');
+    });
+  };
+
+  const baseRenderSettings = window.renderSettings;
+  if(typeof baseRenderSettings === 'function'){
+    window.renderSettings = function(){
+      baseRenderSettings();
+      normalizeBuildLabels();
+    };
+  }
+
+  const baseBackupPayload = window.backupPayload;
+  if(typeof baseBackupPayload === 'function'){
+    window.backupPayload = function(){
+      const payload = baseBackupPayload();
+      payload.build = 'v0.9.2-alpha';
+      payload.releaseStage = PREV1_BUILD_LABEL;
+      return payload;
+    };
+  }
+
+  const baseRenderAll = window.renderAll;
+  if(typeof baseRenderAll === 'function'){
+    window.renderAll = function(){
+      baseRenderAll();
+      requestAnimationFrame(()=>{
+        setViewportFlags();
+        window.buildMobileNav?.();
+        markChartSurfaces();
+        closeMoreOnSelection();
+        normalizeBuildLabels();
+      });
+    };
+  }
+
+  const baseShowView = window.showView;
+  if(typeof baseShowView === 'function'){
+    window.showView = function(id){
+      baseShowView(id);
+      requestAnimationFrame(()=>{
+        setViewportFlags();
+        window.buildMobileNav?.();
+        markChartSurfaces();
+        closeMoreOnSelection();
+        if(window.matchMedia('(max-width:1180px)').matches){
+          try{ window.scrollTo({top:0,behavior:'smooth'}); }catch(e){ window.scrollTo(0,0); }
+        }
+      });
+    };
+  }
+
+  window.addEventListener('resize', () => requestAnimationFrame(setViewportFlags), {passive:true});
+  window.addEventListener('orientationchange', () => setTimeout(setViewportFlags, 120), {passive:true});
+  window.addEventListener('keydown', event => {
+    if(event.key === 'Escape') window.toggleMobileMore?.(false);
+  });
+
+  requestAnimationFrame(()=>{
+    setViewportFlags();
+    window.buildMobileNav?.();
+    markChartSurfaces();
+    closeMoreOnSelection();
+    normalizeBuildLabels();
+  });
+})();
+/* ---- end v0.9.2-alpha recursive aggressive UI/UX polish waves ---- */
+
+
+
+/* ---- v0.9.2-alpha mobile clarity + investments refresh ---- */
+(function(){
+  const BUILD='v0.9.2-alpha';
+  document.title='MoneyMap';
+  function addStyle(css){ const style=document.createElement('style'); style.setAttribute('data-patch','v0.9.2-mobile-investments'); style.textContent=css; document.head.appendChild(style); }
+  addStyle(`
+    :root{--mm-nav-h:58px;--mm-safe-bottom:env(safe-area-inset-bottom,0px);--mm-phone-pad:10px;--mm-soft-card:rgba(255,255,255,.045)}
+    :root[data-theme="light"]{--mm-soft-card:rgba(17,24,39,.035)}
+
+    /* Mobile shell: less chrome, less vertical tax. */
+    @media(max-width:760px){
+      body{background:linear-gradient(180deg,var(--bg),var(--bg2))!important}
+      body:before{opacity:.55!important;background-size:34px 34px!important}
+      .main{padding:10px var(--mm-phone-pad) calc(76px + var(--mm-safe-bottom))!important}
+      .topbar{position:sticky!important;top:0!important;z-index:80!important;margin:-10px calc(var(--mm-phone-pad) * -1) 10px!important;padding:9px var(--mm-phone-pad) 9px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 96%,transparent),color-mix(in srgb,var(--bg) 86%,transparent))!important;border-bottom:1px solid color-mix(in srgb,var(--line) 72%,transparent)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;display:grid!important;grid-template-columns:1fr auto!important;gap:8px!important;align-items:center!important}
+      .searchbar{grid-column:1/-1!important;order:1!important;height:40px!important;min-height:40px!important;padding:8px 12px!important;border-radius:999px!important;box-shadow:none!important;background:color-mix(in srgb,var(--panel) 72%,transparent)!important}
+      .searchbar input{font-size:14px!important}.searchbar span{font-size:12px!important}
+      .topbar .actions{grid-column:1/-1!important;order:2!important;display:grid!important;grid-template-columns:1fr 42px!important;gap:8px!important;width:100%!important;margin:0!important;align-items:center!important}
+      .topbar .actions>.btn:not(.btn-primary):not(.btn-square),.topbar-secondary{display:none!important}
+      .topbar .actions .btn-primary{height:38px!important;min-height:38px!important;width:100%!important;border-radius:999px!important;padding:0 12px!important;font-size:13px!important;letter-spacing:.01em!important;box-shadow:none!important}
+      .topbar .actions .btn-primary::before{content:'＋';font-weight:900;margin-right:6px}.topbar .actions .btn-primary{font-size:0!important}.topbar .actions .btn-primary::after{content:'Import';font-size:13px!important}
+      .topbar-menu-wrap,.topbar-overflow-btn{height:42px!important;width:42px!important;justify-self:end!important}.topbar-overflow-btn{border-radius:999px!important;padding:0!important;background:color-mix(in srgb,var(--panel2) 80%,transparent)!important}
+
+      .page-head{margin:4px 0 10px!important;gap:8px!important}.section-title{font-size:24px!important;letter-spacing:-.045em!important}.section-sub{font-size:12.5px!important;line-height:1.35!important;max-width:38ch!important}
+      .card,.metric-card,.tracker-stat,.week-card,.hero-metric{border-radius:18px!important;padding:14px!important;box-shadow:0 8px 24px rgba(0,0,0,.08)!important}.card-header{display:flex!important;align-items:flex-start!important;justify-content:space-between!important;gap:10px!important;margin-bottom:10px!important}.card-header .btn{flex:0 0 auto}.card-title{font-size:16px!important}.card-subtitle{font-size:12px!important;line-height:1.32!important}
+      .split-line{margin:12px 0!important}.mini-list{gap:8px!important}.mini-item{border-radius:16px!important;padding:11px 12px!important}.btn{min-height:38px!important;border-radius:12px!important}.btn-small{min-height:34px!important;padding:7px 10px!important}
+      .metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:9px!important}.metric-card,.tracker-stat,.week-card{min-height:88px!important}.metric-label{font-size:8.5px!important;margin-bottom:6px!important}.metric-value{font-size:24px!important;letter-spacing:-.04em!important}.metric-sub{font-size:10.5px!important;line-height:1.25!important;margin-top:6px!important}
+
+      /* Bottom nav: compact tab rail instead of oversized cards. */
+      .mobile-bar{height:calc(var(--mm-nav-h) + var(--mm-safe-bottom))!important;padding:6px 7px calc(6px + var(--mm-safe-bottom))!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:4px!important;overflow:visible!important;background:color-mix(in srgb,var(--panel) 96%,transparent)!important;border-top:1px solid color-mix(in srgb,var(--line) 82%,transparent)!important;box-shadow:0 -10px 26px rgba(0,0,0,.12)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important}
+      .mobile-bar button{min-height:46px!important;height:46px!important;border-radius:13px!important;padding:4px 2px!important;gap:2px!important;position:relative!important;color:var(--muted)!important;background:transparent!important;box-shadow:none!important;font-weight:800!important}
+      .mobile-bar button span:first-child{font-size:15px!important;line-height:1!important}.mobile-bar button span:last-child{font-size:9.5px!important;line-height:1!important;letter-spacing:.005em!important}
+      .mobile-bar button.active{color:var(--accent)!important;background:rgba(var(--accent-rgb),.08)!important}.mobile-bar button.active:before{content:'';position:absolute;top:4px;left:50%;width:18px;height:3px;border-radius:999px;background:var(--accent);transform:translateX(-50%)}
+      .mobile-more-sheet{padding:10px 10px calc(72px + var(--mm-safe-bottom))!important}.mobile-more-panel{border-radius:24px!important;padding:12px!important}.mobile-more-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}.mobile-more-item{min-height:66px!important;padding:10px!important;border-radius:16px!important}.mobile-more-copy span{display:none!important}
+
+      /* Budget cards: remove gray blocks and giant repeated controls. */
+      .budget-board-list,.v60-budget-list{display:grid!important;gap:10px!important}.v092-budget-card{border:1px solid var(--line);background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 96%,transparent),color-mix(in srgb,var(--panel2) 86%,transparent));border-radius:18px;padding:12px;display:grid;gap:10px;box-shadow:0 6px 18px rgba(0,0,0,.06)}
+      .v092-budget-main{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:start;background:transparent;border:0;color:inherit;text-align:left;padding:0;width:100%}.v092-budget-title{font-weight:900;font-size:16px;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.v092-budget-meta{color:var(--muted);font-size:12px;margin-top:3px}.v092-budget-pct{font-size:22px;font-weight:950;letter-spacing:-.04em;text-align:right}.v092-budget-left{font-size:11.5px;color:var(--muted);text-align:right;white-space:nowrap}.v092-meter{height:9px;border-radius:999px;background:var(--panel3);overflow:hidden}.v092-meter span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent2))}.v092-budget-card.warn .v092-meter span{background:linear-gradient(90deg,var(--orange),var(--gold))}.v092-budget-card.bad .v092-meter span{background:linear-gradient(90deg,var(--red),var(--orange))}.v092-budget-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.v092-budget-actions .btn{width:100%;min-height:36px!important}.v092-budget-card.good .v092-budget-pct{color:var(--good)}.v092-budget-card.warn .v092-budget-pct{color:var(--orange)}.v092-budget-card.bad .v092-budget-pct{color:var(--red)}
+      .v60-budget-row{border-radius:18px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 96%,transparent),color-mix(in srgb,var(--panel2) 86%,transparent))!important}.v60-budget-top{background:transparent!important}.v60-budget-actions{display:grid!important;grid-template-columns:1fr 1fr!important}.v60-budget-name{color:var(--text)!important}.v60-budget-meta,.v60-budget-left{color:var(--muted)!important}
+
+      /* Investment tab receives first-class mobile treatment. */
+      #view-investments .tracker-grid{gap:10px!important}.investment-mobile-summary{display:grid;gap:8px;margin-bottom:10px}.investment-action-strip{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}.holding-card-list{display:grid;gap:9px}.holding-card{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 96%,transparent),color-mix(in srgb,var(--panel2) 86%,transparent));padding:12px;display:grid;gap:10px}.holding-card-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}.holding-symbol{font-weight:950;font-size:17px;letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.holding-name{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.holding-value{text-align:right;font-weight:950;font-size:17px}.holding-gain{text-align:right;font-size:12px}.holding-facts{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.holding-fact{border:1px solid var(--line);border-radius:13px;padding:8px;background:var(--panel2)}.holding-fact span{display:block;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.08em}.holding-fact b{display:block;font-size:12px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.holding-card-actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px}.holding-card-actions .btn{min-height:34px!important;padding:6px 8px!important;font-size:11px!important}.investment-insight{border:1px solid var(--line);border-radius:16px;background:var(--panel2);padding:11px}.investment-insight b{display:block;font-size:13px}.investment-insight span{display:block;color:var(--muted);font-size:12px;line-height:1.3;margin-top:3px}
+      #holdingCardsV092{display:grid!important}.investments-has-cards #view-investments .table-wrap{display:none!important}#view-investments .chart-hover-note{font-size:11px!important;margin-top:6px!important}.allocation-bar{height:8px!important}
+    }
+    @media(min-width:761px){#holdingCardsV092{display:none!important}.investment-mobile-summary,.investment-action-strip{display:none!important}}
+    @media(max-width:390px){.metric-grid,.tracker-hero,.goal-summary,.credit-metric-grid,.review-summary-grid{grid-template-columns:1fr!important}.holding-facts{grid-template-columns:1fr 1fr!important}.mobile-bar button span:last-child{font-size:8.8px!important}.section-title{font-size:22px!important}}
+  `);
+
+  function statusClass(pct){ pct=Number(pct)||0; return pct>=100?'bad':pct>=85?'warn':'good'; }
+  function clampPct(pct){ return Math.min(100, Math.max(0, Number(pct)||0)); }
+  function friendlyMoney(v){ try{return typeof v60Money==='function'?v60Money(v):money(v);}catch(e){return '$'+Number(v||0).toLocaleString();} }
+  function v092BudgetCard(b){
+    const cls=statusClass(b.pct); const left=Math.max(0,Number(b.remaining)||0); const pct=clampPct(b.pct);
+    return `<div class="v092-budget-card ${cls}"><button type="button" class="v092-budget-main" onclick="showCategoryTransactions('${escapeJs(b.category)}')" aria-label="Open ${escapeHtml(b.category)} transactions"><div><div class="v092-budget-title">${escapeHtml(b.category)}</div><div class="v092-budget-meta">${friendlyMoney(b.spent)} spent of ${friendlyMoney(b.limit)}</div></div><div><div class="v092-budget-pct">${Math.round(Number(b.pct)||0)}%</div><div class="v092-budget-left">${friendlyMoney(left)} left</div></div></button><div class="v092-meter"><span style="width:${pct}%"></span></div><div class="v092-budget-actions"><button type="button" class="btn btn-small" onclick="showCategoryTransactions('${escapeJs(b.category)}')">View transactions</button><button type="button" class="btn btn-small" onclick="editBudget('${b.id}')">Edit budget</button></div></div>`;
+  }
+  window.budgetRowHtml = v092BudgetCard;
+  window.v60BudgetCard = v092BudgetCard;
+
+  const baseRenderBudgets = window.renderBudgets;
+  window.renderBudgets = function(){
+    const board=document.getElementById('budgetBoard');
+    if(board){
+      const stats=budgetStats().sort((a,b)=>b.pct-a.pct);
+      board.innerHTML=stats.length?`<div class="budget-board-list">${stats.map(v092BudgetCard).join('')}</div>`:emptyMini('No budgets yet','Create monthly category limits for quick guardrails.','Add budget','openDrawer(\'budget\')');
+      const summary=document.getElementById('budgetSummary');
+      if(summary){ const totalLimit=stats.reduce((a,b)=>a+b.limit,0); const totalSpent=stats.reduce((a,b)=>a+b.spent,0); const over=stats.filter(b=>b.pct>100).length; const room=Math.max(0,totalLimit-totalSpent); summary.innerHTML=`<div class="mini-item"><div><b>Total planned</b><br><span>This month</span></div><strong>${friendlyMoney(totalLimit)}</strong></div><div class="mini-item"><div><b>Remaining room</b><br><span>${totalLimit?Math.round(totalSpent/totalLimit*100):0}% used</span></div><strong class="${room?'good':'warn'}">${friendlyMoney(room)}</strong></div><div class="mini-item"><div><b>Needs attention</b><br><span>Over-budget categories</span></div><strong class="${over?'bad':'good'}">${over}</strong></div>`; }
+      const sugg=document.getElementById('budgetSuggestions');
+      if(sugg){ const existing=new Set((state.budgets||[]).map(b=>b.category)); const rows=byCategory(monthTransactions(currentMonth())).filter(([cat])=>!existing.has(cat)).slice(0,4); sugg.innerHTML=rows.length?rows.map(([cat,val])=>`<button type="button" class="mini-item" onclick="openDrawer('budget',{category:'${escapeJs(cat)}',limit:${Math.ceil(val*1.15/10)*10}})"><div><b>${escapeHtml(cat)}</b><br><span>Based on ${friendlyMoney(val)} current spend</span></div><strong>${friendlyMoney(Math.ceil(val*1.15/10)*10)}</strong></button>`).join(''):emptyMini('No suggestions','Import more spending or all active categories already have budgets.'); }
+      return;
+    }
+    if(typeof baseRenderBudgets==='function') baseRenderBudgets();
+  };
+
+  function ensureHoldingCardsContainer(){
+    const table=document.querySelector('#view-investments .table-wrap'); if(!table) return null;
+    let cards=document.getElementById('holdingCardsV092');
+    if(!cards){ cards=document.createElement('div'); cards.id='holdingCardsV092'; cards.className='holding-card-list'; table.insertAdjacentElement('afterend', cards); }
+    document.body.classList.add('investments-has-cards');
+    return cards;
+  }
+  function holdingCard(h){
+    const value=holdingValue(h); const cost=holdingCost(h); const gain=value-cost; const gainPct=cost?(gain/cost*100):0; const included=h.includeNetWorth!==false;
+    const symbol=escapeHtml(h.symbol||h.name||'Holding'); const name=escapeHtml(h.name||h.account||'Manual holding');
+    return `<div class="holding-card"><div class="holding-card-top"><div><div class="holding-symbol">${symbol}</div><div class="holding-name">${name}</div></div><div><div class="holding-value">${money(value)}</div><div class="holding-gain ${gain>=0?'good':'bad'}">${gain>=0?'+':''}${money(gain)} ${cost?`· ${gainPct>=0?'+':''}${pctFmt(gainPct)}`:''}</div></div></div><div class="holding-facts"><div class="holding-fact"><span>Qty</span><b>${nval(h.quantity).toLocaleString()}</b></div><div class="holding-fact"><span>Price</span><b>${money(h.price,{cents:true})}</b></div><div class="holding-fact"><span>Class</span><b>${escapeHtml(h.assetClass||'Stock')}</b></div></div><div class="holding-card-actions"><button type="button" class="btn btn-small" onclick="toggleHoldingInclude('${h.id}')">${included?'Exclude':'Include'}</button><button type="button" class="btn btn-small" onclick="openDrawer('holding', findById('holdings','${h.id}'))">Edit</button><button type="button" class="btn btn-small btn-danger" onclick="deleteTrackerItem('holdings','${h.id}')">Delete</button></div></div>`;
+  }
+  function renderHoldingCards(holdings){
+    const cards=ensureHoldingCardsContainer(); if(!cards) return;
+    cards.innerHTML=holdings.length?holdings.map(holdingCard).join(''):`<div class="empty"><div><strong>No holdings yet.</strong><p>Add stocks, funds, crypto, bonds, or cash positions manually.</p><button type="button" class="btn btn-primary" onclick="openDrawer('holding')">Add holding</button></div></div>`;
+  }
+
+  window.renderInvestments = function(){
+    const metrics=document.getElementById('investmentMetrics'); if(!metrics) return;
+    const holdings=state.holdings||[]; const value=holdings.reduce((a,h)=>a+holdingValue(h),0); const cost=holdings.reduce((a,h)=>a+holdingCost(h),0); const gain=value-cost; const ret=cost?(gain/cost*100):0; const inc=includedHoldings().reduce((a,h)=>a+holdingValue(h),0); const excluded=Math.max(0,value-inc);
+    metrics.innerHTML=`<div class="tracker-stat"><div class="metric-label">Portfolio value</div><div class="metric-value good">${friendlyMoney(value)}</div><div class="metric-sub">${holdings.length} manual holding${holdings.length===1?'':'s'}</div></div><div class="tracker-stat"><div class="metric-label">Unrealized P/L</div><div class="metric-value ${gain>=0?'good':'bad'}">${gain>=0?'+':''}${friendlyMoney(gain)}</div><div class="metric-sub">${cost?`${ret>=0?'+':''}${pctFmt(ret)} return on cost`:'Add cost basis for return'}</div></div><div class="tracker-stat"><div class="metric-label">Cost basis</div><div class="metric-value blue">${friendlyMoney(cost)}</div><div class="metric-sub">Manual purchase basis</div></div><div class="tracker-stat"><div class="metric-label">Net worth included</div><div class="metric-value purple">${friendlyMoney(inc)}</div><div class="metric-sub">${excluded?`${friendlyMoney(excluded)} excluded`:'No duplicate exclusion'}</div></div>`;
+    const rows=document.getElementById('holdingRows');
+    if(rows){ rows.innerHTML=holdings.length?holdings.map(h=>{ const value=holdingValue(h); const cost=holdingCost(h); const gain=value-cost; const included=h.includeNetWorth!==false; return `<tr><td><b>${escapeHtml(h.symbol||h.name||'Holding')}</b><br><span class="muted">${escapeHtml(h.name||'Manual holding')} · <span class="balance-badge ${included?'include':'exclude'}">${included?'Included':'Excluded'}</span></span></td><td>${escapeHtml(h.account||'Manual')}</td><td>${escapeHtml(h.assetClass||'Stock')}</td><td class="amount-cell">${nval(h.quantity).toLocaleString()}</td><td class="amount-cell">${money(h.price,{cents:true})}</td><td class="amount-cell good">${money(value)}</td><td class="amount-cell ${gain>=0?'good':'bad'}">${gain>=0?'+':''}${money(gain)}</td><td class="right"><div class="table-actions"><button type="button" class="btn btn-small" onclick="toggleHoldingInclude('${h.id}')">${included?'Exclude':'Include'}</button><button type="button" class="btn btn-small" onclick="openDrawer('holding', findById('holdings','${h.id}'))">Edit</button><button type="button" class="btn btn-small btn-danger" onclick="deleteTrackerItem('holdings','${h.id}')">Delete</button></div></td></tr>`; }).join(''):`<tr><td colspan="8"><div class="empty" style="min-height:150px"><div><strong>No holdings yet.</strong><p>Add stocks, funds, crypto, bonds, or cash positions manually.</p><button type="button" class="btn btn-primary" onclick="openDrawer('holding')">Add holding</button></div></div></td></tr>`; }
+    renderHoldingCards(holdings);
+    const alloc=allocationRows(); const list=document.getElementById('allocationList');
+    if(list){ list.innerHTML=alloc.length?alloc.map((a,i)=>`<div class="mini-item"><div><b><span class="dot" style="background:${COLORS[i%COLORS.length]}"></span> ${escapeHtml(a.name)}</b><br><span>${pctFmt(a.pct)} of portfolio</span><div class="allocation-bar"><span style="width:${a.pct}%;background:${COLORS[i%COLORS.length]}"></span></div></div><strong>${money(a.value)}</strong></div>`).join(''):emptyMini('No allocation yet','Add holdings to see asset class weights.','Add holding','openDrawer(\'holding\')'); }
+    const notes=document.getElementById('investmentNotes');
+    if(notes){ const top=alloc[0]; const concentration=top&&top.pct>65; notes.innerHTML=`<div class="investment-insight"><b>${concentration?'Concentration watch':'Allocation ready'}</b><span>${top?`${top.name} is ${pctFmt(top.pct)} of tracked holdings.`:'Add holdings to generate allocation notes.'}</span></div><div class="investment-insight"><b>Double-count guard</b><span>Exclude holdings from net worth if the same brokerage balance is already listed on the Net worth page.</span></div><div class="investment-insight"><b>Manual pricing</b><span>Prices do not update automatically. Edit holdings after checking current values.</span></div>`; }
+    if(typeof renderInvestmentChart==='function') requestAnimationFrame(()=>renderInvestmentChart());
+  };
+
+  function afterPaint(){
+    document.querySelectorAll('#appBuildLabel').forEach(el=>{el.textContent='Pre-v1 alpha · '+BUILD;});
+    const budgetHeat=document.getElementById('budgetHeat'); if(budgetHeat){ const heat=budgetStats().sort((a,b)=>b.pct-a.pct).slice(0,5); budgetHeat.innerHTML=heat.length?`<div class="budget-board-list">${heat.map(v092BudgetCard).join('')}</div>`:emptyMini('No budgets','Create simple monthly caps.','Add budget','openDrawer(\'budget\')'); }
+    const nav=document.getElementById('mobileNav'); if(nav){ nav.querySelectorAll('button').forEach(b=>{ const t=b.querySelector('span:last-child'); if(t){ t.textContent={Home:'Home',Overview:'Home',Review:'Review',Transactions:'Txns',Txns:'Txns',Budgets:'Budget',Budget:'Budget',More:'More'}[t.textContent.trim()]||t.textContent; } }); }
+  }
+  const prevRenderAll=window.renderAll; if(typeof prevRenderAll==='function'){ window.renderAll=function(){ prevRenderAll(); requestAnimationFrame(afterPaint); }; }
+  const prevShowView=window.showView; if(typeof prevShowView==='function'){ window.showView=function(id){ prevShowView(id); requestAnimationFrame(()=>{ afterPaint(); if(id==='investments') window.renderInvestments?.(); }); }; }
+  const prevBackup=window.backupPayload; if(typeof prevBackup==='function'){ window.backupPayload=function(){ const payload=prevBackup(); payload.build=BUILD; payload.releaseStage='Pre-v1 alpha'; return payload; }; }
+  requestAnimationFrame(()=>{ afterPaint(); window.renderInvestments?.(); });
+})();
+/* ---- end v0.9.2-alpha mobile clarity + investments refresh ---- */
 </script>
 </body>
 </html>
