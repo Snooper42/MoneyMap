@@ -3,7 +3,7 @@
 
 const STORAGE_KEY = window.MoneyMapConfig?.storageKey || 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = window.MoneyMapConfig?.buildId || 'v0.1.10';
+const APP_BUILD_ID = window.MoneyMapConfig?.buildId || 'v0.1.12';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;

@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const BUILD_ID='v0.1.10', STORAGE_KEY='moneymap_v1', ASSET_TOKEN='v0.1.10-20260530-1';
+  const BUILD_ID='v0.1.12', STORAGE_KEY='moneymap_v1', ASSET_TOKEN='v0.1.12-20260530-1';
   window.MoneyMapConfig=Object.freeze({buildId:BUILD_ID,expectedBuild:BUILD_ID,storageKey:STORAGE_KEY,releaseName:'Dashboard command center redesign, Accounts premium UI, taxonomy filters, stale renderer cleanup, and cache-safe static release',cacheBust:ASSET_TOKEN,localOnly:true});
   window.MONEYMAP_EXPECTED_BUILD=BUILD_ID;
   window.MoneyMap={version:BUILD_ID,assetToken:ASSET_TOKEN,storageKey:STORAGE_KEY,config:window.MoneyMapConfig};

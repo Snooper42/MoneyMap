@@ -45,7 +45,7 @@
   var TYPE_ICON={Checking:'bank',Savings:'piggy',Cash:'wallet','Money Market':'piggy',Brokerage:'chart',Retirement:'retirement',HSA:'retirement','Crypto Wallet':'chart',Property:'home',Vehicle:'car',Collectibles:'box',Jewelry:'diamond','Precious Metals':'diamond',Art:'box','Other Asset':'tag','Credit Card':'card',Loan:'loan','Student Loan':'loan',Mortgage:'mortgage','Auto Loan':'car','Other Liability':'loan'};
   var TYPE_GROUP={Checking:'cash',Savings:'cash',Cash:'cash','Money Market':'cash','CD':'cash','Certificate of Deposit':'cash',Brokerage:'investments',Retirement:'retirement',HSA:'retirement','Crypto Wallet':'investments',Property:'property',Vehicle:'vehicles',Collectibles:'collectibles',Jewelry:'jewelry','Precious Metals':'collectibles',Art:'collectibles','Other Asset':'other-assets','Credit Card':'credit-cards',Loan:'loans','Student Loan':'student-loans',Mortgage:'mortgage','Auto Loan':'auto-loans','Other Liability':'other-debt'};
   var GROUPS=[
-    {id:'cash',label:'Cash',icon:'piggy',side:'assets',hint:'Checking, savings, CDs, and cash'},
+    {id:'cash',label:'Cash',icon:'wallet',side:'assets',hint:'Checking, savings, CDs, and cash'},
     {id:'investments',label:'Investments',icon:'chart',side:'assets',hint:'Brokerage and crypto'},
     {id:'retirement',label:'Retirement',icon:'retirement',side:'assets',hint:'IRA, 401(k), HSA'},
     {id:'property',label:'Property',icon:'home',side:'assets',hint:'Home and real estate'},

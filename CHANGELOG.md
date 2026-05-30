@@ -1,3 +1,12 @@
+## v0.1.11 — 2026-05-30
+
+### Added
+- **Hash-based routing** (`src/js/core/router-v0.1.11.js`): browser back/forward now works between views. Every `showView()` call pushes a history entry; the back button restores the previous view. Direct deep-links (e.g. `index.html#accounts`) navigate on load.
+
+### Fixed (carried from v0.1.10 patch)
+- Accounts dot-click popover: `position: relative` and all `.mm-nw-popover-v014` CSS ported into `accounts-v0.1.10.css` (was lost when `accounts-desktop-v0.1.9.css` was removed from the load order)
+- Accounts grouping: Checking, Savings, Money Market, CDs all consolidate into a single **Cash** group instead of separate filter pills
+
 ## v0.1.10 — 2026-05-30 — Dashboard command center redesign + Accounts premium UI
 
 ### Dashboard

@@ -1,0 +1,33 @@
+MoneyMap v0.1.11 — 2026-05-30
+==============================
+
+WHAT'S NEW
+----------
+Browser back/forward navigation now works.
+
+Every time you switch views (Dashboard, Accounts, Transactions, etc.) a
+history entry is pushed so the browser's back and forward buttons navigate
+between them as expected. The URL hash also updates (e.g. #accounts), so
+reloading the page or bookmarking a URL lands you on the right view.
+
+This is handled by a small new file: src/js/core/router-v0.1.11.js.
+No other files were changed for this feature.
+
+ALSO FIXED IN THIS BUILD
+------------------------
+- Accounts dot-click popover was broken (missing CSS from removed legacy
+  file). Clicking blue dots on the net-worth chart now shows the snapshot
+  popup correctly again.
+- Accounts grouping: Checking, Savings, Money Market, and CDs now all
+  appear under a single "Cash" category instead of separate filter pills.
+
+PREVIEW
+-------
+  cd path\to\MoneyMap_v0.1.11
+  python -m http.server 8080 --bind 127.0.0.1
+  Open: http://127.0.0.1:8080
+
+COMPATIBILITY
+-------------
+Static file / GitHub Pages — no server config required.
+hash-based routing works on any file server, any browser.

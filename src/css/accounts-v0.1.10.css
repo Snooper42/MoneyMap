@@ -317,3 +317,93 @@
   .mm-nw-popover-v014{position:fixed;left:16px!important;right:16px!important;bottom:calc(90px + var(--mm-safe-bottom,0px))!important;top:auto!important;width:auto;}
   .mm-nw-popover-v014::after{display:none;}
 }
+
+/* ── PORTED FROM accounts-desktop-v0.1.9.css (removed in v0.1.10) ── */
+
+/* Account type badge inside row */
+.mm-acct-v110-type-pill{
+  display:inline-flex;align-items:center;padding:2px 7px;
+  border-radius:5px;font-size:10.5px;font-weight:700;
+  background:var(--panel3);border:1px solid var(--line);
+  color:var(--muted);white-space:nowrap;
+}
+
+/* Pill icon — constrain the mm-acct-icon-v014 to 16px inside a filter pill */
+.mm-acct-v110-pill-icon .mm-acct-icon-v014{
+  width:16px;height:16px;border-radius:4px;
+  background:transparent!important;color:inherit!important;box-shadow:none;
+}
+.mm-acct-v110-pill-icon .mm-acct-icon-v014 svg{width:11px;height:11px;}
+
+/* Chart card — overflow:visible is critical so popover escapes the card boundary */
+.mm-accounts-chart-card-v014{
+  position:relative;overflow:visible!important;
+  border-radius:var(--radius);
+  background:radial-gradient(circle at 14% 14%,rgba(var(--accent-rgb),.10),transparent 38%),
+    linear-gradient(180deg,var(--panel),var(--panel));
+}
+
+/* Chart top header area */
+.mm-accounts-chart-top-v014{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  gap:16px;margin-bottom:12px;flex-wrap:wrap;
+}
+
+/* "Filter: All groups" and "Groups: N" pills in chart section */
+.mm-accounts-control-pill-v014{
+  display:inline-flex;align-items:center;justify-content:space-between;
+  gap:8px;min-height:38px;padding:0 13px;
+  border:1px solid var(--line);border-radius:12px;
+  background:var(--panel2);color:var(--text);
+  font-size:12.5px;font-weight:800;white-space:nowrap;
+}
+.mm-accounts-control-pill-v014 span{color:var(--muted);font-weight:700;}
+
+/* Balance groups list section header */
+.mm-accounts-list-head-v014{
+  display:flex;align-items:flex-start;justify-content:space-between;
+  gap:14px;margin-bottom:14px;
+}
+.mm-accounts-list-head-v014 h3{margin:0;font-size:14.5px;font-weight:800;letter-spacing:-.02em;}
+.mm-accounts-list-head-v014 p{margin:3px 0 0;font-size:12.5px;color:var(--muted);}
+
+/* Icon picker in account drawer */
+.v014-icon-picker{margin-top:14px;}
+.v014-icon-picker>label{
+  display:block;font-size:10.5px;font-weight:900;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--muted);
+  margin-bottom:8px;
+}
+.v014-icon-grid{
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;
+}
+.v014-icon-choice{
+  width:100%;min-height:46px;border:1px solid var(--line);
+  border-radius:13px;background:var(--panel2);
+  display:grid;place-items:center;cursor:pointer;
+  transition:border-color .12s,background .12s;
+}
+.v014-icon-choice:hover{border-color:var(--line2);background:var(--panel);}
+.v014-icon-choice .mm-acct-icon-v014{width:30px;height:30px;border-radius:10px;box-shadow:none;}
+.v014-icon-choice .mm-acct-icon-v014 svg{width:17px;height:17px;}
+.v014-icon-choice.active{
+  border-color:rgba(var(--accent-rgb),.6);
+  background:rgba(var(--accent-rgb),.09);
+  box-shadow:0 0 0 3px rgba(var(--accent-rgb),.09);
+}
+@media(max-width:460px){.v014-icon-grid{grid-template-columns:repeat(4,minmax(0,1fr));}}
+
+/* ── RESPONSIVE BREAKPOINT FIX ──
+   .main drops to padding:12px at 760px but accounts header had -32px margin.
+   Must match main's actual padding at each breakpoint. */
+@media(max-width:760px){
+  .mm-acct-v110-header{margin:-26px -12px 20px;padding:26px 12px 22px;}
+}
+@media(max-width:640px){
+  .mm-acct-v110-header{margin:-26px -12px 18px;padding:22px 12px 20px;}
+  .mm-acct-v110-header-inner{flex-direction:column;gap:14px;}
+  .mm-acct-v110-header-right{align-items:flex-start;}
+  .mm-acct-v110-layout{gap:12px;}
+  .mm-acct-v110-summary{grid-template-columns:1fr;}
+  .v014-icon-grid{grid-template-columns:repeat(4,minmax(0,1fr));}
+}
