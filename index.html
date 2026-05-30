@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<title>MoneyMap</title>
+<meta content="MoneyMap" name="application-name"/>
+<meta content="MoneyMap" name="apple-mobile-web-app-title"/>
+<meta content="A private, local-first personal finance dashboard for budgets, reviews, goals, and net worth." name="description"/>
+<meta content="#0f172a" media="(prefers-color-scheme: dark)" name="theme-color"/>
+<meta content="#f7f5ef" media="(prefers-color-scheme: light)" name="theme-color"/>
+<meta content="website" property="og:type"/>
+<meta content="MoneyMap" property="og:title"/>
+<meta content="A clean personal finance dashboard for budgets, reviews, goals, and net worth." property="og:description"/>
+<meta content="summary" name="twitter:card"/>
+<meta content="MoneyMap" name="twitter:title"/>
+<meta content="A clean personal finance dashboard for budgets, reviews, goals, and net worth." name="twitter:description"/>
+<link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f172a'/%3E%3Cpath d='M18 43V21h7l7 10 7-10h7v22h-7V32.5L33.8 40h-3.6L25 32.5V43h-7z' fill='%23fb923c'/%3E%3C/svg%3E" rel="icon"/>
+
+
+<link href="src/css/base.css?v=qa5-20260530" rel="stylesheet"/>
+<link href="src/css/layout.css?v=qa5-20260530" rel="stylesheet"/>
+<link href="src/css/components.css?v=qa5-20260530" rel="stylesheet"/>
+<link href="src/css/mobile.css?v=qa5-20260530" rel="stylesheet"/></head>
+
+
+
+
+
+<body>
+<a class="skip-link" href="#mainContent">Skip to main content</a>
+<div class="app-shell" id="appShell">
+<aside class="sidebar">
+<div class="brand">
+<div class="logo"></div>
+<div><h1>MoneyMap</h1><p>Private weekly money OS</p></div>
+</div>
+<div class="nav-kicker">Workspace</div>
+<div class="nav-group" id="sideNav"></div>
+<div class="nav-kicker">Tools</div>
+<div class="nav-group">
+<button class="nav-btn" onclick="openDrawer('backup')"><span class="nav-icon">↧</span><span class="nav-copy"><strong>Backups</strong><span>Export, import, reset</span></span></button>
+<button class="nav-btn" onclick="openDrawer('quickAdd')"><span class="nav-icon">＋</span><span class="nav-copy"><strong>Quick add</strong><span>Transaction, budget, goal</span></span></button>
+</div>
+<div class="sidebar-card privacy-lock"><div>🔒</div><div><b>Private by default.</b><br/>Data lives in this browser only. Hosting the file does not upload anyone’s finances.</div></div>
+</aside>
+<main class="main" id="mainContent" tabindex="-1">
+<div class="topbar">
+<div class="searchbar"><span>⌘</span><input id="globalSearch" oninput="renderAll()" placeholder="Search transactions, merchants, categories..."/></div>
+<div class="actions">
+<button class="btn btn-ghost topbar-secondary" id="themeBtn" onclick="toggleTheme()">Dark</button>
+<button class="btn topbar-secondary" onclick="openFirstRun(true)">Start</button>
+<button class="btn topbar-secondary" onclick="openCustomizeDrawerV51()">Customize</button>
+<button class="btn topbar-secondary" onclick="loadDemoData()">Demo</button>
+<button class="btn btn-primary" onclick="showView('import')">Import CSV</button>
+<div class="topbar-menu-wrap">
+<button aria-label="More options" class="topbar-overflow-btn" onclick="toggleTopbarMenu()">···</button>
+<div class="topbar-menu" id="topbarMenu">
+<button class="btn btn-ghost" id="themeBtnMobile" onclick="toggleTheme();toggleTopbarMenu()">Theme</button>
+<button class="btn" onclick="openFirstRun(true);toggleTopbarMenu()">Start</button>
+<button class="btn" onclick="openCustomizeDrawerV51();toggleTopbarMenu()">Customize</button>
+<button class="btn" onclick="loadDemoData();toggleTopbarMenu()">Demo</button>
+</div>
+</div>
+</div>
+</div>
+<section class="view active" id="view-overview">
+<div class="hero" id="overviewHero">
+<div class="hero-card onboarding-card" id="welcomeHero">
+<button aria-label="Remove this tile" class="dismiss-btn" onclick="setHomeTile('intro', false)" title="Remove this tile">×</button>
+<div class="eyebrow">Weekly review system</div>
+<h2>Make your money obvious.</h2>
+<p>Import transactions once a week, review what changed, spot leaks, track goals, and keep a clean financial picture without paying for bank syncing.</p>
+<div class="hero-row">
+<button class="btn btn-primary" onclick="showView('import')">Import transactions</button>
+<button class="btn" onclick="startWeeklyReview()">Start weekly review</button>
+<button class="btn" onclick="loadDemoData()">Try demo data</button>
+</div>
+<div class="welcome-note">This card auto-hides after data is added. You can also hide it now or bring it back in Settings.</div>
+</div>
+<div class="command-strip" id="compactCommand">
+<button aria-label="Remove this tile" class="dismiss-btn" onclick="setHomeTile('intro', false)" title="Remove this tile">×</button>
+<div class="command-copy">
+<div class="eyebrow">Command center</div>
+<h2 id="compactHeadline">Weekly money check</h2>
+<p id="compactSubline">Import, review, and clean up your finances without the giant onboarding card.</p>
+</div>
+<div class="command-actions">
+<button class="btn btn-primary" onclick="showView('import')">Import CSV</button>
+<button class="btn" onclick="startWeeklyReview()">Review</button>
+<button class="btn" onclick="openDrawer('quickAdd')">Quick add</button>
+</div>
+</div>
+<div class="hero-metric">
+<button aria-label="Remove money score tile" class="dismiss-btn" onclick="setHomeTile('score', false)" title="Remove money score tile">×</button>
+<div class="card-label metric-label">Money score</div>
+<div class="metric-value" id="moneyScore">0</div>
+<div class="metric-sub" id="moneyScoreSub">Import transactions or add demo data to begin.</div>
+<div class="progress" style="margin-top:18px"><span id="moneyScoreBar"></span></div>
+<div class="split-line"></div>
+<div class="mini-list" id="smartNudges"></div>
+<div class="score-actions" id="scoreActions"></div>
+</div>
+</div>
+<div class="metric-grid">
+<button class="metric-card" onclick="showView('transactions')" role="button" type="button"><div class="metric-label">This month spent</div><div class="metric-value bad" id="mtdSpend">$0</div><div class="metric-sub" id="mtdSpendSub">Across visible spending categories</div></button>
+<button class="metric-card" onclick="showView('transactions')" role="button" type="button"><div class="metric-label">Income tracked</div><div class="metric-value good" id="mtdIncome">$0</div><div class="metric-sub">This calendar month</div></button>
+<button class="metric-card" onclick="showUnreviewedTransactions()" role="button" type="button"><div class="metric-label">Unreviewed</div><div class="metric-value gold" id="unreviewedCount">0</div><div class="metric-sub">Transactions waiting for cleanup</div></button>
+<button class="metric-card" onclick="showView('recurring')" role="button" type="button"><div class="metric-label">Subscriptions</div><div class="metric-value purple" id="subscriptionTotal">$0</div><div class="metric-sub" id="subscriptionSub">Detected recurring monthly spend</div></button>
+</div>
+<div class="monarch-benchmark-strip" id="monarchUsabilityPanel"></div>
+<div class="v5-command-board" id="v5CommandBoard"></div>
+<div class="v52-parity-grid" id="v52ParityPanel"></div>
+<div class="grid-21 overview-grid-main">
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Spending map</h3><p class="card-subtitle">Where your money went this month.</p></div><span class="pill" id="monthPill"></span></div>
+<div class="canvas-wrap chart-interactive mm-chart-card"><canvas aria-label="Monthly spending by category" id="spendCanvas" tabindex="0"></canvas><div aria-hidden="true" class="chart-tooltip" id="spendChartTip"></div></div><div class="chart-legend" id="spendLegend"></div><div class="chart-hover-note">Hover or tap a bar to inspect spending by category.</div>
+</div>
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Top categories</h3><p class="card-subtitle">Largest controllable spend.</p></div></div>
+<div class="mini-list" id="topCategories"></div>
+</div>
+</div>
+<div class="grid-2 overview-grid-bottom">
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Budget heat</h3><p class="card-subtitle">Budgets closest to their limit.</p></div><button class="btn btn-small" onclick="showView('budgets')">Manage</button></div>
+<div id="budgetHeat"></div>
+</div>
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Recent activity</h3><p class="card-subtitle">Latest imported transactions.</p></div><button class="btn btn-small" onclick="showView('transactions')">View all</button></div>
+<div class="mini-list" id="recentActivity"></div>
+</div>
+</div>
+<div class="card monthly-plan-card" id="monthlyPlanCard"></div>
+</section>
+<section class="view" id="view-import">
+<div class="page-head"><div><h2 class="section-title">Import center</h2><p class="section-sub">Drop CSVs from your bank, credit card, Apple Card, or exported spreadsheet. MoneyMap dedupes and categorizes them.</p></div><button class="btn" onclick="downloadSampleCsv()">Download sample CSV</button></div>
+<div class="steps">
+<div class="step active" id="stepFile"><div class="step-num">1</div><h4>Choose files</h4><p>Drag multiple CSVs at once.</p></div>
+<div class="step" id="stepMap"><div class="step-num">2</div><h4>Map columns</h4><p>Save mapping per bank.</p></div>
+<div class="step" id="stepClean"><div class="step-num">3</div><h4>Review import</h4><p>Check totals before accepting.</p></div>
+<div class="step" id="stepDone"><div class="step-num">4</div><h4>Review week</h4><p>Undo is available in history.</p></div>
+</div>
+<div class="grid-12">
+<div class="card">
+<div class="dropzone" id="dropzone">
+<div class="upload-icon">⇡</div>
+<h3>Drop CSV files here</h3>
+<p>Or click to select files. Nothing leaves your device.</p>
+<input accept=".csv,text/csv" id="csvInput" multiple="" type="file"/>
+</div>
+<div class="split-line"></div>
+<div class="mini-list">
+<div class="mini-item"><div><b>Supports</b><br/><span>Date, Description, Amount, Debit/Credit, Account, Category</span></div><span>CSV</span></div>
+<div class="mini-item"><div><b>Dedupe</b><br/><span>Checks existing data and duplicates inside the selected batch</span></div><span id="dedupeMode">On</span></div>
+<div class="mini-item"><div><b>Auto rules</b><br/><span>Merchant text rules apply at import</span></div><span id="ruleCountImport">0 rules</span></div>
+</div>
+</div>
+<div class="stack">
+<div class="card" id="mappingCard">
+<div class="card-header"><div><h3 class="card-title">Column mapping</h3><p class="card-subtitle">MoneyMap auto-detects columns, reuses saved bank mappings, and lets you review the batch before accepting.</p></div></div>
+<div class="empty" id="mappingEmpty"><div><strong>No file selected yet.</strong><p>Drop one or more CSVs to preview rows, confirm mapping, and review duplicates before import.</p><div class="empty-actions"><button class="btn btn-primary" onclick="document.getElementById('csvInput')?.click()">Choose CSV</button><button class="btn" onclick="downloadSampleCsv()">Sample CSV</button></div></div></div>
+<div id="mappingContent" style="display:none">
+<div class="file-tabs" id="fileTabs"></div>
+<div class="mapping-tools">
+<div class="form-field"><label>Bank / mapping name</label><input class="input" id="mappingProfileName" oninput="updateActiveProfileName(this.value)" placeholder="Example: Chase checking"/></div>
+<div class="mapping-tool-actions"><button class="btn btn-small" onclick="saveActiveMapping()">Save mapping</button><button class="btn btn-small" onclick="autoDetectActiveMapping()">Auto-detect again</button></div>
+</div>
+<div class="mini-list import-status" id="mappingStatus"></div>
+<div class="split-line"></div>
+<div class="form-row-3" id="mappingFields"></div>
+<div class="split-line"></div>
+<div class="mapping-grid" id="mappingPreview"></div>
+<div class="split-line"></div>
+<div class="import-summary" id="importSummary"></div>
+<div class="hero-row"><button class="btn btn-primary" onclick="prepareImportSummary()">Review import</button><button class="btn btn-disabled" disabled="" id="acceptImportBtn" onclick="commitImport()">Accept import</button><button class="btn" onclick="clearPendingImport()">Clear</button></div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Import history</h3><p class="card-subtitle">Recent batches, duplicate counts, and undo for the latest batch.</p></div></div>
+<div class="mini-list" id="importHistory"></div>
+</div>
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Saved bank mappings</h3><p class="card-subtitle">Reusable column presets saved locally for future CSV imports.</p></div></div>
+<div class="mini-list" id="savedMappingsList"></div>
+</div>
+</div>
+</div>
+</section>
+<section class="view" id="view-review">
+<div class="page-head"><div><h2 class="section-title">Weekly review</h2><p class="section-sub">Review the current queue, clean merchant names, approve categories, and close the week with one click.</p></div><div class="actions"><button class="btn" onclick="cleanReviewQueueMerchants()">Clean queue</button><button class="btn" onclick="approveCurrentWeek()">Approve week</button><button class="btn" onclick="approveAllReviewed()">Approve visible</button><button class="btn btn-primary" onclick="showView('rules')">Improve rules</button></div></div>
+<div class="review-summary-grid" id="weeklyReviewSummary"></div>
+<div class="grid-21">
+<div class="review-card">
+<div class="swipe-hint"><span>👈 Swipe left to hide</span><span>Swipe right to approve 👉</span></div>
+<div id="reviewQueue"></div>
+</div>
+<div class="stack">
+<div class="card"><h3 class="card-title">Review controls</h3><p class="card-subtitle">Narrow the queue without leaving the weekly workflow.</p><div class="split-line"></div><div class="review-controls"><div><label>Search queue</label><input class="input" id="reviewSearch" oninput="reviewIndex=0; renderReview()" placeholder="Merchant, category, account..."/></div><div><label>Scope</label><select id="reviewScope" onchange="reviewIndex=0; renderReview()"><option value="all">All unreviewed</option><option value="week">Current week</option><option value="month">This month</option><option value="uncategorized">Uncategorized only</option></select></div></div></div>
+<div class="card"><h3 class="card-title">Review stats</h3><div class="split-line"></div><div class="mini-list" id="reviewStats"></div></div>
+<div class="card"><h3 class="card-title">Fast keys</h3><p class="card-subtitle">Use your keyboard while reviewing.</p><div class="split-line"></div><div class="mini-list"><div class="mini-item"><b>Approve</b><span><span class="kbd">A</span></span></div><div class="mini-item"><b>Skip</b><span><span class="kbd">S</span></span></div><div class="mini-item"><b>Create rule</b><span><span class="kbd">R</span></span></div><div class="mini-item"><b>Clean merchant</b><span><span class="kbd">C</span></span></div></div></div>
+</div>
+</div>
+</section>
+<section class="view" id="view-transactions">
+<div class="page-head"><div><h2 class="section-title">Transactions</h2><p class="section-sub">Search, filter, recategorize, hide transfers, and export cleaned data.</p></div><div class="actions"><button class="btn" onclick="cleanVisibleMerchants()">Clean visible</button><button class="btn" onclick="cleanAllMerchants()">Clean all</button><button class="btn" onclick="exportTransactionsCsv()">Export CSV</button><button class="btn btn-primary" onclick="openDrawer('quickAdd')">Add transaction</button></div></div>
+<div class="card">
+<div class="tx-filter-grid">
+<div><label>Search transactions</label><input class="input" id="transactionSearch" oninput="renderAll()" placeholder="Merchant, category, account, notes..."/></div>
+<div><label>Month</label><select id="filterMonth" onchange="renderAll()"></select></div>
+<div><label>Category</label><select id="filterCategory" onchange="renderAll()"></select></div>
+<div><label>Account</label><select id="filterAccount" onchange="renderAll()"><option value="all">All accounts</option></select></div>
+<div><label>Visibility</label><select id="filterVisibility" onchange="renderAll()"><option value="all">All</option><option value="visible">Visible only</option><option value="hidden">Hidden/transfers</option><option value="unreviewed">Unreviewed</option><option value="reviewed">Reviewed</option></select></div>
+<div><label>Amount type</label><select id="filterAmountType" onchange="renderAll()"><option value="all">All amounts</option><option value="spend">Spending only</option><option value="income">Income only</option><option value="zero">Zero / unread amount</option></select></div>
+</div>
+<div class="split-line"></div>
+<div class="table-wrap"><table><thead><tr><th>Date</th><th>Merchant</th><th>Category</th><th>Account</th><th>Status</th><th class="right">Amount</th><th></th></tr></thead><tbody id="transactionRows"></tbody></table></div>
+<div class="tx-card-list" id="transactionCards"></div>
+</div>
+</section>
+<section class="view" id="view-budgets">
+<div class="page-head"><div><h2 class="section-title">Budgets</h2><p class="section-sub">Set simple monthly caps. Spending updates automatically from imported transactions.</p></div><button class="btn btn-primary" onclick="openDrawer('budget')">Add budget</button></div>
+<div class="grid-21">
+<div class="card"><div class="card-header"><div><h3 class="card-title">Monthly budget board</h3><p class="card-subtitle">Green means under control. Orange means watch. Red means over.</p></div></div><div id="budgetBoard"></div></div>
+<div class="stack"><div class="card"><h3 class="card-title">Budget summary</h3><div class="split-line"></div><div class="mini-list" id="budgetSummary"></div></div><div class="card"><h3 class="card-title">Suggested budgets</h3><p class="card-subtitle">Based on current spending.</p><div class="split-line"></div><div class="mini-list" id="budgetSuggestions"></div></div></div>
+</div>
+</section>
+<section class="view" id="view-recurring">
+<div class="page-head"><div><h2 class="section-title">Subscriptions</h2><p class="section-sub">Recurring charges are detected from repeating merchants and similar amounts.</p></div><button class="btn" onclick="detectRecurring(true)">Rescan</button></div>
+<div class="metric-grid"><div class="metric-card"><div class="metric-label">Monthly recurring</div><div class="metric-value purple" id="recMonthly">$0</div><div class="metric-sub">Detected active subscriptions</div></div><div class="metric-card"><div class="metric-label">Annualized</div><div class="metric-value gold" id="recAnnual">$0</div><div class="metric-sub">Monthly recurring × 12</div></div><div class="metric-card"><div class="metric-label">Items</div><div class="metric-value blue" id="recCount">0</div><div class="metric-sub">Likely recurring merchants</div></div><div class="metric-card"><div class="metric-label">Potential cuts</div><div class="metric-value good" id="recCuts">$0</div><div class="metric-sub">Items marked review/cancel</div></div></div>
+<div class="card"><div class="card-header"><div><h3 class="card-title">Recurring charges</h3><p class="card-subtitle">Mark things as keep, review, or cancel target.</p></div></div><div class="mini-list" id="recurringList"></div></div>
+</section>
+<section class="view" id="view-networth">
+<div class="page-head"><div><h2 class="section-title">Net worth</h2><p class="section-sub">Manual account balances, included assets and liabilities, and historical snapshots in one clean tracker.</p></div><div class="actions"><button class="btn" onclick="saveNetWorthSnapshot()">Save snapshot</button><button class="btn btn-primary" onclick="openDrawer('account')">Add account</button></div></div>
+<div class="tracker-hero" id="netWorthMetrics"></div>
+<div class="tracker-grid">
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Manual account balances</h3><p class="card-subtitle">Checking, savings, brokerage balances, cards, loans, property, and other manual values. Use include/exclude to avoid double-counting holdings or debts.</p></div><button class="btn btn-small" onclick="openDrawer('account')">Add</button></div>
+<div class="table-wrap"><table><thead><tr><th>Account</th><th>Type</th><th>Updated</th><th>Status</th><th class="right">Balance</th><th></th></tr></thead><tbody id="accountRows"></tbody></table></div>
+</div>
+<div class="stack">
+<div class="card"><div class="card-header"><div><h3 class="card-title">Net worth trend</h3><p class="card-subtitle">Snapshots are manual so old values never drift when balances change.</p></div></div><div class="canvas-wrap chart-interactive mm-chart-card"><canvas aria-label="Net worth trend" id="netWorthCanvas" tabindex="0"></canvas><div aria-hidden="true" class="chart-tooltip" id="netWorthChartTip"></div></div><div class="chart-legend" id="netWorthLegend"></div><div class="chart-hover-note">Hover or tap a point to inspect a net worth snapshot.</div><div class="split-line"></div><div class="form-row"><div><label>Snapshot date</label><input class="input" id="netWorthSnapshotDate" type="date"/></div><div><label>Note</label><input class="input" id="netWorthSnapshotNote" placeholder="Optional note"/></div></div><div class="hero-row"><button class="btn btn-primary" onclick="saveNetWorthSnapshot()">Save current net worth</button><button class="btn" onclick="exportTrackerCsv('networth')">Export CSV</button></div></div>
+<div class="card"><div class="card-header"><div><h3 class="card-title">Snapshot history</h3><p class="card-subtitle">Newest snapshots first.</p></div></div><div class="mini-list" id="netWorthSnapshotList"></div></div>
+</div>
+</div>
+</section>
+<section class="view" id="view-debt">
+<div class="page-head"><div><h2 class="section-title">Debt tracker</h2><p class="section-sub">Track payoff balances, APR, minimum payments, extra payments, and the next best debt to attack.</p></div><div class="actions"><button class="btn" onclick="exportTrackerCsv('debts')">Export CSV</button><button class="btn btn-primary" onclick="openDrawer('debt')">Add debt</button></div></div>
+<div class="tracker-hero" id="debtMetrics"></div>
+<div class="tracker-grid-reverse">
+<div class="stack">
+<div class="payoff-focus" id="debtFocus"></div>
+<div class="card"><h3 class="card-title">Strategy</h3><p class="card-subtitle">Avalanche minimizes interest. Snowball prioritizes quick wins.</p><div class="split-line"></div><label>Payoff strategy</label><select id="debtStrategy" onchange="setDebtStrategy(this.value)"><option value="avalanche">Avalanche, highest APR first</option><option value="snowball">Snowball, smallest balance first</option></select><div class="split-line"></div><div class="mini-list" id="debtPlan"></div></div>
+</div>
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Debt accounts</h3><p class="card-subtitle">Balances are positive amounts owed. Payments are monthly.</p></div><button class="btn btn-small" onclick="openDrawer('debt')">Add</button></div>
+<div class="table-wrap"><table><thead><tr><th>Debt</th><th>APR</th><th>Min</th><th>Extra</th><th>Include</th><th class="right">Balance</th><th></th></tr></thead><tbody id="debtRows"></tbody></table></div>
+</div>
+</div>
+</section>
+<section class="view" id="view-investments">
+<div class="page-head"><div><h2 class="section-title">Investment holdings</h2><p class="section-sub">Manual holdings, allocation, cost basis, unrealized gain/loss, and net-worth inclusion control.</p></div><div class="actions"><button class="btn" onclick="exportTrackerCsv('holdings')">Export CSV</button><button class="btn btn-primary" onclick="openDrawer('holding')">Add holding</button></div></div>
+<div class="tracker-hero" id="investmentMetrics"></div>
+<div class="tracker-grid">
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Holdings</h3><p class="card-subtitle">Update price manually whenever you want a new snapshot. Shares can be fractional.</p></div><button class="btn btn-small" onclick="openDrawer('holding')">Add</button></div>
+<div class="table-wrap"><table><thead><tr><th>Holding</th><th>Account</th><th>Class</th><th class="right">Qty</th><th class="right">Price</th><th class="right">Value</th><th class="right">Gain/Loss</th><th></th></tr></thead><tbody id="holdingRows"></tbody></table></div>
+</div>
+<div class="stack">
+<div class="card"><div class="card-header"><div><h3 class="card-title">Allocation</h3><p class="card-subtitle">Grouped by asset class.</p></div></div><div class="canvas-wrap chart-interactive mm-chart-card"><canvas aria-label="Investment allocation by asset class" id="investmentCanvas" tabindex="0"></canvas><div aria-hidden="true" class="chart-tooltip" id="investmentChartTip"></div></div><div class="chart-legend" id="investmentLegend"></div><div class="chart-hover-note">Hover or tap a bar to inspect allocation value and weight.</div><div class="split-line"></div><div class="mini-list" id="allocationList"></div></div>
+<div class="card"><h3 class="card-title">Portfolio notes</h3><p class="card-subtitle">Use manual holdings for visibility. Exclude holdings from net worth if you already track the same account balance on the Net worth page.</p><div class="split-line"></div><div class="mini-list" id="investmentNotes"></div></div>
+</div>
+</div>
+</section>
+<section class="view" id="view-credit">
+<div class="page-head"><div><h2 class="section-title">Credit tracker</h2><p class="section-sub">Optional monthly score logging for Experian, Equifax, and TransUnion. Nothing is pulled automatically, nothing leaves this browser.</p></div><button class="btn btn-primary" onclick="document.getElementById('creditMonth')?.focus()">Add monthly scores</button></div>
+<div class="credit-hero">
+<div class="card credit-score-card">
+<div class="card-header"><div><h3 class="card-title">Latest credit snapshot</h3><p class="card-subtitle" id="creditLatestSub">Add your first score log to begin.</p></div></div>
+<div class="score-summary">
+<div class="score-ring" id="creditAvgRing" style="--score-pct:0%"><strong id="creditAvgScore">—</strong></div>
+<div>
+<div class="metric-label">Average score</div>
+<div class="metric-sub" id="creditAvgDelta">No monthly trend yet.</div>
+<div style="margin-top:12px"><span class="score-band" id="creditBand">Not logged</span></div>
+</div>
+</div>
+</div>
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Score trend</h3><p class="card-subtitle">Track long-term movement by bureau and average.</p></div></div>
+<div class="canvas-wrap chart-interactive" id="creditChartWrap"><canvas aria-label="Credit score trend. Hover or focus to inspect bureau values by month." id="creditCanvas" tabindex="0"></canvas><div aria-hidden="true" class="chart-tooltip" id="creditChartTip"></div></div><div class="chart-legend" id="creditLegend"></div><div class="chart-hover-note">Hover or tap near a month to update the legend with each bureau and average score.</div>
+</div>
+</div>
+<div class="credit-metric-grid" id="creditMetricGrid"></div>
+<div class="bureau-grid" style="margin:var(--gap) 0">
+<div class="bureau-card"><h4>Experian</h4><div class="score" id="experianLatest">—</div><div class="metric-sub" id="experianDelta">No data</div></div>
+<div class="bureau-card"><h4>Equifax</h4><div class="score" id="equifaxLatest">—</div><div class="metric-sub" id="equifaxDelta">No data</div></div>
+<div class="bureau-card"><h4>TransUnion</h4><div class="score" id="transunionLatest">—</div><div class="metric-sub" id="transunionDelta">No data</div></div>
+</div>
+<div class="grid-12">
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Log monthly scores</h3><p class="card-subtitle">Enter any bureaus you have. Missing scores are fine.</p></div></div>
+<div class="form-field"><label>Month</label><input class="input" id="creditMonth" type="month"/></div>
+<div class="form-row-3">
+<div><label>Experian</label><input class="input" id="creditExperian" max="850" min="300" placeholder="300–850" type="number"/></div>
+<div><label>Equifax</label><input class="input" id="creditEquifax" max="850" min="300" placeholder="300–850" type="number"/></div>
+<div><label>TransUnion</label><input class="input" id="creditTransunion" max="850" min="300" placeholder="300–850" type="number"/></div>
+</div>
+<div class="score-note-grid">
+<div><label>Utilization %</label><input class="input" id="creditUtilization" max="100" min="0" placeholder="Optional" step="0.1" type="number"/></div>
+<div><label>Score source</label><input class="input" id="creditSource" placeholder="App, lender, bureau"/></div>
+</div>
+<div class="form-field" style="margin-top:12px"><label>Note</label><input class="input" id="creditNote" placeholder="Optional, e.g. paid utilization down"/></div>
+<div class="score-note-grid"><div><label>Target score</label><input class="input" id="creditTarget" max="850" min="300" placeholder="Optional target" type="number"/></div><div><label>Reminder cadence</label><select id="creditCadence"><option value="monthly">Monthly</option><option value="quarterly">Quarterly</option><option value="manual">Manual only</option></select></div></div>
+<div class="hero-row"><button class="btn btn-primary" onclick="saveCreditLog()">Save credit log</button><button class="btn" onclick="clearCreditForm()">Clear</button></div>
+<div class="split-line"></div>
+<p class="microcopy">Tip: log scores once a month from the same source when possible. Different apps may show different scoring models.</p>
+</div>
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Credit history</h3><p class="card-subtitle">Newest logs first. Edit by clicking a row’s Edit button.</p></div></div>
+<div class="table-wrap"><table><thead><tr><th>Month</th><th>Experian</th><th>Equifax</th><th>TransUnion</th><th>Average</th><th>Util.</th><th>Source</th><th>Note</th><th></th></tr></thead><tbody id="creditRows"></tbody></table></div>
+</div>
+</div>
+</section>
+<section class="view" id="view-goals">
+<div class="page-head"><div><h2 class="section-title">Goals</h2><p class="section-sub">Track savings targets, payoff targets, big purchases, deadline risk, and monthly pace.</p></div><div class="actions"><button class="btn" onclick="exportTrackerCsv('goals')">Export CSV</button><button class="btn btn-primary" onclick="openDrawer('goal')">Add goal</button></div></div>
+<div class="goal-summary" id="goalSummary"></div>
+<div class="grid-3" id="goalGrid"></div>
+</section>
+<section class="view" id="view-rules">
+<div class="page-head"><div><h2 class="section-title">Rules and automation</h2><p class="section-sub">Create merchant-text rules, auto-hide transfers, detect recurring charges, and accept suggested rules when repeated edits reveal a pattern.</p></div><div class="actions"><button class="btn" onclick="runTransferScan(true)">Run transfer scan</button><button class="btn btn-primary" onclick="addRuleFromForm()">Add rule</button></div></div>
+<div class="grid-12">
+<div class="stack">
+<div class="card">
+<h3 class="card-title">Create merchant rule</h3><p class="card-subtitle">Rules match imported raw descriptions and cleaned merchant names. They run during import and when you apply automation.</p><div class="split-line"></div>
+<div class="form-field"><label>Description contains</label><input class="input" id="ruleContains" placeholder="PUBLIX, NETFLIX, CREDIT CARD PAYMENT"/></div>
+<div class="rule-action-grid">
+<div><label>Action</label><select id="ruleAction" onchange="syncRuleFormAction()"><option value="categorize">Set category</option><option value="hide">Set category and hide</option><option value="transfer">Mark as transfer and hide</option></select></div>
+<div><label>Amount type</label><select id="ruleDirection"><option value="any">Any amount</option><option value="spend">Spending only</option><option value="income">Income only</option><option value="zero">Zero amount only</option></select></div>
+</div>
+<div class="form-field" style="margin-top:12px"><label>Set category</label><input class="input" id="ruleCategory" list="categoryList" placeholder="Groceries"/></div>
+<div class="auto-note">Use “mark as transfer and hide” for credit-card payments, account transfers, and other money movement that should not count as spending.</div>
+<div class="hero-row"><button class="btn btn-primary" onclick="addRuleFromForm()">Save rule</button><button class="btn" onclick="applyRulesToAll()">Apply automation now</button><button class="btn" onclick="detectRecurring(true)">Rescan subscriptions</button></div>
+</div>
+<div class="card"><div class="card-header"><div><h3 class="card-title">Automation health</h3><p class="card-subtitle">Quick controls for transfer detection, subscription detection, and rule suggestions.</p></div></div><div class="mini-list" id="automationStats"></div></div>
+</div>
+<div class="stack">
+<div class="card"><div class="card-header"><div><h3 class="card-title">Suggested rules</h3><p class="card-subtitle">Generated from repeated category edits and repeated merchants with consistent categories.</p></div></div><div class="mini-list" id="suggestedRulesList"></div></div>
+<div class="card"><div class="card-header"><div><h3 class="card-title">Active rules</h3><p class="card-subtitle">Rules are checked in order. More specific rules should stay above broad rules.</p></div></div><div class="mini-list" id="rulesList"></div></div>
+</div>
+</div>
+</section>
+<section class="view" id="view-settings">
+<div class="page-head"><div><h2 class="section-title">Settings</h2><p class="section-sub">Local preferences, privacy, display, and app maintenance.</p></div><button class="btn btn-primary" onclick="openCustomizeDrawerV51()">Customize look</button></div>
+<div class="card" id="benchmarkSettingsCard" style="margin-bottom:14px"></div>
+<div class="settings-grid">
+<div class="stack">
+<div class="card">
+<div class="card-header"><div><h3 class="card-title">Appearance</h3><p class="card-subtitle">Make it feel personal. Color, spacing, and visual style are saved locally.</p></div></div>
+<label>Accent color</label>
+<div class="theme-grid" id="accentOptions">
+<button class="theme-option" data-accent-option="mint" onclick="setAppearance('accent','mint')" style="--sw1:#53e0ac;--sw2:#68b8ff"><div class="theme-swatch"></div><b>Mint</b><span>Clean fintech default</span></button>
+<button class="theme-option" data-accent-option="pink" onclick="setAppearance('accent','pink')" style="--sw1:#ff74bf;--sw2:#ffb2d8"><div class="theme-swatch"></div><b>Pink</b><span>Soft rose mode</span></button>
+<button class="theme-option" data-accent-option="ocean" onclick="setAppearance('accent','ocean')" style="--sw1:#5ee8ff;--sw2:#6ba8ff"><div class="theme-swatch"></div><b>Ocean</b><span>Blue and crisp</span></button>
+<button class="theme-option" data-accent-option="violet" onclick="setAppearance('accent','violet')" style="--sw1:#a78bfa;--sw2:#d8b4fe"><div class="theme-swatch"></div><b>Violet</b><span>Premium purple</span></button>
+<button class="theme-option" data-accent-option="sunset" onclick="setAppearance('accent','sunset')" style="--sw1:#ff9f6e;--sw2:#ffd166"><div class="theme-swatch"></div><b>Sunset</b><span>Warm orange</span></button>
+<button class="theme-option" data-accent-option="mono" onclick="setAppearance('accent','mono')" style="--sw1:#e5e7eb;--sw2:#9ca3af"><div class="theme-swatch"></div><b>Mono</b><span>Minimal grayscale</span></button>
+</div>
+<div class="split-line"></div>
+<div class="form-row">
+<div><label>Theme</label><div class="segmented"><button class="btn btn-small" data-theme-option="system" onclick="setAppearance('theme','system')">System</button><button class="btn btn-small" data-theme-option="dark" onclick="setAppearance('theme','dark')">Dark</button><button class="btn btn-small" data-theme-option="light" onclick="setAppearance('theme','light')">Light</button></div></div>
+<div><label>Density</label><div class="segmented"><button class="btn btn-small" data-density-option="compact" onclick="setAppearance('density','compact')">Compact</button><button class="btn btn-small" data-density-option="comfortable" onclick="setAppearance('density','comfortable')">Comfort</button><button class="btn btn-small" data-density-option="roomy" onclick="setAppearance('density','roomy')">Roomy</button></div></div>
+</div>
+<div class="form-field" style="margin-top:12px"><label>Surface style</label><div class="segmented"><button class="btn btn-small" data-vibe-option="clean" onclick="setAppearance('vibe','clean')">Clean</button><button class="btn btn-small" data-vibe-option="glass" onclick="setAppearance('vibe','glass')">Glass</button><button class="btn btn-small" data-vibe-option="minimal" onclick="setAppearance('vibe','minimal')">Minimal</button></div></div>
+</div>
+<div class="card"><h3 class="card-title">Preferences</h3><div class="split-line"></div><div class="form-row"><div class="form-field"><label>Currency</label><select id="currencySelect" onchange="saveSettingsFromUI()"><option value="USD">USD</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="CAD">CAD</option></select></div><div class="form-field"><label>Monthly income target</label><input class="input" id="incomeTarget" oninput="saveSettingsFromUI()" placeholder="Optional" type="number"/></div></div><div class="toggle"><div><b>Show cents</b><br/><span class="muted">Display decimal places in amounts</span></div><div class="switch" id="centsSwitch" onclick="toggleSettingSwitch('showCents')"></div></div><div class="split-line"></div><div class="mini-item"><div><b>Startup screen</b><br/><span>Reopen Demo Mode, Start Fresh, or Import CSV choices.</span></div><button class="btn btn-small" onclick="openFirstRun(true);">Open</button></div><div class="split-line"></div><div class="welcome-mode-row"><div><b>Overview top tiles</b><br/><span class="muted">Remove the large intro/command tile or the Money Score tile from the top of Overview.</span></div><div class="mini-list tile-manager-row"><div class="mini-item"><div><b>Intro / command tile</b><br/><span>Big welcome card for new users, compact command strip after setup.</span></div><button class="btn btn-small" data-home-tile="intro" onclick="toggleHomeTile('intro')">Shown</button></div><div class="mini-item"><div><b>Money Score tile</b><br/><span>Score, nudges, and quick actions.</span></div><button class="btn btn-small" data-home-tile="score" onclick="toggleHomeTile('score')">Shown</button></div></div></div><div class="split-line"></div><div class="welcome-mode-row"><div><b>Intro tile behavior</b><br/><span class="muted">Only applies when the intro / command tile is shown.</span></div><div class="segmented"><button class="btn btn-small" data-welcome-option="auto" onclick="setWelcomeMode('auto')">Auto</button><button class="btn btn-small" data-welcome-option="hidden" onclick="setWelcomeMode('hidden')">Compact</button><button class="btn btn-small" data-welcome-option="visible" onclick="setWelcomeMode('visible')">Big</button></div></div></div>
+</div>
+<div class="stack">
+<div class="card"><h3 class="card-title">Live preview</h3><p class="card-subtitle">A quick sense of the selected style.</p><div class="split-line"></div><div class="preview-shell"><div class="preview-card"><div class="metric-label">Monthly snapshot</div><div class="metric-value good">$4,280</div><div class="metric-sub">Income, budgets, and goals in one clean view.</div><div class="preview-bar"></div></div></div></div>
+<div class="card"><h3 class="card-title">Privacy and portability</h3><p class="card-subtitle">This app has no backend. Use backups when switching devices or browsers.</p><div class="split-line"></div><div class="mini-list"><div class="mini-item"><div><b>Storage</b><br/><span>Browser localStorage</span></div><span id="storageUsage">—</span></div><div class="mini-item"><div><b>Last backup</b><br/><span id="lastBackupLabel">Never</span></div><span class="pill" id="lastBackupAge">No backup</span></div><div class="mini-item"><div><b>Backup JSON</b><br/><span>Full portable workspace export.</span></div><button class="btn btn-small" onclick="exportBackup()">Export</button></div><div class="mini-item"><div><b>Reports</b><br/><span>Download weekly or monthly summaries.</span></div><div class="table-actions"><button class="btn btn-small" onclick="exportPeriodReport('week')">Weekly</button><button class="btn btn-small" onclick="exportPeriodReport('month')">Monthly</button></div></div><div class="mini-item"><div><b>Build</b><br/><span>Use this value for the GitHub release tag.</span></div><span class="pill" id="appBuildLabel">—</span></div><div class="mini-item"><div><b>Danger zone</b><br/><span>Clear all local data</span></div><button class="btn btn-small btn-danger" onclick="resetAllData()">Reset</button></div></div></div>
+</div>
+</div>
+</section>
+</main>
+</div>
+<div class="mobile-bar" id="mobileNav"></div>
+<div aria-label="Command palette" aria-modal="true" class="command-palette" id="commandPalette" role="dialog">
+<div class="command-box">
+<div class="command-search"><span>⌘</span><input autocomplete="off" id="commandInput" oninput="renderCommandPalette()" onkeydown="handleCommandPaletteKey(event)" placeholder="Search actions, pages, reports, settings..."/></div>
+<div class="command-results" id="commandResults"></div>
+</div>
+</div>
+<div class="toast" id="toast"></div>
+<datalist id="categoryList"></datalist>
+<div aria-hidden="true" class="drawer" id="drawer"><div class="drawer-backdrop" onclick="closeDrawer()"></div><div aria-labelledby="drawerTitle" aria-modal="true" class="drawer-panel" role="dialog"><div class="drawer-head"><div><h3 class="section-title" id="drawerTitle">Quick add</h3><p class="section-sub" id="drawerSub">Add or manage data.</p></div><button aria-label="Close drawer" class="btn btn-square drawer-close" onclick="closeDrawer()">×</button></div><div id="drawerBody"></div></div></div>
+<div aria-hidden="true" class="first-run" id="firstRun">
+<div aria-labelledby="firstRunTitle" aria-modal="true" class="first-run-panel" role="dialog">
+<div class="first-run-head">
+<div class="eyebrow">First run</div>
+<h2 id="firstRunTitle">Choose how to start.</h2>
+<p>MoneyMap stores everything locally in this browser. Pick demo mode to explore, start fresh for a blank workspace, or import a CSV to begin with real data.</p>
+</div>
+<div class="start-grid">
+<button class="start-option" onclick="chooseFirstRun('demo')"><span class="start-icon">◈</span><b>Demo mode</b><span>Load sample transactions, budgets, goals, recurring charges, and credit history.</span></button>
+<button class="start-option" onclick="chooseFirstRun('fresh')"><span class="start-icon">＋</span><b>Start fresh</b><span>Keep an empty workspace and add items manually when you are ready.</span></button>
+<button class="start-option" onclick="chooseFirstRun('import')"><span class="start-icon">⇡</span><b>Import CSV</b><span>Go straight to the import center and map your bank export.</span></button>
+</div>
+<div class="first-run-footer"><span id="firstRunFootnote">Private by default. No bank login or backend required.</span><div class="actions"><button class="btn btn-small" onclick="chooseFirstRun('continue')">Continue current workspace</button><button class="btn btn-small" onclick="chooseFirstRun('fresh')">Start fresh</button></div></div>
+</div>
+</div>
+
+
+<script src="src/js/utils.js?v=qa5-20260530"></script>
+<script src="src/js/state.js?v=qa5-20260530"></script>
+<script src="src/js/storage.js?v=qa5-20260530"></script>
+<script src="src/js/navigation.js?v=qa5-20260530"></script>
+<script src="src/js/accounts.js?v=qa5-20260530"></script>
+<script src="src/js/transactions.js?v=qa5-20260530"></script>
+<script src="src/js/budgets.js?v=qa5-20260530"></script>
+<script src="src/js/investments.js?v=qa5-20260530"></script>
+<script src="src/js/charts.js?v=qa5-20260530"></script>
+<script src="src/js/settings.js?v=qa5-20260530"></script>
+<script src="src/js/app.js?v=qa5-20260530"></script></body>
+</html>
