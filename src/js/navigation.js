@@ -5,7 +5,10 @@ function setStep(id){ ['stepFile','stepMap','stepClean','stepDone'].forEach(s=>d
 
 function buildNav(){
   const side = document.getElementById('sideNav');
-  side.innerHTML = NAV.map(([id,title,sub,icon])=>`<button class="nav-btn ${id===activeView?'active':''}" data-view="${id}" onclick="showView('${id}')"><span class="nav-icon">${icon}</span><span class="nav-copy"><strong>${title}</strong><span>${sub}</span></span></button>`).join('');
+  side.innerHTML = NAV.map(([id,title,sub,icon])=>{
+    const svgIcon = (window.MM_NAV && window.MM_NAV.icon) ? window.MM_NAV.icon(id) : icon;
+    return `<button class="nav-btn ${id===activeView?'active':''}" data-view="${id}" onclick="showView('${id}')"><span class="nav-icon">${svgIcon}</span><span class="nav-copy"><strong>${title}</strong><span>${sub}</span></span></button>`;
+  }).join('');
 }
 
 function buildMobileNav(){

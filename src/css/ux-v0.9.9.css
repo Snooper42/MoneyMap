@@ -1,0 +1,556 @@
+/* MoneyMap v0.9.9 — SVG nav + editable bar CSS
+   ─────────────────────────────────────────────────────────────────
+   1. Bottom nav bar — compact, SVG-driven
+   2. More sheet — clean grid, icon treatment
+   3. Nav customizer panel
+   4. Sidebar nav SVG icons (desktop)
+   ─────────────────────────────────────────────────────────────────
+   This file loads last and uses high-specificity selectors to win
+   against the layered mobile.css rules. All !important usage is
+   deliberate cascade override.
+   ───────────────────────────────────────────────────────────────── */
+
+/* ══════════════════════════════════════════════════════════════════
+   1. BOTTOM NAV BAR
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Compact bar — 50px content + safe area.
+   Previous layers set 56-60px. This is measurably smaller.         */
+@media (max-width: 1180px) {
+
+  .mobile-bar,
+  #mobileNav {
+    /* Reset height from old layers */
+    height: calc(50px + env(safe-area-inset-bottom, 0px)) !important;
+    min-height: unset !important;
+    padding: 4px 6px calc(4px + env(safe-area-inset-bottom, 0px)) !important;
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 3px !important;
+    align-items: stretch !important;
+    background: color-mix(in srgb, var(--panel) 96%, transparent) !important;
+    border-top: 1px solid color-mix(in srgb, var(--line) 70%, transparent) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.12) !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 110 !important;
+    overflow: visible !important;
+  }
+
+  /* ── Tab buttons ── */
+  .mobile-bar button,
+  #mobileNav button,
+  .mm-nav-btn {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px !important;
+    min-height: 42px !important;
+    height: 42px !important;
+    border-radius: 12px !important;
+    padding: 4px 2px !important;
+    background: transparent !important;
+    border: none !important;
+    color: var(--muted) !important;
+    cursor: pointer !important;
+    transition: background 0.12s, color 0.12s !important;
+    font-family: inherit !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .mobile-bar button:active,
+  #mobileNav button:active,
+  .mm-nav-btn:active {
+    background: color-mix(in srgb, var(--panel2) 80%, transparent) !important;
+    transform: scale(0.94) !important;
+  }
+
+  /* ── Active tab indicator ── */
+  .mobile-bar button.active,
+  #mobileNav button.active,
+  .mm-nav-btn.active {
+    color: var(--accent) !important;
+    background: color-mix(in srgb, var(--accent) 10%, transparent) !important;
+  }
+
+  /* Top accent pip on active tab */
+  .mm-nav-btn.active::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 2.5px;
+    border-radius: 999px;
+    background: var(--accent);
+  }
+
+  /* ── SVG icon in nav ── */
+  .mm-nav-icon,
+  .mobile-bar button span:first-child {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 22px !important;
+    height: 22px !important;
+    flex: 0 0 auto !important;
+    font-size: 0 !important; /* hide emoji fallback */
+  }
+
+  .mm-nav-icon svg {
+    width: 20px !important;
+    height: 20px !important;
+    stroke-width: 1.75 !important;
+    display: block !important;
+  }
+
+  /* ── Label ── */
+  .mm-nav-label,
+  .mobile-bar button span:last-child {
+    font-size: 9px !important;
+    font-weight: 760 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.01em !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+    color: inherit !important;
+  }
+
+  /* Active label: slightly bolder */
+  .mm-nav-btn.active .mm-nav-label {
+    font-weight: 860 !important;
+  }
+}
+
+/* On wider mobile/tablet: 5 items still look fine at 1180px */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .mobile-bar,
+  #mobileNav {
+    max-width: 600px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    border-radius: 18px 18px 0 0 !important;
+    border-left: 1px solid color-mix(in srgb, var(--line) 60%, transparent) !important;
+    border-right: 1px solid color-mix(in srgb, var(--line) 60%, transparent) !important;
+  }
+}
+
+/* ── Update main content padding to match new bar height ── */
+@media (max-width: 1180px) {
+  body .main {
+    padding-bottom: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  body .main {
+    padding-bottom: calc(58px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   2. MORE SHEET
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Outer overlay */
+.mm-more-sheet,
+.mobile-more-sheet {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 400 !important;
+  display: none !important;
+  align-items: flex-end !important;
+  justify-content: center !important;
+  padding: 0 !important;
+  background: rgba(3, 7, 18, 0.58) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+}
+
+.mm-more-sheet.active,
+.mobile-more-sheet.active {
+  display: flex !important;
+}
+
+/* Inner panel */
+.mm-more-inner,
+.mobile-more-panel {
+  width: min(520px, 100%) !important;
+  max-height: 72vh !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  overscroll-behavior: contain !important;
+  background: var(--panel) !important;
+  border: 1px solid var(--line) !important;
+  border-bottom: none !important;
+  border-radius: 22px 22px 0 0 !important;
+  padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+  box-shadow: 0 -16px 60px rgba(0, 0, 0, 0.28) !important;
+}
+
+/* Drag handle */
+.mm-more-inner::before,
+.mobile-more-panel::before {
+  content: '';
+  display: block;
+  width: 36px;
+  height: 3.5px;
+  border-radius: 999px;
+  background: var(--line2);
+  margin: 0 auto 12px;
+  opacity: 0.65;
+}
+
+/* Header row */
+.mm-more-head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  padding: 0 2px 12px !important;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 65%, transparent) !important;
+  margin-bottom: 10px !important;
+}
+
+.mm-more-title b {
+  font-size: 16px !important;
+  font-weight: 860 !important;
+  letter-spacing: -0.03em !important;
+  color: var(--text) !important;
+  display: block !important;
+}
+
+.mm-more-title span {
+  font-size: 11.5px !important;
+  color: var(--muted) !important;
+  display: block !important;
+  margin-top: 1px !important;
+}
+
+.mm-more-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+/* Edit bar button */
+.mm-more-customize-btn {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  padding: 7px 10px !important;
+  border-radius: 999px !important;
+  background: var(--panel2) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--muted) !important;
+  font-size: 12px !important;
+  font-weight: 760 !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+  transition: border-color 0.12s, color 0.12s !important;
+}
+
+.mm-more-customize-btn svg {
+  width: 13px !important;
+  height: 13px !important;
+}
+
+.mm-more-customize-btn:hover {
+  border-color: var(--line2) !important;
+  color: var(--text) !important;
+}
+
+/* Close button */
+.mm-more-close-btn {
+  display: grid !important;
+  place-items: center !important;
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 50% !important;
+  background: var(--panel2) !important;
+  border: 1px solid var(--line) !important;
+  color: var(--muted) !important;
+  cursor: pointer !important;
+  font-family: inherit !important;
+}
+
+.mm-more-close-btn svg {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+/* Sections grid */
+.mm-more-grid,
+.mobile-more-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 7px !important;
+}
+
+/* Section item */
+.mm-more-item,
+.mobile-more-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 11px 12px !important;
+  border-radius: 14px !important;
+  border: 1px solid var(--line) !important;
+  background: var(--panel2) !important;
+  color: var(--text) !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  min-height: 52px !important;
+  font-family: inherit !important;
+  transition: border-color 0.12s, background 0.12s !important;
+}
+
+.mm-more-item:hover,
+.mobile-more-item:hover {
+  border-color: var(--line2) !important;
+  background: var(--panel3) !important;
+}
+
+.mm-more-item.active,
+.mobile-more-item.active {
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent) !important;
+  background: color-mix(in srgb, var(--accent) 10%, var(--panel2)) !important;
+  color: var(--accent) !important;
+}
+
+/* Icon box */
+.mm-more-icon,
+.mobile-more-icon {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 10px !important;
+  background: var(--panel3) !important;
+  display: grid !important;
+  place-items: center !important;
+  flex: 0 0 auto !important;
+  color: var(--muted) !important;
+}
+
+.mm-more-item.active .mm-more-icon,
+.mobile-more-item.active .mobile-more-icon {
+  color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel3)) !important;
+}
+
+.mm-more-icon svg { width: 18px !important; height: 18px !important; }
+
+/* Copy */
+.mm-more-copy,
+.mobile-more-copy { min-width: 0 !important; }
+
+.mm-more-copy strong,
+.mobile-more-copy strong {
+  display: block !important;
+  font-size: 13px !important;
+  font-weight: 760 !important;
+  letter-spacing: -0.01em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.mm-more-copy span,
+.mobile-more-copy span {
+  display: block !important;
+  font-size: 11px !important;
+  color: var(--muted) !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin-top: 1px !important;
+}
+
+@media (max-width: 380px) {
+  .mm-more-grid { grid-template-columns: 1fr !important; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   3. NAV CUSTOMIZER PANEL
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Reuses mm-more-inner container — only inner content changes */
+
+.mm-cust-slots-label,
+.mm-cust-avail-label {
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 2px;
+  margin-bottom: 8px;
+  margin-top: 14px;
+}
+
+/* Active bar slots — horizontal row of 4 */
+.mm-cust-slots {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.mm-cust-slot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 6px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  background: color-mix(in srgb, var(--accent) 8%, var(--panel2));
+  position: relative;
+  min-height: 68px;
+}
+
+.mm-cust-slot-empty {
+  border-style: dashed !important;
+  border-color: var(--line) !important;
+  background: transparent !important;
+  color: var(--soft);
+  font-size: 11px;
+  justify-content: center;
+}
+
+.mm-cust-slot-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mm-cust-slot-icon svg { width: 20px; height: 20px; }
+
+.mm-cust-slot-name {
+  font-size: 10px;
+  font-weight: 760;
+  color: var(--text);
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+/* Remove button: top-right corner */
+.mm-cust-remove {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--panel3);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-family: inherit;
+  padding: 0;
+}
+
+.mm-cust-remove svg { width: 9px; height: 9px; stroke-width: 2.5; }
+.mm-cust-remove:hover { color: var(--red); border-color: var(--red); }
+
+/* Available chips */
+.mm-cust-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.mm-cust-chip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 660;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.12s, background 0.12s;
+}
+
+.mm-cust-chip:hover { border-color: var(--line2); background: var(--panel3); }
+.mm-cust-chip:active { transform: scale(0.96); }
+
+.mm-cust-chip-disabled {
+  opacity: 0.38 !important;
+  cursor: not-allowed !important;
+}
+
+.mm-cust-chip-icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted);
+}
+
+.mm-cust-chip-icon svg { width: 16px; height: 16px; }
+
+/* Footer */
+.mm-cust-footer {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.mm-cust-footer .btn { flex: 1; justify-content: center; min-height: 42px; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   4. SIDEBAR NAV SVG ICONS (desktop)
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Sidebar nav icon wrapper */
+.nav-icon {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 9px !important;
+  background: transparent !important;
+  display: grid !important;
+  place-items: center !important;
+  color: var(--muted) !important;
+  transition: color 0.12s, background 0.12s !important;
+}
+
+.nav-btn.active .nav-icon {
+  color: var(--accent) !important;
+  background: color-mix(in srgb, var(--accent) 12%, transparent) !important;
+}
+
+.nav-icon svg {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+/* Override old emoji display in sidebar nav */
+.nav-icon:not(:has(svg)) {
+  font-size: 14px !important;
+}

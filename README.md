@@ -1,34 +1,71 @@
 # MoneyMap
 
-Local-first, privacy-first manual finance app.
+**Local-first personal finance. No bank login, no sync, no backend.**
 
-Current build: `v0.9.6`
+Track spending, budgets, net worth, and goals entirely in your browser. Your data never leaves your device.
 
-## Local testing
+---
+
+## Quick start
 
 ```bash
 python3 -m http.server 8080
 ```
 
-Open: `http://localhost:8080`
+Open `http://localhost:8080` — tap **Explore with demo data** to see the full dashboard, or **Add my accounts** to start with real balances.
 
-## v0.9.6 focus — Mobile-first UX pass
+---
 
-- **Transaction form redesign** — Spend/Income toggle replaces "negative for spending". Type a positive number, pick the type. Correct on mobile.
-- **iOS input zoom fix** — All inputs are font-size 16px on mobile, preventing the Safari zoom-on-focus bug.
-- **Mobile nav** — Bottom nav now has an "Add" button instead of "Import". Import is still accessible via the topbar and command palette (⌘K).
-- **Form polish** — `inputmode="decimal"` on all money fields, `autocapitalize="words"` on description/name fields, consistent drawer action layout.
-- **Spend-map extraction** — The Overview spend category list IIFE (~155 lines) extracted from `app.js` to `src/js/ui/spend-map.js`. app.js drops from 3,905 to ~3,752 lines.
-- **Build label bug fix** — Settings page build label was hardcoded to `v0.9.4`. Now reads from `APP_BUILD_ID`.
-- Storage key unchanged: `moneymap_v1`
+## What it does
 
-## Release files
+| Feature | Notes |
+|---------|-------|
+| Transactions | Manual entry or CSV import from any bank |
+| Budgets | Monthly category limits with live progress |
+| Net worth | Manual account balances + snapshot history |
+| Goals | Savings and payoff targets with deadlines |
+| Debt payoff | Avalanche or snowball, with projected dates |
+| Investments | Manual holding tracker with allocation chart |
+| Credit history | Score log with multi-bureau trend chart |
+| Review mode | Weekly transaction cleanup with approve/skip |
+| Automation | Category rules, transfer hiding, merchant cleanup |
 
-- Full clean zip: `MoneyMap_v0.9.6_full_no_git.zip`
-- Changed files zip: `MoneyMap_v0.9.6_changed_files.zip`
-- Patch notes: `docs/PATCH_NOTES_v0.9.6.md`
-- Install notes: `txt/v0.9.6_install.txt`
+---
 
 ## Privacy model
 
-MoneyMap has no backend. Data lives in browser localStorage. Export a backup before switching browsers or clearing site data.
+- Data stored in `localStorage` under the key `moneymap_v1`
+- No network requests beyond loading the app files
+- No telemetry, no analytics, no ads
+- Export a JSON backup before switching browsers or clearing site data
+
+---
+
+## Version
+
+Current: `v0.1.0` — see [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md)
+
+Patch notes: `docs/PATCH_NOTES_v0.1.0.md`
+
+---
+
+## Architecture
+
+```
+src/
+  js/
+    core/     app-config, render-bus, shared-helpers, security, cache-guard
+    ui/       spend-map, onboarding, touch, nav, dashboard
+    ux-v*.js  legacy patch layers (being consolidated)
+  css/
+    base.css layout.css components.css mobile.css ux-v*.css
+```
+
+## Local dev
+
+```bash
+python3 -m http.server 8080
+# Always use same port — localStorage is origin-scoped
+```
+
+DevTools: `MoneyMapRenderBus.list()` · `MM.money0(1000)` · `window.MoneyMap.version`

@@ -33,8 +33,11 @@ function renderNetWorth(){
 
 function saveNetWorthSnapshot(){
   const b=netWorthBreakdown(); const dateEl=document.getElementById('netWorthSnapshotDate'); const noteEl=document.getElementById('netWorthSnapshotNote'); const date=(dateEl&&dateEl.value)||new Date().toISOString().slice(0,10); const note=(noteEl&&noteEl.value.trim())||'';
-  state.netWorthHistory=state.netWorthHistory||[]; const existing=state.netWorthHistory.find(x=>x.date===date);
-  const payload={date,note,netWorth:b.netWorth,assets:b.assets,liabilities:b.liabilities,accountAssets:b.accountAssets,holdingsValue:b.holdingsValue,accountLiabilities:b.accountLiabilities,debtLiabilities:b.debtLiabilities,updatedAt:new Date().toISOString()};
+  state.netWorthHistory=state.netWorthHistory||[];
+  /* Capture a per-account snapshot so dot popups can show breakdown */
+  const accountSnapshot=(state.accounts||[]).filter(a=>a.includeNetWorth!==false).map(a=>({name:a.name,type:a.type,institution:a.institution||'',balance:Number(a.balance||0)}));
+  const existing=state.netWorthHistory.find(x=>x.date===date);
+  const payload={date,note,netWorth:b.netWorth,assets:b.assets,liabilities:b.liabilities,accountAssets:b.accountAssets,holdingsValue:b.holdingsValue,accountLiabilities:b.accountLiabilities,debtLiabilities:b.debtLiabilities,accountSnapshot,updatedAt:new Date().toISOString()};
   if(existing) Object.assign(existing,payload); else state.netWorthHistory.push({id:uid('nw'),createdAt:new Date().toISOString(),...payload});
   if(noteEl) noteEl.value=''; toast('Net worth snapshot saved.'); renderAll();
 }

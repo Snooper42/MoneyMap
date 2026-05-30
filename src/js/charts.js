@@ -1,11 +1,142 @@
 /* MoneyMap charts module.
    Extracted from v0.10.0-alpha app.js with behavior-preserving function moves. */
 
+/* Net worth chart model — used by the interactive overlay in nw-chart.js */
+var netWorthChartModel = null;
+
 function renderNetWorthChart(){
   const canvas=document.getElementById('netWorthCanvas'); if(!canvas || !canvas.closest('.view.active')) return; const rect=canvas.parentElement.getBoundingClientRect(); canvas.width=Math.max(600,rect.width*devicePixelRatio); canvas.height=Math.max(240,rect.height*devicePixelRatio); const ctx=canvas.getContext('2d'); ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); const w=canvas.width/devicePixelRatio,h=canvas.height/devicePixelRatio; ctx.clearRect(0,0,w,h);
-  const rows=(state.netWorthHistory||[]).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(-18); if(!rows.length){ ctx.fillStyle=getCss('--muted'); ctx.font='14px '+getComputedStyle(document.body).fontFamily; ctx.fillText('Save net worth snapshots to draw your trend.',20,42); return; }
-  const vals=rows.map(r=>nval(r.netWorth)); const min=Math.min(...vals,0), max=Math.max(...vals,1); const pad={l:64,r:18,t:18,b:34}; const xFor=i=>pad.l+(rows.length===1?0:(w-pad.l-pad.r)*(i/(rows.length-1))); const yFor=v=>pad.t+(h-pad.t-pad.b)*(1-(v-min)/(max-min||1)); ctx.strokeStyle='rgba(148,163,184,.18)'; ctx.lineWidth=1; [min,(min+max)/2,max].forEach(v=>{ const y=yFor(v); ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke(); ctx.fillStyle=getCss('--muted'); ctx.font='11px '+getComputedStyle(document.body).fontFamily; ctx.fillText(money(v),8,y+4); }); ctx.strokeStyle=getCss('--accent'); ctx.lineWidth=3; ctx.beginPath(); rows.forEach((r,i)=>{ const x=xFor(i), y=yFor(nval(r.netWorth)); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke(); rows.forEach((r,i)=>{ ctx.fillStyle=getCss('--accent'); ctx.beginPath(); ctx.arc(xFor(i),yFor(nval(r.netWorth)),4,0,Math.PI*2); ctx.fill(); }); ctx.fillStyle=getCss('--muted'); ctx.font='12px '+getComputedStyle(document.body).fontFamily; rows.forEach((r,i)=>{ if(rows.length>7 && i%2) return; ctx.fillText(dateFmt(r.date).split(',')[0],Math.max(0,Math.min(w-48,xFor(i)-22)),h-10); });
+  const rows=(state.netWorthHistory||[]).slice().sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(-18); if(!rows.length){ netWorthChartModel=null; ctx.fillStyle=getCss('--muted'); ctx.font='14px '+getComputedStyle(document.body).fontFamily; ctx.fillText('Save net worth snapshots to draw your trend.',20,42); return; }
+  const vals=rows.map(r=>nval(r.netWorth)); const min=Math.min(...vals,0), max=Math.max(...vals,1); const pad={l:64,r:18,t:18,b:34}; const xFor=i=>pad.l+(rows.length===1?0:(w-pad.l-pad.r)*(i/(rows.length-1))); const yFor=v=>pad.t+(h-pad.t-pad.b)*(1-(v-min)/(max-min||1)); ctx.strokeStyle='rgba(148,163,184,.18)'; ctx.lineWidth=1; [min,(min+max)/2,max].forEach(v=>{ const y=yFor(v); ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(w-pad.r,y); ctx.stroke(); ctx.fillStyle=getCss('--muted'); ctx.font='11px '+getComputedStyle(document.body).fontFamily; ctx.fillText(money(v),8,y+4); });
+  /* Area fill under the line */
+  const grad=ctx.createLinearGradient(0,pad.t,0,h-pad.b); grad.addColorStop(0,'rgba(var(--accent-rgb,83,224,172),.18)'); grad.addColorStop(1,'rgba(var(--accent-rgb,83,224,172),.01)'); ctx.fillStyle=grad; ctx.beginPath(); rows.forEach((r,i)=>{ const x=xFor(i),y=yFor(nval(r.netWorth)); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.lineTo(xFor(rows.length-1),h-pad.b); ctx.lineTo(xFor(0),h-pad.b); ctx.closePath(); ctx.fill();
+  /* Line */
+  ctx.strokeStyle=getCss('--accent'); ctx.lineWidth=2.5; ctx.beginPath(); rows.forEach((r,i)=>{ const x=xFor(i),y=yFor(nval(r.netWorth)); i?ctx.lineTo(x,y):ctx.moveTo(x,y); }); ctx.stroke();
+  /* Dots — larger on hover target model */
+  const activeIdx = netWorthChartModel ? netWorthChartModel.activeIdx : null;
+  rows.forEach((r,i)=>{ const x=xFor(i),y=yFor(nval(r.netWorth)); const isActive=activeIdx===i; if(isActive){ ctx.fillStyle='rgba(var(--accent-rgb,83,224,172),.18)'; ctx.beginPath(); ctx.arc(x,y,14,0,Math.PI*2); ctx.fill(); } ctx.fillStyle=getCss('--accent'); ctx.beginPath(); ctx.arc(x,y,isActive?6:4.5,0,Math.PI*2); ctx.fill(); if(isActive){ ctx.strokeStyle=getCss('--bg'); ctx.lineWidth=2.5; ctx.stroke(); } });
+  /* X-axis labels */
+  ctx.fillStyle=getCss('--muted'); ctx.font='12px '+getComputedStyle(document.body).fontFamily; rows.forEach((r,i)=>{ if(rows.length>7 && i%2) return; ctx.fillText(dateFmt(r.date).split(',')[0],Math.max(0,Math.min(w-48,xFor(i)-22)),h-10); });
+  /* Store model for interactive overlay */
+  netWorthChartModel={rows,pad,width:w,height:h,xFor,yFor,activeIdx:activeIdx??null};
+  bindNetWorthChartEvents(canvas);
 }
+
+function bindNetWorthChartEvents(canvas){
+  if(!canvas || canvas.dataset.nwHoverBound) return;
+  canvas.dataset.nwHoverBound='1';
+  canvas.style.cursor='pointer';
+
+  function hit(clientX, clientY){
+    if(!netWorthChartModel) return null;
+    const {rows,pad,width,height,xFor}=netWorthChartModel;
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=width/rect.width, scaleY=height/rect.height;
+    const x=(clientX-rect.left)*scaleX, y=(clientY-rect.top)*scaleY;
+    if(x<pad.l-28||x>width-pad.r+28||y<pad.t-28||y>height-pad.b+28) return null;
+    let best=null,bestDist=36;
+    rows.forEach((_,i)=>{ const d=Math.abs(xFor(i)-x); if(d<bestDist){best=i;bestDist=d;} });
+    return best;
+  }
+
+  canvas.addEventListener('click', e=>{
+    const idx=hit(e.clientX,e.clientY);
+    if(idx===null){ hideNetWorthDotPopup(); return; }
+    if(netWorthChartModel) netWorthChartModel.activeIdx=idx;
+    renderNetWorthChart();
+    const {rows,xFor,yFor}=netWorthChartModel;
+    showNetWorthDotPopup(rows[idx], xFor(idx), yFor(nval(rows[idx].netWorth)), canvas);
+  });
+  canvas.addEventListener('touchend', e=>{
+    const t=e.changedTouches[0];
+    const idx=hit(t.clientX,t.clientY);
+    if(idx===null) return;
+    e.preventDefault();
+    if(netWorthChartModel) netWorthChartModel.activeIdx=idx;
+    renderNetWorthChart();
+    const {rows,xFor,yFor}=netWorthChartModel;
+    showNetWorthDotPopup(rows[idx], xFor(idx), yFor(nval(rows[idx].netWorth)), canvas);
+  },{passive:false});
+
+  document.addEventListener('click', function closeOutside(e){
+    if(!e.target.closest('#nwDotPopup') && e.target!==canvas){
+      hideNetWorthDotPopup();
+      if(netWorthChartModel) netWorthChartModel.activeIdx=null;
+      renderNetWorthChart();
+    }
+  });
+}
+
+function showNetWorthDotPopup(entry, dotX, dotY, canvas){
+  hideNetWorthDotPopup();
+  const popup=document.createElement('div');
+  popup.id='nwDotPopup';
+  popup.className='nw-dot-popup';
+  popup.setAttribute('role','dialog');
+  popup.setAttribute('aria-label','Net worth snapshot breakdown');
+
+  const accounts=entry.accountSnapshot||[];
+  const liabilityTypes=new Set(['Credit Card','Loan','Student Loan','Mortgage','Auto Loan','Other Liability']);
+  const assets=accounts.filter(a=>!liabilityTypes.has(a.type));
+  const liabilities=accounts.filter(a=>liabilityTypes.has(a.type));
+
+  const moneyFmt = v => { try{ return money(v); } catch(e){ return '$'+Number(v||0).toLocaleString(); } };
+
+  function row(a){
+    const bal=Number(a.balance||0);
+    const isLiab=liabilityTypes.has(a.type);
+    const cls=isLiab?'bad':'';
+    const displayed=isLiab?moneyFmt(-Math.abs(bal)):moneyFmt(bal);
+    return `<div class="nw-popup-row"><span class="nw-popup-acct"><span class="nw-popup-name">${escapeHtml(a.name||'Account')}</span><span class="nw-popup-type">${escapeHtml(a.institution||a.type||'')}</span></span><b class="${cls}">${escapeHtml(displayed)}</b></div>`;
+  }
+
+  const hasAccounts=assets.length||liabilities.length;
+  const assetRows=assets.length?assets.map(row).join(''):'';
+  const liabRows=liabilities.length?`<div class="nw-popup-divider"></div>${liabilities.map(row).join('')}`:'';
+  const emptyMsg=hasAccounts?'':`<div class="nw-popup-empty">No account breakdown saved.<br><small>Account detail is captured when you save future snapshots.</small></div>`;
+
+  popup.innerHTML=`
+    <div class="nw-popup-head">
+      <span class="nw-popup-date">${dateFmt(entry.date)}</span>
+      <span class="nw-popup-net ${nval(entry.netWorth)>=0?'good':'bad'}">${moneyFmt(nval(entry.netWorth))}</span>
+      <button type="button" class="nw-popup-close" onclick="hideNetWorthDotPopup()" aria-label="Close">×</button>
+    </div>
+    ${emptyMsg}
+    ${assetRows}${liabRows}
+    ${(entry.assets||entry.liabilities)?`<div class="nw-popup-divider"></div><div class="nw-popup-totals"><span>Assets <b>${moneyFmt(nval(entry.assets))}</b></span><span>Liabilities <b class="bad">${moneyFmt(nval(entry.liabilities))}</b></span></div>`:''}
+    ${entry.note?`<div class="nw-popup-note">${escapeHtml(entry.note)}</div>`:''}
+  `;
+
+  /* Position the popup relative to the canvas */
+  const wrap=canvas.parentElement;
+  wrap.style.position='relative';
+  wrap.appendChild(popup);
+
+  /* Calculate position in CSS pixels — dotX/dotY are in chart coords */
+  const canvasRect=canvas.getBoundingClientRect();
+  const scaleX=canvasRect.width/netWorthChartModel.width;
+  const scaleY=canvasRect.height/netWorthChartModel.height;
+  const pxX=dotX*scaleX;
+  const pxY=dotY*scaleY;
+
+  /* Position above dot on desktop, prefer right side on mobile */
+  const popupW=220;
+  const wrapW=wrap.offsetWidth;
+  let left=Math.max(8,Math.min(wrapW-popupW-8, pxX-popupW/2));
+
+  /* Place above if there's room, else below */
+  const spaceAbove=pxY-8;
+  const top=spaceAbove>120 ? pxY-popup.offsetHeight-16 : pxY+20;
+
+  popup.style.left=left+'px';
+  popup.style.top=Math.max(4,top)+'px';
+}
+
+window.hideNetWorthDotPopup=function(){
+  const p=document.getElementById('nwDotPopup');
+  if(p) p.remove();
+};
+
 
 function renderInvestmentChart(){
   const canvas=document.getElementById('investmentCanvas'); if(!canvas || !canvas.closest('.view.active')) return; const rect=canvas.parentElement.getBoundingClientRect(); canvas.width=Math.max(600,rect.width*devicePixelRatio); canvas.height=Math.max(240,rect.height*devicePixelRatio); const ctx=canvas.getContext('2d'); ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0); const w=canvas.width/devicePixelRatio,h=canvas.height/devicePixelRatio; ctx.clearRect(0,0,w,h);

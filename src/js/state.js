@@ -3,7 +3,7 @@
 
 const STORAGE_KEY = window.MoneyMapConfig?.storageKey || 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = window.MoneyMapConfig?.buildId || 'v0.9.8';
+const APP_BUILD_ID = window.MoneyMapConfig?.buildId || 'v0.1.0';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;
@@ -18,7 +18,7 @@ const defaultState = {
   version: 13,
   theme: 'light',
   appearance: { theme:'light', accent:'sunset', density:'compact', vibe:'minimal' },
-  settings: { currency:'USD', showCents:false, incomeTarget:0, lastBackup:null, lastRestore:null, welcomeMode:'auto', firstRunComplete:false, startupSeenBuild:'', uiPolishV48:false, uiUsabilityV49:false, homeTiles:{intro:true, score:true}, uiParityV52:false, dashboardDensity:'balanced', commandPaletteSeen:false },
+  settings: { currency:'USD', showCents:false, incomeTarget:0, lastBackup:null, lastRestore:null, welcomeMode:'auto', firstRunComplete:false, startupSeenBuild:'', uiPolishV48:false, uiUsabilityV49:false, homeTiles:{intro:true, score:true}, uiParityV52:false, dashboardDensity:'balanced', commandPaletteSeen:false, mobileNavItems:null },
   automation: { transferDetection:true, subscriptionDetection:true, ruleSuggestions:true, merchantCleanup:true },
   trackerSettings: { debtStrategy:'avalanche', creditTarget:760, creditCadence:'monthly' },
   transactions: [], rules: [], merchantRules: [], budgets: [], goals: [], accounts: [], netWorthHistory: [], debts: [], holdings: [], creditHistory: [], imports: [], importMappings: [], recurring: [], categoryStatus: {},

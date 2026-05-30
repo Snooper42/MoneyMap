@@ -491,7 +491,43 @@ function demoAccounts(){ const today=new Date().toISOString().slice(0,10); retur
 ]; }
 function demoDebts(){ return [{id:uid('debt'),name:'Rewards credit card',lender:'Demo Card',balance:1850,apr:22.99,minPayment:65,extraPayment:150,dueDay:'18th',includeNetWorth:true,notes:'Pay statement balance when possible.'},{id:uid('debt'),name:'Auto loan',lender:'Demo Credit Union',balance:9200,apr:5.4,minPayment:310,extraPayment:0,dueDay:'5th',includeNetWorth:true,notes:''}]; }
 function demoHoldings(){ return [{id:uid('hold'),symbol:'VTI',name:'Total Stock Market ETF',account:'Roth IRA',assetClass:'US Stock',quantity:18.5,price:263.4,costBasis:221.5,includeNetWorth:true,notes:''},{id:uid('hold'),symbol:'VXUS',name:'International Stock ETF',account:'Roth IRA',assetClass:'International Stock',quantity:22,price:61.2,costBasis:57.8,includeNetWorth:true,notes:''},{id:uid('hold'),symbol:'BND',name:'Bond ETF',account:'Brokerage',assetClass:'Bond',quantity:11,price:72.8,costBasis:74.1,includeNetWorth:true,notes:''}]; }
-function demoNetWorthHistory(){ const now=new Date(); const rows=[]; for(let i=5;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); const net=24800+(5-i)*1450; rows.push({id:uid('nw'),date:dateKey(d),netWorth:net,assets:net+11200,liabilities:11200,note:i===5?'Demo baseline':i===0?'Demo current month':''}); } return rows; }
+function demoNetWorthHistory(){
+  const now=new Date(); const rows=[];
+  /* Account balances grow/change slightly each month for realism */
+  const baseAccounts=[
+    {name:'Chase Checking',  type:'Checking',   institution:'Chase',              baseBalance:4280},
+    {name:'High-yield savings',type:'Savings',  institution:'Marcus by Goldman',  baseBalance:15400},
+    {name:'Roth IRA',        type:'Retirement', institution:'Fidelity',           baseBalance:4874},
+    {name:'Brokerage',       type:'Brokerage',  institution:'Fidelity',           baseBalance:8640},
+    {name:'Car value',       type:'Vehicle',    institution:'Manual estimate',    baseBalance:14200},
+    {name:'Rewards card',    type:'Credit Card',institution:'Amex',               baseBalance:1850},
+  ];
+  for(let i=5;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    const progress=(5-i)/5;
+    /* Net worth grows from ~24,800 to ~29,850 over 6 months */
+    const netBase=24800+(5-i)*1050+(i===1?-600:0); /* small dip month 4 */
+    const accountSnapshot=baseAccounts.map(a=>{
+      let bal=a.baseBalance;
+      if(a.type==='Retirement') bal=Math.round(a.baseBalance*(0.82+progress*0.22));
+      else if(a.type==='Brokerage') bal=Math.round(a.baseBalance*(0.78+progress*0.26));
+      else if(a.type==='Savings') bal=Math.round(a.baseBalance*(0.88+progress*0.14));
+      else if(a.type==='Checking') bal=Math.round(a.baseBalance*(0.90+progress*0.12+(Math.random()*0.06-0.03)));
+      else if(a.type==='Vehicle') bal=Math.round(a.baseBalance*(1.01-progress*0.04));
+      else if(a.type==='Credit Card') bal=Math.round(a.baseBalance*(0.7+progress*0.4));
+      return {name:a.name,type:a.type,institution:a.institution,balance:bal};
+    });
+    const assets=accountSnapshot.filter(a=>a.type!=='Credit Card').reduce((s,a)=>s+a.balance,0);
+    const liabilities=accountSnapshot.filter(a=>a.type==='Credit Card').reduce((s,a)=>s+a.balance,0);
+    rows.push({
+      id:uid('nw'), date:dateKey(d),
+      netWorth:assets-liabilities, assets, liabilities,
+      accountSnapshot,
+      note:i===5?'Starting baseline':i===0?'Current':'',
+    });
+  }
+  return rows;
+}
 function demoCreditHistory(){ const now=new Date(); const rows=[]; for(let i=5;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); const bump=(5-i)*4; rows.push({id:uid('credit'),month:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`,experian:714+bump,equifax:706+bump,transunion:719+bump,utilization:Math.max(7,28-(5-i)*3),source:'Demo app',note:i===5?'Demo starting point':i===0?'Demo latest log':''}); } return rows; }
 
 
