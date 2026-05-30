@@ -514,7 +514,7 @@ html,body{max-width:100%!important;overflow-x:clip!important}
 html{overflow-y:visible!important;height:auto!important}
 body{overflow-y:visible!important;min-height:100vh}
 @media(min-width:1181px){body.uxv62-more-open{overflow:visible!important}}
-@media(max-width:1180px){body.uxv62-more-open{overflow:hidden!important}}
+@media(max-width:1180px){body.uxv62-more-open{overflow-y:auto!important;touch-action:auto!important}}
 .app-shell,.main,.view,.card,.metric-card,.table-wrap,.topbar,.searchbar,.actions{min-width:0!important;box-sizing:border-box!important}
 .first-run{z-index:4000!important}.drawer{z-index:3500!important}.drawer-panel{z-index:3501!important}.command-palette{z-index:3600!important}.mobile-more-sheet{z-index:3000!important}.toast{z-index:4100!important}
 body.first-run-open .topbar,body.first-run-open .mobile-bar,body.first-run-open .mobile-more-sheet{display:none!important}
@@ -608,3 +608,11 @@ body.first-run-open .topbar,body.first-run-open .mobile-bar,body.first-run-open 
   body .mobile-more-sheet.active{display:flex!important}
 }
 @media(min-width:1181px){body .mobile-more-sheet{display:none!important}}
+
+
+/* R2.3 hard scroll unlock */
+html,body{height:auto!important;min-height:100%!important;max-width:100%!important;overflow-x:clip!important;overflow-y:auto!important;position:static!important;touch-action:auto!important;overscroll-behavior-y:auto!important}
+body{min-height:100vh!important}
+body.mm-more-open,body.uxv62-more-open,body.mm-r22-more-active{overflow-y:auto!important;overflow-x:clip!important;touch-action:auto!important;position:static!important}
+.app-shell,.main,.view{height:auto!important;min-height:0!important;overflow-y:visible!important;overflow-x:clip!important}.main{-webkit-overflow-scrolling:touch!important}.mobile-more-sheet{touch-action:auto!important;overscroll-behavior:auto!important}.mobile-more-panel{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:auto!important;touch-action:auto!important}.global-search-panel{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:auto!important;contain:none!important}
+@-moz-document url-prefix(){html,body{scrollbar-width:auto!important}.topbar,.mobile-shell-header,.mobile-bar,.global-search-panel,.mobile-more-sheet,.command-palette,.first-run,.mm-dialog{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.topbar,.mobile-shell-header{background:var(--bg)!important}.mobile-bar,.global-search-panel,.mobile-more-panel{background:var(--panel)!important}body:before{display:none!important}}

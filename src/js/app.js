@@ -2753,7 +2753,7 @@ window.addEventListener('keydown', event => {
       }
       @media(max-width:760px){
         body{overscroll-behavior-x:none!important}
-        body.mm-more-open{overflow:hidden!important;touch-action:none!important}
+        body.mm-more-open{overflow-y:auto!important;overflow-x:clip!important;touch-action:auto!important}
         body .main{padding:8px 10px calc(78px + env(safe-area-inset-bottom))!important;max-width:100%!important}
         body .app-shell .main>.topbar{display:none!important}
         body .mobile-shell-header{display:flex!important;position:sticky!important;top:0!important;z-index:2100!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;min-height:60px!important;margin:-8px -10px 10px!important;padding:9px 10px calc(9px + 0px)!important;border-bottom:1px solid color-mix(in srgb,var(--line) 76%,transparent)!important;background:color-mix(in srgb,var(--bg) 97%,transparent)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;box-shadow:0 10px 22px rgba(0,0,0,.08)!important}
@@ -3151,7 +3151,7 @@ window.addEventListener('keydown', event => {
 
 /* R2.1 global search fix: make the top search visibly return results. */
 (function(){
-  const BUILD='r2-2-firefox-scroll-20260530';
+  const BUILD='r2-3-hard-scroll-unlock-20260530';
   let searchResults=[];
   let activeIndex=0;
 
@@ -3338,7 +3338,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- R2.2: Firefox scroll guard and stuck-overlay recovery ---- */
 (function(){
-  const BUILD='r2-2-firefox-scroll-20260530';
+  const BUILD='r2-3-hard-scroll-unlock-20260530';
   const STYLE_ID='r22-firefox-scroll-guard-style';
 
   function markBuild(){
@@ -3433,5 +3433,134 @@ window.addEventListener('keydown', event => {
   window.addEventListener('resize', afterRender, {passive:true});
   window.addEventListener('orientationchange', afterRender, {passive:true});
   setInterval(clearStuckLocks, 1200);
+  afterRender();
+})();
+
+
+/* ---- R2.3: hard scroll unlock / stale overlay recovery ----
+   Firefox fallback: never let old mobile sheet or dialog body-lock classes
+   become the page scroll container. Active dialogs still keep their own
+   internal scroll, but stale classes are cleared immediately. */
+(function(){
+  const BUILD='r2-3-hard-scroll-unlock-20260530';
+  const STYLE_ID='r23-hard-scroll-unlock-style';
+
+  function activeDialog(){
+    return !!document.querySelector('.mm-dialog.active');
+  }
+  function activeMoreSheet(){
+    const sheet=document.getElementById('mobileMoreSheet');
+    return !!(sheet && sheet.classList.contains('active'));
+  }
+  function markBuild(){
+    try{
+      document.documentElement.setAttribute('data-moneymap-build', BUILD);
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+    }catch(e){}
+  }
+  function injectStyle(){
+    const css=`
+      html,body{
+        height:auto!important;
+        min-height:100%!important;
+        max-width:100%!important;
+        overflow-x:clip!important;
+        overflow-y:auto!important;
+        position:static!important;
+        touch-action:auto!important;
+        overscroll-behavior-y:auto!important;
+      }
+      body{min-height:100vh!important;}
+      body.mm-more-open,body.uxv62-more-open,body.mm-r22-more-active{
+        overflow-y:auto!important;
+        overflow-x:clip!important;
+        touch-action:auto!important;
+        position:static!important;
+      }
+      .app-shell,.main,.view{
+        height:auto!important;
+        min-height:0!important;
+        overflow-y:visible!important;
+        overflow-x:clip!important;
+      }
+      .main{-webkit-overflow-scrolling:touch!important;}
+      .mobile-more-sheet{touch-action:auto!important;overscroll-behavior:auto!important;}
+      .mobile-more-panel{
+        overflow-y:auto!important;
+        -webkit-overflow-scrolling:touch!important;
+        overscroll-behavior:auto!important;
+        touch-action:auto!important;
+      }
+      .global-search-panel{
+        overflow-y:auto!important;
+        -webkit-overflow-scrolling:touch!important;
+        overscroll-behavior:auto!important;
+        contain:none!important;
+      }
+      @-moz-document url-prefix(){
+        html,body{scrollbar-width:auto!important;}
+        .topbar,.mobile-shell-header,.mobile-bar,.global-search-panel,.mobile-more-sheet,.command-palette,.first-run,.mm-dialog{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;}
+        .topbar,.mobile-shell-header{background:var(--bg)!important;}
+        .mobile-bar,.global-search-panel,.mobile-more-panel{background:var(--panel)!important;}
+        body:before{display:none!important;}
+      }
+    `;
+    let style=document.getElementById(STYLE_ID);
+    if(!style){ style=document.createElement('style'); style.id=STYLE_ID; document.head.appendChild(style); }
+    if(style.textContent!==css) style.textContent=css;
+  }
+  function hardUnlock(){
+    try{
+      injectStyle();
+      markBuild();
+      // Old mobile-more locks are not needed because the sheet is fixed.
+      document.body.classList.remove('mm-more-open','uxv62-more-open','mm-r22-more-active');
+      if(!activeDialog()) document.body.classList.remove('mm-dialog-open');
+      const bodyStyle=document.body.style;
+      const htmlStyle=document.documentElement.style;
+      if(bodyStyle.overflow==='hidden') bodyStyle.overflow='';
+      if(htmlStyle.overflow==='hidden') htmlStyle.overflow='';
+      bodyStyle.overflowY='auto';
+      htmlStyle.overflowY='auto';
+      bodyStyle.touchAction='auto';
+      document.documentElement.style.touchAction='auto';
+      if(!activeMoreSheet()){
+        const sheet=document.getElementById('mobileMoreSheet');
+        if(sheet) sheet.setAttribute('aria-hidden','true');
+      }
+    }catch(e){}
+  }
+  function patchMoreFns(){
+    try{
+      const priorOpen=window.openMobileMoreSheet;
+      if(typeof priorOpen==='function' && !priorOpen.__r23HardScrollUnlockWrapped){
+        window.openMobileMoreSheet=function(){ const out=priorOpen.apply(this,arguments); requestAnimationFrame(hardUnlock); setTimeout(hardUnlock,80); return out; };
+        window.openMobileMoreSheet.__r23HardScrollUnlockWrapped=true;
+      }
+      const priorClose=window.closeMobileMoreSheet;
+      if(typeof priorClose==='function' && !priorClose.__r23HardScrollUnlockWrapped){
+        window.closeMobileMoreSheet=function(){ const out=priorClose.apply(this,arguments); requestAnimationFrame(hardUnlock); setTimeout(hardUnlock,80); return out; };
+        window.closeMobileMoreSheet.__r23HardScrollUnlockWrapped=true;
+      }
+    }catch(e){}
+  }
+  function afterRender(){ patchMoreFns(); hardUnlock(); }
+  const priorRenderAll=window.renderAll;
+  if(typeof priorRenderAll==='function' && !priorRenderAll.__r23HardScrollUnlockWrapped){
+    window.renderAll=function(){ const out=priorRenderAll.apply(this,arguments); requestAnimationFrame(afterRender); return out; };
+    window.renderAll.__r23HardScrollUnlockWrapped=true;
+  }
+  const priorShowView=window.showView;
+  if(typeof priorShowView==='function' && !priorShowView.__r23HardScrollUnlockWrapped){
+    window.showView=function(){ const out=priorShowView.apply(this,arguments); requestAnimationFrame(afterRender); return out; };
+    window.showView.__r23HardScrollUnlockWrapped=true;
+  }
+  document.addEventListener('DOMContentLoaded', afterRender);
+  window.addEventListener('resize', afterRender, {passive:true});
+  window.addEventListener('orientationchange', afterRender, {passive:true});
+  document.addEventListener('visibilitychange', afterRender);
+  document.addEventListener('pointerup', ()=>requestAnimationFrame(hardUnlock), {passive:true});
+  document.addEventListener('keyup', e=>{ if(e.key==='Escape') requestAnimationFrame(hardUnlock); }, {passive:true});
+  setInterval(hardUnlock, 500);
   afterRender();
 })();
