@@ -1,8 +1,8 @@
-/* MoneyMap dashboard v0.1.2 — chart-first mobile/desktop overview */
+/* MoneyMap dashboard v0.1.3 — chart-first mobile/desktop overview */
 (function(){
   'use strict';
 
-  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   if(window.__mmDashboardV012) return;
   window.__mmDashboardV012 = true;
 

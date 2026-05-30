@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   let booted = false;
 
   const esc = value => (typeof escapeHtml === 'function')

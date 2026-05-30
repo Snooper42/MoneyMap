@@ -1767,7 +1767,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- v0.5 mobile clarity + investments refresh ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   document.title='MoneyMap';
   function addStyle(css){ const style=document.createElement('style'); style.setAttribute('data-patch','v0.9.2-mobile-investments'); style.textContent=css; document.head.appendChild(style); }
   addStyle(`
@@ -1884,7 +1884,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- v0.5 UI/UX rescue pass: mobile nav, tables, budgets, investments ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   const ICONS={
     overview:'🏠', import:'⬆️', review:'✅', transactions:'🧾', budgets:'💸', recurring:'🔁',
     networth:'💎', debt:'🧭', investments:'📈', credit:'⭐', goals:'🎯', rules:'⚙️', settings:'🛠️'
@@ -2041,7 +2041,7 @@ window.addEventListener('keydown', event => {
   const oldBuild=window.buildMobileNav; window.buildMobileNav=function(){ if(typeof oldBuild==='function') oldBuild(); polishNav(); };
   const oldRenderAll=window.renderAll; if(typeof oldRenderAll==='function'){ window.renderAll=function(){ oldRenderAll(); requestAnimationFrame(polishNav); }; }
   const oldShow=window.showView; if(typeof oldShow==='function'){ window.showView=function(id){ oldShow(id); requestAnimationFrame(()=>{polishNav(); if(id==='investments') window.renderInvestments?.();}); }; }
-  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||APP_BUILD_ID||'v0.1.2'; }; }
+  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||APP_BUILD_ID||'v0.1.3'; }; }
   const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build='v0.5'; p.releaseStage='v0.5'; return p; }; }
   document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(polishNav));
   setTimeout(polishNav,250);
@@ -2050,7 +2050,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- extracted script block 3: mm-v095-nav-accounts-script ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   const NAV_DEF=[
     {id:'overview',title:'Overview',mobile:'Home',sub:'Net worth snapshot'},
     {id:'accounts',title:'Accounts',mobile:'Accounts',sub:'Balances and edits'},
@@ -2141,7 +2141,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- extracted script block 4: mm-v096-desktop-qa-fixes-script ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   function hideLegacySidebarKickers(){
     const side=document.querySelector('.sidebar'); if(!side) return;
     [...side.children].forEach(el=>{
@@ -2176,7 +2176,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- extracted script block 5: mm-v097-declutter-js ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   function appFont(){ return getComputedStyle(document.body).fontFamily; }
   function setupCanvas(canvas,minW=620,minH=220){
@@ -2351,7 +2351,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- MoneyMap QA2 verification and responsive relabel pass ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   try{ document.documentElement.setAttribute('data-moneymap-build', BUILD); }catch(e){}
   function markBuild(){
     try{
@@ -2522,7 +2522,7 @@ window.addEventListener('keydown', event => {
    normal viewport scrolling. Changed to `overflow-x:clip`. This guard also makes
    sure the mobile "More" body-lock can never get stuck at desktop widths. */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   function isDesktop(){ return window.innerWidth > 1180; }
   function unstickDesktopScroll(){
     try{
@@ -2563,7 +2563,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- QA6 deploy/navigation/dialog finalization ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   const NAV_ITEMS=[
     {id:'overview',title:'Overview',mobile:'Home',sub:'Command center'},
     {id:'accounts',title:'Accounts',mobile:'Accounts',sub:'Balances'},
@@ -2630,7 +2630,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- Refactor 1: mobile-first app shell and navigation ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   const PRIMARY_MOBILE=['overview','accounts','transactions','budgets'];
   const PRIMARY_DESKTOP=['overview','accounts','transactions','budgets','review','import'];
   const SECONDARY=['review','import','networth','recurring','debt','investments','credit','goals','rules','settings'];
@@ -2892,7 +2892,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- Refactor 2: safe action system and destructive action copy ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   const originalLoadDemoData=window.loadDemoData;
 
   function html(value){ return (typeof escapeHtml==='function') ? escapeHtml(String(value ?? '')) : String(value ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
@@ -3194,7 +3194,7 @@ window.addEventListener('keydown', event => {
 
 /* R2.1 global search fix: make the top search visibly return results. */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   let searchResults=[];
   let activeIndex=0;
 
@@ -3381,7 +3381,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- R2.2: Firefox scroll guard and stuck-overlay recovery ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   const STYLE_ID='r22-firefox-scroll-guard-style';
 
   function markBuild(){
@@ -3485,7 +3485,7 @@ window.addEventListener('keydown', event => {
    become the page scroll container. Active dialogs still keep their own
    internal scroll, but stale classes are cleared immediately. */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   const STYLE_ID='r23-hard-scroll-unlock-style';
 
   function activeDialog(){
@@ -3617,7 +3617,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- v0.5: account groups, cleaner portfolio UI, and public version label ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
   const ACCOUNT_GROUPS=[
     {id:'all',label:'All',hint:'Every manual balance'},
     {id:'cash',label:'Cash',hint:'Checking, savings, cash'},

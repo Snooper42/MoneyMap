@@ -1,7 +1,7 @@
-/* MoneyMap final build guard v0.1.2 — prevents old patch layers from relabeling the live build. */
+/* MoneyMap final build guard v0.1.3 — prevents old patch layers from relabeling the live build. */
 (function(){
   'use strict';
-  var BUILD=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||'v0.1.2';
+  var BUILD=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||'v0.1.3';
   function mark(){
     try{
       window.MONEYMAP_EXPECTED_BUILD=BUILD;
