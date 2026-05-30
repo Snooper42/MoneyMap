@@ -39,7 +39,7 @@ function saveNetWorthSnapshot(){
   if(noteEl) noteEl.value=''; toast('Net worth snapshot saved.'); renderAll();
 }
 
-function restoreSnapshotNote(id){ const e=(state.netWorthHistory||[]).find(x=>x.id===id); if(!e) return; const note=prompt('Snapshot note', e.note||''); if(note===null) return; e.note=note; e.updatedAt=new Date().toISOString(); renderAll(); }
+async function restoreSnapshotNote(id){ const e=(state.netWorthHistory||[]).find(x=>x.id===id); if(!e) return; const note=await mmPrompt('Update the note for this net worth snapshot.', e.note||'', {title:'Edit snapshot note', confirmText:'Save note'}); if(note===null) return; e.note=note.trim(); e.updatedAt=new Date().toISOString(); renderAll(); }
 
 function toggleAccountInclude(id){ const a=(state.accounts||[]).find(x=>x.id===id); if(!a) return; a.includeNetWorth=a.includeNetWorth===false; renderAll(); toast(a.includeNetWorth?'Account included in net worth.':'Account excluded from net worth.'); }
 
@@ -64,7 +64,7 @@ function setDebtStrategy(value){ state.trackerSettings=state.trackerSettings||{}
 
 function toggleDebtInclude(id){ const d=(state.debts||[]).find(x=>x.id===id); if(!d) return; d.includeNetWorth=d.includeNetWorth===false; renderAll(); toast(d.includeNetWorth?'Debt included in net worth.':'Debt excluded from net worth.'); }
 
-function deleteTrackerItem(collection,id){ if(!state[collection]) return; if(!confirm('Delete this item?')) return; state[collection]=state[collection].filter(x=>x.id!==id); toast('Item deleted.'); renderAll(); }
+async function deleteTrackerItem(collection,id,options={}){ if(!state[collection]) return; const label=mmCollectionLabel(collection); const name=mmItemName(collection,id); const ok=await mmConfirm(`Delete ${label} "${name}"? This cannot be undone.`, {title:`Delete ${label}?`, confirmText:'Delete', danger:true}); if(!ok) return false; state[collection]=state[collection].filter(x=>x.id!==id); if(options.closeDrawer) closeDrawer(); toast(`${label.charAt(0).toUpperCase()+label.slice(1)} deleted.`); renderAll(); return true; }
 
 function saveAccount(id){ const payload={name:document.getElementById('acctName').value.trim(), institution:document.getElementById('acctInstitution').value.trim(), type:document.getElementById('acctType').value, balance:nval(document.getElementById('acctBalance').value), updatedAt:document.getElementById('acctUpdated').value||new Date().toISOString().slice(0,10), includeNetWorth:document.getElementById('acctInclude').classList.contains('on'), notes:document.getElementById('acctNotes').value.trim()}; if(!payload.name){ toast('Account name required.'); return; } state.accounts=state.accounts||[]; const item=id?state.accounts.find(x=>x.id===id):null; if(item) Object.assign(item,payload); else state.accounts.push({id:uid('acct'),createdAt:new Date().toISOString(),...payload}); closeDrawer(); toast('Account saved.'); renderAll(); }
 

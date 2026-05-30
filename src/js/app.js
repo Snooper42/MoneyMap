@@ -297,7 +297,7 @@ function saveCreditLog(){
   clearCreditForm(); renderAll(); confetti();
 }
 function editCreditLog(id){ const e=(state.creditHistory||[]).find(x=>x.id===id); if(!e) return; document.getElementById('creditMonth').value=e.month||currentMonth(); document.getElementById('creditExperian').value=e.experian||''; document.getElementById('creditEquifax').value=e.equifax||''; document.getElementById('creditTransunion').value=e.transunion||''; document.getElementById('creditUtilization').value=e.utilization??''; document.getElementById('creditSource').value=e.source||''; document.getElementById('creditNote').value=e.note||''; window.scrollTo({top:0,behavior:'smooth'}); }
-function deleteCreditLog(id){ state.creditHistory=(state.creditHistory||[]).filter(e=>e.id!==id); toast('Credit log deleted.'); renderAll(); }
+async function deleteCreditLog(id){ const ok=await mmConfirm('Delete this credit score log?', {title:'Delete credit log?', confirmText:'Delete', danger:true}); if(!ok) return; state.creditHistory=(state.creditHistory||[]).filter(e=>e.id!==id); toast('Credit log deleted.'); renderAll(); }
 
 function renderGoals(){
   const grid=document.getElementById('goalGrid'); if(!grid) return;
@@ -308,8 +308,8 @@ function renderGoals(){
 function goalStatus(g){ const target=nval(g.target), current=nval(g.current), remaining=Math.max(0,target-current); if(target && current>=target) return {label:'Complete',risk:false,monthly:0}; if(!g.dueDate) return {label:'No deadline',risk:false,monthly:null}; const months=monthDiff(new Date().toISOString().slice(0,10),g.dueDate); if(months===null) return {label:'No deadline',risk:false,monthly:null}; const monthly=remaining/Math.max(1,months); const risk=months<=2 && remaining>0; return {label:`Need ${money(monthly)}/mo`,risk,monthly}; }
 function goalSortScore(g){ const st=goalStatus(g); const p={High:0,Medium:1,Low:2}[g.priority||'Medium'] ?? 1; return (st.risk?-10:0)+p+(nval(g.current)>=nval(g.target)?10:0); }
 function bumpGoal(id,amt){ const g=state.goals.find(x=>x.id===id); if(g){g.current=Number(g.current||0)+amt;if(g.current>=g.target) confetti();renderAll();} }
-function openGoalContribution(id){ const g=state.goals.find(x=>x.id===id); if(!g) return; const amt=parseFloat(prompt('Contribution amount', '100')); if(!Number.isFinite(amt) || amt===0) return; g.current=Math.max(0,Math.min(Number(g.target||0),Number(g.current||0)+amt)); renderAll(); if(g.current>=g.target) confetti(); }
-function deleteGoal(id){ state.goals=state.goals.filter(g=>g.id!==id); renderAll(); }
+async function openGoalContribution(id){ const g=state.goals.find(x=>x.id===id); if(!g) return; const raw=await mmPrompt('Contribution amount', '100', {title:'Add goal contribution', confirmText:'Add'}); if(raw===null) return; const amt=parseFloat(raw); if(!Number.isFinite(amt) || amt===0) return; g.current=Math.max(0,Math.min(Number(g.target||0),Number(g.current||0)+amt)); renderAll(); if(g.current>=g.target) confetti(); }
+async function deleteGoal(id){ const ok=await mmConfirm('Delete this goal? This cannot be undone.', {title:'Delete goal?', confirmText:'Delete', danger:true}); if(!ok) return; state.goals=state.goals.filter(g=>g.id!==id); renderAll(); }
 function editGoal(id){ const g=state.goals.find(x=>x.id===id); openDrawer('goal',g); }
 
 
@@ -2479,7 +2479,7 @@ window.addEventListener('keydown', event => {
    normal viewport scrolling. Changed to `overflow-x:clip`. This guard also makes
    sure the mobile "More" body-lock can never get stuck at desktop widths. */
 (function(){
-  const BUILD='qa5-20260530';
+  const BUILD='qa6-20260530';
   function isDesktop(){ return window.innerWidth > 1180; }
   function unstickDesktopScroll(){
     try{
@@ -2516,4 +2516,70 @@ window.addEventListener('keydown', event => {
   document.addEventListener('DOMContentLoaded',run);
   window.addEventListener('resize',unstickDesktopScroll,{passive:true});
   run();
+})();
+
+/* ---- QA6 deploy/navigation/dialog finalization ---- */
+(function(){
+  const BUILD='qa6-20260530';
+  const NAV_ITEMS=[
+    {id:'overview',title:'Overview',mobile:'Home',sub:'Command center'},
+    {id:'accounts',title:'Accounts',mobile:'Accounts',sub:'Balances'},
+    {id:'transactions',title:'Transactions',mobile:'Txns',sub:'Search and edit'},
+    {id:'budgets',title:'Budgets',mobile:'Budget',sub:'Monthly limits'},
+    {id:'review',title:'Review',mobile:'Review',sub:'Weekly cleanup'},
+    {id:'import',title:'Import',mobile:'Import',sub:'CSV dropzone'},
+    {id:'networth',title:'Net worth',mobile:'Net worth',sub:'History'},
+    {id:'recurring',title:'Subscriptions',mobile:'Subs',sub:'Recurring charges'},
+    {id:'debt',title:'Debt',mobile:'Debt',sub:'Payoff plan'},
+    {id:'investments',title:'Investments',mobile:'Invest',sub:'Holdings'},
+    {id:'credit',title:'Credit',mobile:'Credit',sub:'Score history'},
+    {id:'goals',title:'Goals',mobile:'Goals',sub:'Targets'},
+    {id:'rules',title:'Rules',mobile:'Rules',sub:'Autopilot'},
+    {id:'settings',title:'Settings',mobile:'Settings',sub:'Local app'}
+  ];
+  const FALLBACK_ICONS={overview:'⌂',accounts:'▤',transactions:'≡',budgets:'◌',review:'✓',import:'⇡',networth:'◆',recurring:'↻',debt:'◒',investments:'△',credit:'◧',goals:'◇',rules:'⚡',settings:'⚙',more:'•••'};
+  const DEF_PRIMARY=['overview','accounts','transactions','budgets','review','import'];
+  const DEF_MOBILE=['overview','accounts','transactions','budgets'];
+  const allIds=()=>NAV_ITEMS.map(x=>x.id);
+  const navItem=id=>NAV_ITEMS.find(x=>x.id===id) || {id,title:id,mobile:id,sub:''};
+  function navIcon(id){ try{ return (typeof window.mmNavIcon==='function' && window.mmNavIcon(id)) || FALLBACK_ICONS[id] || '•'; }catch(e){ return FALLBACK_ICONS[id] || '•'; } }
+  function validList(list,fallback){ const ids=allIds(); const seen=new Set(); const source=Array.isArray(list)?list:fallback; const out=source.filter(id=>ids.includes(id) && !seen.has(id) && (seen.add(id),true)); return out.length?out:fallback.slice(); }
+  function navSettings(){ state.settings=state.settings||{}; state.settings.navPrimary=validList(state.settings.navPrimary,DEF_PRIMARY); state.settings.mobileTabs=validList(state.settings.mobileTabs,DEF_MOBILE).slice(0,4); if(!state.settings.mobileTabs.length) state.settings.mobileTabs=DEF_MOBILE.slice(); return state.settings; }
+  function navButton(id,extra=''){ const n=navItem(id); return `<button type="button" class="nav-btn ${extra} ${id===activeView?'active':''}" data-view="${id}" onclick="showView('${id}')"><span class="nav-icon">${navIcon(id)}</span><span class="nav-copy"><strong>${escapeHtml(n.title)}</strong><span>${escapeHtml(n.sub)}</span></span></button>`; }
+  window.buildNav=function(){
+    const side=document.getElementById('sideNav'); if(!side) return;
+    const s=navSettings(); const primary=s.navPrimary; const more=allIds().filter(id=>!primary.includes(id));
+    side.innerHTML=`${primary.map(id=>navButton(id)).join('')}<div class="nav-inline-head"><span>More</span><button type="button" class="btn btn-small" onclick="showView('settings'); setTimeout(()=>document.getElementById('navLayoutSettings')?.scrollIntoView({behavior:'smooth',block:'start'}),80)">Edit</button></div>${more.map(id=>navButton(id,'secondary')).join('')}`;
+  };
+  function ensureMoreSheet(){
+    let sheet=document.getElementById('mobileMoreSheet');
+    if(!sheet){ sheet=document.createElement('div'); sheet.id='mobileMoreSheet'; sheet.className='mobile-more-sheet'; document.body.appendChild(sheet); }
+    sheet.setAttribute('aria-hidden', sheet.classList.contains('active')?'false':'true');
+    sheet.innerHTML=`<div class="mobile-more-panel" role="dialog" aria-modal="true" aria-label="More MoneyMap sections"><div class="mobile-more-head"><div><b>More sections</b><span>Open the sections that are not pinned to the bottom bar.</span></div><button type="button" class="btn btn-small" onclick="closeMobileMoreSheet()">Close</button></div><div class="mobile-more-grid" id="mobileMoreGrid"></div></div>`;
+    sheet.onclick=e=>{ if(e.target===sheet) closeMobileMoreSheet(); };
+    return sheet;
+  }
+  function renderMobileMoreGrid(){ const sheet=ensureMoreSheet(); const grid=sheet.querySelector('#mobileMoreGrid'); if(!grid) return; const pinned=navSettings().mobileTabs; const more=allIds().filter(id=>!pinned.includes(id)); grid.innerHTML=more.map(id=>{ const n=navItem(id); return `<button type="button" class="mobile-more-item ${id===activeView?'active':''}" data-view="${id}" onclick="closeMobileMoreSheet(); showView('${id}')"><span class="mobile-more-icon">${navIcon(id)}</span><span class="mobile-more-copy"><strong>${escapeHtml(n.title)}</strong><span>${escapeHtml(n.sub)}</span></span></button>`; }).join(''); }
+  window.openMobileMoreSheet=function(){ const sheet=ensureMoreSheet(); renderMobileMoreGrid(); sheet.classList.add('active'); sheet.setAttribute('aria-hidden','false'); document.body.classList.add('mm-more-open'); };
+  window.closeMobileMoreSheet=function(){ const sheet=document.getElementById('mobileMoreSheet'); if(sheet){ sheet.classList.remove('active'); sheet.setAttribute('aria-hidden','true'); } document.body.classList.remove('mm-more-open','uxv62-more-open'); };
+  window.toggleMobileMore=function(open){ const sheet=ensureMoreSheet(); const next=typeof open==='boolean'?open:!sheet.classList.contains('active'); next?openMobileMoreSheet():closeMobileMoreSheet(); };
+  window.buildMobileNav=function(){ const nav=document.getElementById('mobileNav'); if(!nav) return; const pinned=navSettings().mobileTabs; const moreActive=!pinned.includes(activeView); nav.innerHTML=pinned.map(id=>{ const n=navItem(id); return `<button type="button" class="${id===activeView?'active':''}" onclick="showView('${id}')" aria-label="Open ${escapeHtml(n.title)}"><span>${navIcon(id)}</span><span>${escapeHtml(n.mobile||n.title)}</span></button>`; }).join('')+`<button type="button" class="${moreActive?'active':''}" onclick="openMobileMoreSheet()" aria-label="Open more sections"><span>${navIcon('more')}</span><span>More</span></button>`; renderMobileMoreGrid(); };
+  window.toggleNavPrimary=function(id){ const s=navSettings(); const idx=s.navPrimary.indexOf(id); if(idx>=0 && id!=='overview') s.navPrimary.splice(idx,1); else if(idx<0) s.navPrimary.push(id); saveState(); buildNav(); renderNavLayoutSettings(); toast('Navigation updated.'); };
+  window.moveNavPrimary=function(id,dir){ const s=navSettings(); const i=s.navPrimary.indexOf(id); if(i<0) return; const j=Math.max(0,Math.min(s.navPrimary.length-1,i+dir)); [s.navPrimary[i],s.navPrimary[j]]=[s.navPrimary[j],s.navPrimary[i]]; saveState(); buildNav(); renderNavLayoutSettings(); };
+  window.toggleMobileTab=function(id){ const s=navSettings(); const idx=s.mobileTabs.indexOf(id); if(idx>=0){ if(s.mobileTabs.length>1) s.mobileTabs.splice(idx,1); } else { if(s.mobileTabs.length>=4) s.mobileTabs.shift(); s.mobileTabs.push(id); } saveState(); buildMobileNav(); renderNavLayoutSettings(); toast('Bottom navigation updated.'); };
+  window.resetNavLayout=function(){ state.settings.navPrimary=DEF_PRIMARY.slice(); state.settings.mobileTabs=DEF_MOBILE.slice(); saveState(); buildNav(); buildMobileNav(); renderNavLayoutSettings(); toast('Navigation reset.'); };
+  window.renderNavLayoutSettings=function(){
+    const el=document.getElementById('navLayoutSettings'); if(!el) return; const s=navSettings();
+    el.innerHTML=`<div class="card-header"><div><h3 class="card-title">Navigation layout</h3><p class="card-subtitle">Pin frequent sections to the sidebar and bottom bar. Other sections remain under More.</p></div><button type="button" class="btn btn-small" onclick="resetNavLayout()">Reset</button></div><div class="mm-v095-tab-list">${NAV_ITEMS.map(n=>{ const pinned=s.navPrimary.includes(n.id); const mobile=s.mobileTabs.includes(n.id); return `<div class="mm-v095-tab-row"><span class="mm-v095-tab-icon">${navIcon(n.id)}</span><div><b>${escapeHtml(n.title)}</b><span>${escapeHtml(n.sub)}</span></div><div class="mm-v095-tab-actions"><button type="button" class="btn btn-small ${pinned?'btn-primary':''}" onclick="toggleNavPrimary('${n.id}')">${pinned?'Sidebar':'More'}</button><button type="button" class="btn btn-small ${mobile?'btn-primary':''}" onclick="toggleMobileTab('${n.id}')">${mobile?'Bottom':'Mobile'}</button><button type="button" class="btn btn-small" onclick="moveNavPrimary('${n.id}',-1)">Up</button><button type="button" class="btn btn-small" onclick="moveNavPrimary('${n.id}',1)">Down</button></div></div>`; }).join('')}</div>`;
+  };
+  function markBuild(){ try{ document.documentElement.setAttribute('data-moneymap-build',BUILD); document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; }); }catch(e){} }
+  function afterRender(){ try{ document.querySelectorAll('button:not([type])').forEach(btn=>{ btn.type='button'; }); buildNav(); buildMobileNav(); renderMobileMoreGrid(); renderNavLayoutSettings(); markBuild(); }catch(e){ console.warn('MoneyMap QA6 afterRender failed',e); } }
+  const priorShow=window.showView;
+  if(typeof priorShow==='function' && !priorShow.__qa6Wrapped){ window.showView=function(id){ closeMobileMoreSheet(); const out=priorShow.apply(this,arguments); requestAnimationFrame(afterRender); return out; }; window.showView.__qa6Wrapped=true; }
+  const priorRenderAll=window.renderAll;
+  if(typeof priorRenderAll==='function' && !priorRenderAll.__qa6Wrapped){ window.renderAll=function(){ const out=priorRenderAll.apply(this,arguments); requestAnimationFrame(afterRender); return out; }; window.renderAll.__qa6Wrapped=true; }
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMobileMoreSheet(); });
+  document.addEventListener('DOMContentLoaded',afterRender);
+  window.addEventListener('resize',afterRender,{passive:true});
+  afterRender();
 })();

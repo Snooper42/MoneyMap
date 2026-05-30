@@ -2,16 +2,24 @@
 
 MoneyMap is a private, local-first personal finance planner.
 
-## v0.10.0-alpha structural split
+## QA6 deploy notes
 
-This milestone continues the migration from a single-file app into a GitHub Pages-compatible static project.
+This build is `qa6-20260530` / `v0.10.1-qa6`.
+
+What changed:
+
+- Replaced native browser `confirm()` and `prompt()` dialogs with MoneyMap-styled modals.
+- Added safer delete confirmations for accounts, debts, holdings, goals, transactions, rules, saved mappings, backups, and resets.
+- Hardened sidebar and mobile navigation so pinned tabs and the More sheet rebuild consistently after every render.
+- Added an Accounts route to the stable navigation set.
+- Updated cache-busting query strings on all CSS and JavaScript assets so GitHub Pages serves the new files instead of stale browser-cached files.
+
+## File layout
 
 ```text
 index.html
 README.md
 docs/
-  v0.10.0-alpha-notes.md
-  v0.10.0-alpha-split-migration.md
 src/
   css/
     base.css
@@ -48,6 +56,17 @@ Then open:
 http://localhost:8000
 ```
 
-## GitHub Pages
+## GitHub Pages deployment
 
-Upload the whole folder contents to the repo root. GitHub Pages should still serve `index.html`.
+Upload the folder contents to the repo root. Do not upload or replace the `.git` folder from any ZIP.
+
+After replacing files, commit and push:
+
+```bash
+git status
+git add index.html README.md src/css/components.css src/css/mobile.css src/js/utils.js src/js/state.js src/js/storage.js src/js/navigation.js src/js/accounts.js src/js/transactions.js src/js/settings.js src/js/app.js
+git commit -m "Apply MoneyMap QA6 navigation and dialog fixes"
+git push
+```
+
+If GitHub Pages still shows the old UI, hard refresh the browser and confirm the page source references `?v=qa6-20260530`.

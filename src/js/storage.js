@@ -222,7 +222,7 @@ function extractBackupState(parsed){
 
 function importBackupFile(e){
   const input=e.target; const file=input.files && input.files[0]; if(!file) return;
-  file.text().then(text=>{
+  file.text().then(async text=>{
     try{
       const parsed=JSON.parse(text);
       const incoming=extractBackupState(parsed);
@@ -236,7 +236,7 @@ function importBackupFile(e){
       };
       const exported=parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString() : 'unknown date';
       const msg=`Import backup from ${exported}? This replaces your current local MoneyMap workspace.\n\nTransactions: ${summary.transactions||0}\nAccounts: ${summary.accounts||0}\nGoals: ${summary.goals||0}\nDebts: ${summary.debts||0}\nHoldings: ${summary.holdings||0}\nCredit logs: ${summary.creditLogs||0}`;
-      if(!confirm(msg)){ input.value=''; return; }
+      if(!(await mmConfirm(msg, {title:'Import backup?', confirmText:'Import backup', danger:true}))){ input.value=''; return; }
       state=mergeState(defaultState,incoming);
       state.settings.lastRestore=new Date().toISOString();
       state.settings.startupSeenBuild=APP_BUILD_ID;
@@ -252,9 +252,11 @@ function importBackupFile(e){
   });
 }
 
-function resetAllData(){
-  if(!confirm('Delete all MoneyMap data in this browser? Export a backup first if you may need this workspace later.')) return;
-  if(!confirm('Final confirmation: this clears transactions, budgets, trackers, imports, rules, and settings from localStorage.')) return;
+async function resetAllData(){
+  const first=await mmConfirm('Delete all MoneyMap data in this browser? Export a backup first if you may need this workspace later.', {title:'Reset MoneyMap?', confirmText:'Continue', danger:true});
+  if(!first) return;
+  const second=await mmConfirm('Final confirmation: this clears transactions, budgets, trackers, imports, rules, and settings from localStorage.', {title:'Final reset confirmation', confirmText:'Delete all data', danger:true});
+  if(!second) return;
   state=clone(defaultState);
   ensureStarterContent();
   try{ OLD_STORAGE_KEYS.forEach(key=>localStorage.removeItem(key)); }catch(e){}

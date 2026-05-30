@@ -66,10 +66,10 @@ function resetWorkspaceForFreshStart(){
   ensureStarterContent();
 }
 
-function chooseFirstRun(mode){
+async function chooseFirstRun(mode){
   if(mode==='continue'){ completeFirstRun(); toast('Current workspace continued.'); renderAll(); return; }
-  if(mode==='demo' && workspaceHasUserData() && !confirm('Replace your current workspace with demo data?')) return;
-  if(mode==='fresh' && workspaceHasUserData() && !confirm('Start fresh and clear existing transactions, imports, goals, and credit logs?')) return;
+  if(mode==='demo' && workspaceHasUserData() && !(await mmConfirm('Replace your current workspace with demo data?', {title:'Load demo workspace?', confirmText:'Replace', danger:true}))) return;
+  if(mode==='fresh' && workspaceHasUserData() && !(await mmConfirm('Start fresh and clear existing transactions, imports, goals, and credit logs?', {title:'Start fresh?', confirmText:'Clear workspace', danger:true}))) return;
   if(mode==='demo'){ completeFirstRun(); loadDemoData(); return; }
   if(mode==='import'){ completeFirstRun(); showView('import'); toast('Import center opened. Drop your CSV to begin.'); return; }
   resetWorkspaceForFreshStart();

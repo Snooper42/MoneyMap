@@ -247,7 +247,7 @@ function renderSavedMappings(){
   el.innerHTML=maps.length?maps.map(m=>`<div class="mini-item"><div><b>${escapeHtml(m.name||'Bank mapping')}</b><br><span>${(m.headers||[]).length} columns · used ${m.useCount||0} time${(m.useCount||0)===1?'':'s'}${m.updatedAt?` · ${dateFmt(String(m.updatedAt).slice(0,10))}`:''}</span></div><div class="table-actions"><button class="btn btn-small btn-danger" onclick="deleteSavedMapping('${m.id}')">Delete</button></div></div>`).join(''):emptyMini('No saved mappings yet','Save a bank mapping from the import center to reuse it later.');
 }
 
-function deleteSavedMapping(id){ state.importMappings=(state.importMappings||[]).filter(m=>m.id!==id); toast('Saved mapping deleted.'); renderAll(); }
+async function deleteSavedMapping(id){ const ok=await mmConfirm('Delete this saved CSV mapping?', {title:'Delete saved mapping?', confirmText:'Delete', danger:true}); if(!ok) return; state.importMappings=(state.importMappings||[]).filter(m=>m.id!==id); toast('Saved mapping deleted.'); renderAll(); }
 
 function invalidateImportSummary(){ if(pendingImport){ pendingImport.summary=null; renderImportSummaryPanel(); setStep('stepMap'); } }
 
@@ -619,7 +619,7 @@ function addRuleFromForm(){ const contains=document.getElementById('ruleContains
 
 function addSuggestedRule(contains,category,action='categorize',direction='spend'){ if(ruleExistsForContains(contains)){ toast('A matching rule already exists.'); return; } state.rules.unshift(canonicalRule({id:uid('rule'),contains,category,action,direction,createdBy:'suggestion'})); state.transactions.forEach(tx=>applyAutomationToTx(tx,{guess:false})); saveState(); toast('Suggested rule accepted.'); renderAll(); }
 
-function deleteRule(id){ state.rules=state.rules.filter(r=>r.id!==id); saveState(); renderAll(); }
+async function deleteRule(id){ const ok=await mmConfirm('Delete this automation rule?', {title:'Delete rule?', confirmText:'Delete', danger:true}); if(!ok) return; state.rules=state.rules.filter(r=>r.id!==id); saveState(); renderAll(); }
 
 function moveRule(id,dir){ const i=state.rules.findIndex(r=>r.id===id); if(i<0) return; const j=Math.max(0,Math.min(state.rules.length-1,i+dir)); const [r]=state.rules.splice(i,1); state.rules.splice(j,0,r); saveState(); renderAll(); }
 
@@ -639,7 +639,7 @@ function applyRulesToAll(){ let ruleHits=0, transferHits=0; state.transactions.f
 
 function saveQuickTransaction(id){ const tx=id?state.transactions.find(t=>t.id===id):{id:uid('tx'),createdAt:new Date().toISOString()}; if(!tx) return; Object.assign(tx,{date:document.getElementById('qaDate').value, amount:parseFloat(document.getElementById('qaAmount').value)||0, description:document.getElementById('qaDesc').value.trim()||'Manual transaction', rawDescription:document.getElementById('qaDesc').value.trim()||'Manual transaction', category:document.getElementById('qaCat').value.trim()||'Other', account:document.getElementById('qaAcct').value.trim()||'General', hidden:document.getElementById('qaHidden').classList.contains('on'), reviewed:true}); if(!id) state.transactions.push(tx); state.settings.firstRunComplete=true; closeDrawer(); toast('Transaction saved.'); renderAll(); }
 
-function deleteTransaction(id){ state.transactions=state.transactions.filter(t=>t.id!==id); closeDrawer(); toast('Transaction deleted.'); renderAll(); }
+async function deleteTransaction(id){ const ok=await mmConfirm('Delete this transaction? This cannot be undone.', {title:'Delete transaction?', confirmText:'Delete', danger:true}); if(!ok) return; state.transactions=state.transactions.filter(t=>t.id!==id); closeDrawer(); toast('Transaction deleted.'); renderAll(); }
 
 function exportTransactionsCsv(){
   const headers=['date','description','rawDescription','amount','category','account','reviewed','hidden','notes','createdAt'];

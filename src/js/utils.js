@@ -234,6 +234,89 @@ function hashTx(tx){ return [tx.date, Number(tx.amount).toFixed(2), normalizeMer
 
 function escapeHtml(str){ return String(str ?? '').replace(/[&<>'"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
 
+
+function ensureMoneyMapDialog(){
+  let root=document.getElementById('mmDialogRoot');
+  if(root) return root;
+  root=document.createElement('div');
+  root.id='mmDialogRoot';
+  root.className='mm-dialog';
+  root.setAttribute('aria-hidden','true');
+  document.body.appendChild(root);
+  return root;
+}
+
+function mmDialog(options={}){
+  return new Promise(resolve=>{
+    const root=ensureMoneyMapDialog();
+    const previous=document.activeElement;
+    const type=options.type || 'confirm';
+    const isPrompt=type === 'prompt';
+    const title=options.title || (isPrompt ? 'Enter value' : 'Confirm action');
+    const message=options.message || '';
+    const confirmText=options.confirmText || (isPrompt ? 'Save' : 'OK');
+    const cancelText=options.cancelText || 'Cancel';
+    const danger=Boolean(options.danger);
+    const defaultValue=options.defaultValue ?? '';
+    const bodyHtml=String(message).split(/\n+/).map(x=>`<p>${escapeHtml(x)}</p>`).join('');
+    root.innerHTML=`<div class="mm-dialog-backdrop" data-dialog-cancel="1"></div>
+      <div class="mm-dialog-panel ${danger?'danger':''}" role="dialog" aria-modal="true" aria-labelledby="mmDialogTitle">
+        <div class="mm-dialog-head">
+          <span class="mm-dialog-icon">${danger?'!':'?'}</span>
+          <div><h3 id="mmDialogTitle">${escapeHtml(title)}</h3><div class="mm-dialog-copy">${bodyHtml}</div></div>
+        </div>
+        ${isPrompt?`<input class="input mm-dialog-input" id="mmDialogInput" value="${escapeHtml(defaultValue)}" autocomplete="off">`:''}
+        <div class="mm-dialog-actions">
+          <button type="button" class="btn" data-dialog-cancel="1">${escapeHtml(cancelText)}</button>
+          <button type="button" class="btn ${danger?'btn-danger':'btn-primary'}" data-dialog-confirm="1">${escapeHtml(confirmText)}</button>
+        </div>
+      </div>`;
+    root.classList.add('active');
+    root.setAttribute('aria-hidden','false');
+    document.body.classList.add('mm-dialog-open');
+    const input=root.querySelector('#mmDialogInput');
+    const confirmBtn=root.querySelector('[data-dialog-confirm]');
+    const close=(value)=>{
+      root.classList.remove('active');
+      root.setAttribute('aria-hidden','true');
+      document.body.classList.remove('mm-dialog-open');
+      root.innerHTML='';
+      document.removeEventListener('keydown',onKey,true);
+      try{ previous?.focus?.(); }catch(e){}
+      resolve(value);
+    };
+    const confirm=()=> close(isPrompt ? (input?.value ?? '') : true);
+    const cancel=()=> close(isPrompt ? null : false);
+    const onKey=(event)=>{
+      if(event.key==='Escape'){ event.preventDefault(); cancel(); }
+      if(event.key==='Enter' && (!isPrompt || document.activeElement===input)){ event.preventDefault(); confirm(); }
+      if(event.key==='Tab'){
+        const focusables=[...root.querySelectorAll('button,input')];
+        if(!focusables.length) return;
+        const first=focusables[0], last=focusables[focusables.length-1];
+        if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
+        else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
+      }
+    };
+    root.onclick=event=>{ if(event.target.closest('[data-dialog-cancel]')) cancel(); if(event.target.closest('[data-dialog-confirm]')) confirm(); };
+    document.addEventListener('keydown',onKey,true);
+    setTimeout(()=>{ (input || confirmBtn)?.focus?.(); if(input) input.select(); },20);
+  });
+}
+
+function mmConfirm(message, options={}){ return mmDialog({type:'confirm', message, ...options}); }
+function mmPrompt(message, defaultValue='', options={}){ return mmDialog({type:'prompt', message, defaultValue, ...options}); }
+
+function mmCollectionLabel(collection){
+  return ({accounts:'account',debts:'debt',holdings:'holding',netWorthHistory:'snapshot',goals:'goal',transactions:'transaction',creditHistory:'credit log',rules:'rule',importMappings:'saved mapping'}[collection] || 'item');
+}
+
+function mmItemName(collection,id){
+  const item=(state?.[collection]||[]).find(x=>x.id===id);
+  if(!item) return mmCollectionLabel(collection);
+  return item.name || item.description || item.category || item.symbol || item.date || mmCollectionLabel(collection);
+}
+
 function toast(msg){ const wrap=document.getElementById('toast'); const el=document.createElement('div'); el.className='toast-item'; el.textContent=msg; wrap.appendChild(el); setTimeout(()=>el.remove(),3400); }
 
 function daysLeftInMonth(){ const d=new Date(); const last=new Date(d.getFullYear(), d.getMonth()+1, 0).getDate(); return Math.max(1,last-d.getDate()+1); }
