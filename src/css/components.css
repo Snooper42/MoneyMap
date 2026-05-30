@@ -901,3 +901,13 @@ td,th{white-space:nowrap}.table-wrap{position:relative}.table-wrap:after{content
 .global-search-footer{display:flex;gap:8px;justify-content:flex-end;padding:10px 8px 4px;border-top:1px solid var(--line);margin-top:8px}
 @media(max-width:900px){.global-search-panel{left:12px;right:12px;top:calc(100% + 8px);width:auto;max-height:calc(100dvh - 160px);border-radius:20px}.global-search-item{min-height:58px;grid-template-columns:40px minmax(0,1fr) auto}.global-search-icon{width:40px;height:40px}.global-search-copy b{font-size:14px}.global-search-copy span{font-size:12.5px}.global-search-value{font-size:12px}}
 @media(max-width:480px){.global-search-panel{left:10px;right:10px;padding:8px;max-height:calc(100dvh - 150px)}.global-search-head{display:grid;gap:4px}.global-search-item{grid-template-columns:36px minmax(0,1fr);padding:10px 9px}.global-search-value{grid-column:2;justify-self:start;color:var(--muted)}}
+
+
+/* R2.2 Firefox scroll guard */
+html{height:auto!important;min-height:100%!important;overflow-y:auto!important;overflow-x:clip!important}
+body{min-height:100vh!important;overflow-y:auto!important;overflow-x:clip!important}
+.app-shell,.main,.view{overflow-x:clip!important}
+.global-search-panel{overscroll-behavior:auto!important;contain:layout paint!important;will-change:auto!important}
+@media(max-width:760px){body:not(.mm-r22-more-active).mm-more-open,body:not(.mm-r22-more-active).uxv62-more-open{overflow-y:auto!important;touch-action:auto!important}body .mobile-more-panel{-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important}}
+@media(min-width:761px){body.mm-more-open,body.uxv62-more-open{overflow-y:auto!important;touch-action:auto!important}}
+@-moz-document url-prefix(){.topbar,.mobile-shell-header,.mobile-bar,.global-search-panel,.mobile-more-sheet,.command-palette,.first-run{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.topbar,.mobile-shell-header{background:var(--bg)!important}.mobile-bar,.global-search-panel,.mobile-more-panel{background:var(--panel)!important}.mobile-more-sheet{background:rgba(2,6,23,.68)!important}body:before{display:none!important}}

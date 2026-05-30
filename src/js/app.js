@@ -2741,13 +2741,13 @@ window.addEventListener('keydown', event => {
   };
   function injectStyle(){
     const css=`
-      html,body{max-width:100%;overflow-x:hidden!important}
+      html,body{max-width:100%;overflow-x:clip!important;overflow-y:visible!important;height:auto!important}
       .app-shell,.main,.view{max-width:100%;min-width:0}
       .mobile-shell-header{display:none}
       @media(max-width:1180px){
-        body .app-shell{display:block!important;grid-template-columns:1fr!important;overflow-x:hidden!important;width:100%!important}
+        body .app-shell{display:block!important;grid-template-columns:1fr!important;overflow-x:clip!important;width:100%!important}
         body .sidebar{display:none!important}
-        body .main{width:100%!important;max-width:1040px!important;min-width:0!important;margin:0 auto!important;overflow-x:hidden!important;padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+        body .main{width:100%!important;max-width:1040px!important;min-width:0!important;margin:0 auto!important;overflow-x:clip!important;padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
         body .mobile-bar{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:2200!important;width:100%!important;max-width:100vw!important;overflow:hidden!important}
         body .mobile-bar button{min-width:0!important;width:100%!important;touch-action:manipulation!important}
       }
@@ -3151,7 +3151,7 @@ window.addEventListener('keydown', event => {
 
 /* R2.1 global search fix: make the top search visibly return results. */
 (function(){
-  const BUILD='r2-1-global-search-20260530';
+  const BUILD='r2-2-firefox-scroll-20260530';
   let searchResults=[];
   let activeIndex=0;
 
@@ -3333,4 +3333,105 @@ window.addEventListener('keydown', event => {
     window.showView.__r21GlobalSearchWrapped=true;
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',afterRender); else afterRender();
+})();
+
+
+/* ---- R2.2: Firefox scroll guard and stuck-overlay recovery ---- */
+(function(){
+  const BUILD='r2-2-firefox-scroll-20260530';
+  const STYLE_ID='r22-firefox-scroll-guard-style';
+
+  function markBuild(){
+    try{
+      document.documentElement.setAttribute('data-moneymap-build', BUILD);
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+    }catch(e){}
+  }
+
+  function injectStyle(){
+    const css=`
+      html{height:auto!important;min-height:100%!important;overflow-y:auto!important;overflow-x:clip!important}
+      body{min-height:100vh!important;overflow-y:auto!important;overflow-x:clip!important;touch-action:auto!important}
+      .app-shell,.main,.view{overflow-x:clip!important}
+      .global-search-panel{overscroll-behavior:auto!important;contain:layout paint!important;will-change:auto!important}
+      @media(max-width:760px){
+        body:not(.mm-r22-more-active).mm-more-open{overflow-y:auto!important;touch-action:auto!important}
+        body:not(.mm-r22-more-active).uxv62-more-open{overflow-y:auto!important;touch-action:auto!important}
+        body .mobile-more-panel{-webkit-overflow-scrolling:touch!important;touch-action:pan-y!important}
+      }
+      @media(min-width:761px){
+        body.mm-more-open,body.uxv62-more-open{overflow-y:auto!important;touch-action:auto!important}
+      }
+      @-moz-document url-prefix(){
+        .topbar,.mobile-shell-header,.mobile-bar,.global-search-panel,.mobile-more-sheet,.command-palette,.first-run{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+        .topbar,.mobile-shell-header{background:var(--bg)!important}
+        .mobile-bar,.global-search-panel,.mobile-more-panel{background:var(--panel)!important}
+        .mobile-more-sheet{background:rgba(2,6,23,.68)!important}
+        body:before{display:none!important}
+      }
+    `;
+    let style=document.getElementById(STYLE_ID);
+    if(!style){ style=document.createElement('style'); style.id=STYLE_ID; document.head.appendChild(style); }
+    if(style.textContent!==css) style.textContent=css;
+  }
+
+  function moreSheetIsActive(){
+    const sheet=document.getElementById('mobileMoreSheet');
+    return !!(sheet && sheet.classList.contains('active') && window.matchMedia('(max-width: 760px)').matches);
+  }
+
+  function clearStuckLocks(){
+    try{
+      const activeMore=moreSheetIsActive();
+      document.body.classList.toggle('mm-r22-more-active', activeMore);
+      if(!activeMore) document.body.classList.remove('mm-more-open','uxv62-more-open');
+      if(document.body.style.overflow==='hidden' && !activeMore) document.body.style.overflow='';
+      if(document.documentElement.style.overflow==='hidden') document.documentElement.style.overflow='';
+      document.documentElement.style.overflowY='auto';
+      document.body.style.overflowY='auto';
+    }catch(e){}
+  }
+
+  function closeSearchOnPageScrollIntent(event){
+    try{
+      const panel=document.getElementById('globalSearchPanel');
+      if(!panel || !panel.classList.contains('active')) return;
+      const input=document.querySelector('.searchbar input');
+      const target=event.target;
+      if(panel.contains(target) || (input && input.contains(target))) return;
+      if(typeof window.closeGlobalSearchPanel==='function') window.closeGlobalSearchPanel();
+    }catch(e){}
+  }
+
+  function afterRender(){ injectStyle(); markBuild(); clearStuckLocks(); }
+
+  const priorOpen=window.openMobileMoreSheet;
+  if(typeof priorOpen==='function' && !priorOpen.__r22ScrollGuardWrapped){
+    window.openMobileMoreSheet=function(){ const out=priorOpen.apply(this,arguments); requestAnimationFrame(afterRender); return out; };
+    window.openMobileMoreSheet.__r22ScrollGuardWrapped=true;
+  }
+  const priorClose=window.closeMobileMoreSheet;
+  if(typeof priorClose==='function' && !priorClose.__r22ScrollGuardWrapped){
+    window.closeMobileMoreSheet=function(){ const out=priorClose.apply(this,arguments); requestAnimationFrame(afterRender); return out; };
+    window.closeMobileMoreSheet.__r22ScrollGuardWrapped=true;
+  }
+  const priorShow=window.showView;
+  if(typeof priorShow==='function' && !priorShow.__r22ScrollGuardWrapped){
+    window.showView=function(){ const out=priorShow.apply(this,arguments); requestAnimationFrame(afterRender); return out; };
+    window.showView.__r22ScrollGuardWrapped=true;
+  }
+  const priorRenderAll=window.renderAll;
+  if(typeof priorRenderAll==='function' && !priorRenderAll.__r22ScrollGuardWrapped){
+    window.renderAll=function(){ const out=priorRenderAll.apply(this,arguments); requestAnimationFrame(afterRender); return out; };
+    window.renderAll.__r22ScrollGuardWrapped=true;
+  }
+
+  document.addEventListener('wheel', closeSearchOnPageScrollIntent, {passive:true});
+  document.addEventListener('touchmove', closeSearchOnPageScrollIntent, {passive:true});
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') requestAnimationFrame(afterRender); });
+  document.addEventListener('DOMContentLoaded', afterRender);
+  window.addEventListener('resize', afterRender, {passive:true});
+  window.addEventListener('orientationchange', afterRender, {passive:true});
+  setInterval(clearStuckLocks, 1200);
+  afterRender();
 })();
