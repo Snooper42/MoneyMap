@@ -405,3 +405,128 @@ function hexToRgb(hex){
 function rgbToHex(r,g,b){ return '#'+[r,g,b].map(v=>clamp(Math.round(v),0,255).toString(16).padStart(2,'0')).join('').toUpperCase(); }
 
 function mixRgb(a,b,p){ return a.map((v,i)=>Math.round(v+(b[i]-v)*p)); }
+
+
+/* ---- Refactor 2 dialog layer: app-native confirmations, prompts, and dangerous actions ---- */
+(function(){
+  function html(value){ return escapeHtml(String(value ?? '')); }
+  function detailRows(details){
+    const rows=(details||[]).filter(x=>x && (x.value!==undefined && x.value!==null && String(x.value)!==''));
+    if(!rows.length) return '';
+    return `<div class="mm-dialog-details">${rows.map(x=>`<div class="mm-dialog-detail-row"><span>${html(x.label||'Detail')}</span><b>${html(x.value)}</b></div>`).join('')}</div>`;
+  }
+  function impactList(items){
+    const rows=(items||[]).filter(Boolean);
+    if(!rows.length) return '';
+    return `<div class="mm-dialog-impact"><b>What happens</b><ul>${rows.map(x=>`<li>${html(x)}</li>`).join('')}</ul></div>`;
+  }
+  function ensureRoot(){ return ensureMoneyMapDialog(); }
+
+  window.mmDialog=function(options={}){
+    return new Promise(resolve=>{
+      const root=ensureRoot();
+      const previous=document.activeElement;
+      const type=options.type || 'confirm';
+      const isPrompt=type === 'prompt';
+      const danger=Boolean(options.danger);
+      const title=options.title || (isPrompt ? 'Enter value' : 'Confirm action');
+      const message=options.message || '';
+      const confirmText=options.confirmText || (isPrompt ? 'Save' : 'OK');
+      const cancelText=options.cancelText || 'Cancel';
+      const defaultValue=options.defaultValue ?? '';
+      const requireText=options.requireText ? String(options.requireText) : '';
+      const requireLabel=options.requireLabel || (requireText ? `Type ${requireText} to confirm` : '');
+      const icon=options.icon || (danger ? '!' : (isPrompt ? '✎' : '✓'));
+      const bodyHtml=String(message).split(/\n+/).filter(Boolean).map(x=>`<p>${html(x)}</p>`).join('');
+      const promptHtml=isPrompt ? `<label class="mm-dialog-field"><span>${html(options.inputLabel||'Value')}</span><input class="input mm-dialog-input" id="mmDialogInput" value="${html(defaultValue)}" autocomplete="off"></label>` : '';
+      const requireHtml=requireText ? `<label class="mm-dialog-field mm-dialog-require"><span>${html(requireLabel)}</span><input class="input mm-dialog-input" id="mmDialogRequire" autocomplete="off" autocapitalize="characters" spellcheck="false" inputmode="text"></label>` : '';
+      root.innerHTML=`<div class="mm-dialog-backdrop" data-dialog-cancel="1"></div>
+        <div class="mm-dialog-panel ${danger?'danger':''}" role="dialog" aria-modal="true" aria-labelledby="mmDialogTitle" aria-describedby="mmDialogDescription">
+          <div class="mm-dialog-head">
+            <span class="mm-dialog-icon" aria-hidden="true">${html(icon)}</span>
+            <div class="mm-dialog-titleblock"><h3 id="mmDialogTitle">${html(title)}</h3><div class="mm-dialog-copy" id="mmDialogDescription">${bodyHtml}</div></div>
+          </div>
+          ${detailRows(options.details)}
+          ${impactList(options.impact || options.consequences)}
+          ${promptHtml}
+          ${requireHtml}
+          <div class="mm-dialog-actions">
+            <button type="button" class="btn mm-dialog-cancel" data-dialog-cancel="1">${html(cancelText)}</button>
+            <button type="button" class="btn ${danger?'btn-danger':'btn-primary'} mm-dialog-confirm" data-dialog-confirm="1">${html(confirmText)}</button>
+          </div>
+        </div>`;
+      root.classList.add('active');
+      root.setAttribute('aria-hidden','false');
+      document.body.classList.add('mm-dialog-open');
+      const valueInput=root.querySelector('#mmDialogInput');
+      const requireInput=root.querySelector('#mmDialogRequire');
+      const confirmBtn=root.querySelector('[data-dialog-confirm]');
+      const cancelBtn=root.querySelector('[data-dialog-cancel].mm-dialog-cancel');
+      const updateConfirm=()=>{
+        if(!requireText) return;
+        const matches=String(requireInput?.value||'').trim()===requireText;
+        confirmBtn.disabled=!matches;
+        confirmBtn.setAttribute('aria-disabled', String(!matches));
+      };
+      updateConfirm();
+      requireInput?.addEventListener('input',updateConfirm);
+      const close=(value)=>{
+        root.classList.remove('active');
+        root.setAttribute('aria-hidden','true');
+        document.body.classList.remove('mm-dialog-open');
+        root.innerHTML='';
+        document.removeEventListener('keydown',onKey,true);
+        try{ previous?.focus?.(); }catch(e){}
+        resolve(value);
+      };
+      const confirm=()=>{
+        if(confirmBtn.disabled) return;
+        close(isPrompt ? (valueInput?.value ?? '') : true);
+      };
+      const cancel=()=> close(isPrompt ? null : false);
+      const onKey=(event)=>{
+        if(event.key==='Escape'){ event.preventDefault(); cancel(); return; }
+        if(event.key==='Enter'){
+          if(isPrompt && document.activeElement===valueInput){ event.preventDefault(); confirm(); return; }
+          if(requireText && document.activeElement===requireInput && !confirmBtn.disabled){ event.preventDefault(); confirm(); return; }
+          if(!danger && !requireText){ event.preventDefault(); confirm(); return; }
+        }
+        if(event.key==='Tab'){
+          const focusables=[...root.querySelectorAll('button:not([disabled]),input')];
+          if(!focusables.length) return;
+          const first=focusables[0], last=focusables[focusables.length-1];
+          if(event.shiftKey && document.activeElement===first){ event.preventDefault(); last.focus(); }
+          else if(!event.shiftKey && document.activeElement===last){ event.preventDefault(); first.focus(); }
+        }
+      };
+      root.onclick=event=>{ if(event.target.closest('[data-dialog-cancel]')) cancel(); if(event.target.closest('[data-dialog-confirm]')) confirm(); };
+      document.addEventListener('keydown',onKey,true);
+      setTimeout(()=>{
+        if(valueInput){ valueInput.focus(); valueInput.select(); }
+        else if(requireInput){ requireInput.focus(); }
+        else if(danger){ cancelBtn?.focus?.(); }
+        else { confirmBtn?.focus?.(); }
+      },20);
+    });
+  };
+
+  window.mmConfirm=function(message, options={}){ return window.mmDialog({type:'confirm', message, ...options}); };
+  window.mmPrompt=function(message, defaultValue='', options={}){ return window.mmDialog({type:'prompt', message, defaultValue, ...options}); };
+  window.mmConfirmDanger=function(message, options={}){ return window.mmDialog({type:'confirm', message, danger:true, ...options}); };
+  window.mmConfirmDelete=function(options={}){
+    const type=options.itemType || 'item';
+    const name=options.itemName || 'this item';
+    return window.mmDialog({
+      type:'confirm',
+      danger:true,
+      title:options.title || `Delete ${type}?`,
+      message:options.message || `You are deleting “${name}”. This cannot be undone.`,
+      confirmText:options.confirmText || `Delete ${type}`,
+      cancelText:options.cancelText || 'Cancel',
+      details:options.details || [],
+      impact:options.impact || options.consequences || [],
+      icon:options.icon || '!'
+    });
+  };
+  try{ mmDialog=window.mmDialog; mmConfirm=window.mmConfirm; mmPrompt=window.mmPrompt; mmConfirmDanger=window.mmConfirmDanger; mmConfirmDelete=window.mmConfirmDelete; }catch(e){}
+})();

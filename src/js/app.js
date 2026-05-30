@@ -2587,7 +2587,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- Refactor 1: mobile-first app shell and navigation ---- */
 (function(){
-  const BUILD='r1-mobile-shell-20260530';
+  const BUILD='r2-action-system-20260530';
   const PRIMARY_MOBILE=['overview','accounts','transactions','budgets'];
   const PRIMARY_DESKTOP=['overview','accounts','transactions','budgets','review','import'];
   const SECONDARY=['review','import','networth','recurring','debt','investments','credit','goals','rules','settings'];
@@ -2844,4 +2844,307 @@ window.addEventListener('keydown', event => {
   window.addEventListener('resize',syncShell,{passive:true});
   window.addEventListener('orientationchange',syncShell,{passive:true});
   syncShell();
+})();
+
+
+/* ---- Refactor 2: safe action system and destructive action copy ---- */
+(function(){
+  const BUILD='r2-action-system-20260530';
+  const originalLoadDemoData=window.loadDemoData;
+
+  function html(value){ return (typeof escapeHtml==='function') ? escapeHtml(String(value ?? '')) : String(value ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function displayMoney(value, opts){ try{ return money(value, opts); }catch(e){ return String(value ?? '—'); } }
+  function todayBuild(){ try{ document.documentElement.setAttribute('data-moneymap-build',BUILD); document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; }); }catch(e){} }
+  function countLabel(count, singular, plural){ const n=Number(count||0); return `${n} ${n===1?singular:(plural||singular+'s')}`; }
+  function workspaceSummary(){
+    try{
+      const s=typeof backupSummary==='function' ? backupSummary() : {};
+      return [
+        {label:'Transactions',value:countLabel(s.transactions,'transaction')},
+        {label:'Accounts',value:countLabel(s.accounts,'account')},
+        {label:'Budgets',value:countLabel((state.budgets||[]).length,'budget')},
+        {label:'Trackers',value:countLabel((s.goals||0)+(s.debts||0)+(s.holdings||0)+(s.creditLogs||0),'item')},
+        {label:'Rules',value:countLabel(s.rules,'rule')}
+      ];
+    }catch(e){ return []; }
+  }
+  function find(collection,id){ return (state?.[collection]||[]).find(x=>x.id===id) || null; }
+  function itemName(collection,item){
+    if(!item) return typeof mmCollectionLabel==='function' ? mmCollectionLabel(collection) : 'item';
+    if(collection==='transactions') return item.description || 'Transaction';
+    if(collection==='rules') return item.contains || 'Automation rule';
+    if(collection==='creditHistory') return item.month || item.date || 'Credit log';
+    if(collection==='importMappings') return item.name || 'CSV mapping';
+    if(collection==='netWorthHistory') return item.date || 'Net worth snapshot';
+    return item.name || item.description || item.category || item.symbol || item.date || 'Item';
+  }
+  function deleteConfig(collection,id){
+    const item=find(collection,id);
+    const name=itemName(collection,item);
+    const fallback={itemType:'item',itemName:name,details:[],impact:['This removes the selected item from this browser.']};
+    if(!item) return fallback;
+    if(collection==='accounts'){
+      const signed=typeof accountSignedValue==='function' ? accountSignedValue(item) : Number(item.balance||0);
+      return {itemType:'account',itemName:name,details:[
+        {label:'Type',value:item.type||'Account'},
+        {label:'Institution',value:item.institution||'Manual'},
+        {label:'Balance',value:displayMoney(signed)},
+        {label:'Net worth',value:item.includeNetWorth!==false?'Included':'Excluded'}
+      ],impact:['Removes this manual balance from Accounts.','Transactions, budgets, and CSV imports are not deleted.']};
+    }
+    if(collection==='debts'){
+      return {itemType:'debt',itemName:name,details:[
+        {label:'Lender',value:item.lender||'Manual'},
+        {label:'Balance',value:displayMoney(item.balance)},
+        {label:'APR',value:(typeof pctFmt==='function'?pctFmt(item.apr):`${item.apr||0}%`)},
+        {label:'Net worth',value:item.includeNetWorth!==false?'Included':'Excluded'}
+      ],impact:['Removes this payoff tracker and payment plan row.','Transactions and accounts are not deleted.']};
+    }
+    if(collection==='holdings'){
+      const total=(Number(item.quantity||0)*Number(item.price||0));
+      return {itemType:'holding',itemName:name,details:[
+        {label:'Symbol',value:item.symbol||'—'},
+        {label:'Account',value:item.account||'Manual'},
+        {label:'Value',value:displayMoney(total)},
+        {label:'Net worth',value:item.includeNetWorth!==false?'Included':'Excluded'}
+      ],impact:['Removes this investment holding from the tracker.','No transactions or account records are removed.']};
+    }
+    if(collection==='netWorthHistory'){
+      return {itemType:'snapshot',itemName:name,details:[
+        {label:'Date',value:item.date?dateFmt(item.date):'—'},
+        {label:'Net worth',value:displayMoney(item.netWorth)},
+        {label:'Note',value:item.note||'Manual snapshot'}
+      ],impact:['Removes this historical net worth point.','Current accounts, debts, and holdings are not changed.']};
+    }
+    return fallback;
+  }
+  async function confirmDelete(config){
+    if(typeof mmConfirmDelete==='function') return await mmConfirmDelete(config);
+    return await mmConfirm(`Delete ${config.itemType||'item'} "${config.itemName||''}"? This cannot be undone.`, {title:`Delete ${config.itemType||'item'}?`,confirmText:'Delete',danger:true});
+  }
+  function closeAnyDrawer(){ try{ closeDrawer(); }catch(e){} }
+  function finish(msg){ if(msg) toast(msg); renderAll(); todayBuild(); }
+
+  window.deleteTrackerItem=async function(collection,id,options={}){
+    if(!state?.[collection]) return false;
+    const config=deleteConfig(collection,id);
+    const ok=await confirmDelete(config);
+    if(!ok) return false;
+    state[collection]=state[collection].filter(x=>x.id!==id);
+    if(options.closeDrawer) closeAnyDrawer();
+    const label=(config.itemType||'item').replace(/^./,c=>c.toUpperCase());
+    finish(`${label} deleted.`);
+    return true;
+  };
+
+  window.deleteTransaction=async function(id){
+    const tx=find('transactions',id); if(!tx) return;
+    const ok=await confirmDelete({
+      itemType:'transaction',
+      itemName:tx.description||'Transaction',
+      details:[
+        {label:'Date',value:tx.date?dateFmt(tx.date):'—'},
+        {label:'Amount',value:displayMoney(tx.amount,{cents:true})},
+        {label:'Category',value:tx.category||'Other'},
+        {label:'Account',value:tx.account||'General'}
+      ],
+      impact:['Removes this transaction from spending, income, budgets, reports, and review counts.','Import history and saved mappings are not deleted.']
+    });
+    if(!ok) return;
+    state.transactions=(state.transactions||[]).filter(t=>t.id!==id);
+    closeAnyDrawer();
+    finish('Transaction deleted.');
+  };
+
+  window.deleteGoal=async function(id){
+    const goal=find('goals',id); if(!goal) return;
+    const target=Number(goal.target||0), current=Number(goal.current||0);
+    const ok=await confirmDelete({
+      itemType:'goal',
+      itemName:goal.name||'Goal',
+      details:[
+        {label:'Progress',value:`${displayMoney(current)} of ${displayMoney(target)}`},
+        {label:'Due date',value:goal.dueDate?dateFmt(goal.dueDate):'No due date'},
+        {label:'Priority',value:goal.priority||'Medium'}
+      ],
+      impact:['Removes this savings target and progress tracker.','Accounts and transactions are not changed.']
+    });
+    if(!ok) return;
+    state.goals=(state.goals||[]).filter(g=>g.id!==id);
+    finish('Goal deleted.');
+  };
+
+  window.deleteCreditLog=async function(id){
+    const entry=find('creditHistory',id); if(!entry) return;
+    const avg=typeof avgScore==='function' ? avgScore(entry) : null;
+    const ok=await confirmDelete({
+      itemType:'credit log',
+      itemName:entry.month||entry.date||'Credit log',
+      details:[
+        {label:'Average score',value:avg||'—'},
+        {label:'Utilization',value:entry.utilization!==null&&entry.utilization!==undefined?`${entry.utilization}%`:'—'},
+        {label:'Source',value:entry.source||'Manual'}
+      ],
+      impact:['Removes this score entry from credit history charts.','No transaction or account data is changed.']
+    });
+    if(!ok) return;
+    state.creditHistory=(state.creditHistory||[]).filter(e=>e.id!==id);
+    finish('Credit log deleted.');
+  };
+
+  window.deleteSavedMapping=async function(id){
+    const mapping=find('importMappings',id); if(!mapping) return;
+    const ok=await confirmDelete({
+      itemType:'CSV mapping',
+      itemName:mapping.name||'Bank mapping',
+      details:[
+        {label:'Columns',value:countLabel((mapping.headers||[]).length,'column')},
+        {label:'Used',value:countLabel(mapping.useCount||0,'time','times')},
+        {label:'Updated',value:mapping.updatedAt?dateFmt(String(mapping.updatedAt).slice(0,10)):'—'}
+      ],
+      impact:['Removes this reusable import mapping.','Past imports and transactions are not deleted.']
+    });
+    if(!ok) return;
+    state.importMappings=(state.importMappings||[]).filter(m=>m.id!==id);
+    finish('Saved mapping deleted.');
+  };
+
+  window.deleteRule=async function(id){
+    const rule=find('rules',id); if(!rule) return;
+    const ok=await confirmDelete({
+      itemType:'automation rule',
+      itemName:rule.contains||'Rule',
+      details:[
+        {label:'Match text',value:rule.contains||'—'},
+        {label:'Action',value:(typeof ruleActionLabel==='function'?ruleActionLabel(rule):(rule.action||'Categorize'))},
+        {label:'Category',value:rule.category||'Other'},
+        {label:'Scope',value:rule.direction==='any'?'Any amount':(rule.direction||'Spend')}
+      ],
+      impact:['Stops this rule from applying to future imports and automation runs.','Existing transactions are not deleted.']
+    });
+    if(!ok) return;
+    state.rules=(state.rules||[]).filter(r=>r.id!==id);
+    finish('Automation rule deleted.');
+  };
+
+  window.resetAllData=async function(){
+    const ok=await mmConfirmDanger('This clears the current MoneyMap workspace from this browser. Export a backup first if you may need it later.', {
+      title:'Reset MoneyMap?',
+      confirmText:'Delete all data',
+      requireText:'DELETE',
+      requireLabel:'Type DELETE to confirm reset',
+      details:workspaceSummary(),
+      impact:['Deletes transactions, budgets, accounts, goals, trackers, rules, import history, saved mappings, settings, and local backup metadata.','This does not delete files on your computer or anything outside this browser.']
+    });
+    if(!ok) return;
+    state=clone(defaultState);
+    ensureStarterContent();
+    try{ OLD_STORAGE_KEYS.forEach(key=>localStorage.removeItem(key)); localStorage.removeItem(STORAGE_KEY); }catch(e){}
+    saveState();
+    closeAnyDrawer();
+    finish('Local data reset.');
+    openFirstRunIfNeeded();
+  };
+
+  window.importBackupFile=function(e){
+    const input=e.target; const file=input.files && input.files[0]; if(!file) return;
+    file.text().then(async text=>{
+      try{
+        const parsed=JSON.parse(text);
+        const incoming=extractBackupState(parsed);
+        const summary=parsed.summary || {
+          transactions:(incoming.transactions||[]).length,
+          accounts:(incoming.accounts||[]).length,
+          goals:(incoming.goals||[]).length,
+          debts:(incoming.debts||[]).length,
+          holdings:(incoming.holdings||[]).length,
+          creditLogs:(incoming.creditHistory||[]).length,
+          rules:(incoming.rules||[]).length
+        };
+        const exported=parsed.exportedAt ? new Date(parsed.exportedAt).toLocaleString() : 'unknown date';
+        const ok=await mmConfirmDanger('Importing this backup replaces the current local workspace in this browser.', {
+          title:'Import backup?',
+          confirmText:'Import backup',
+          details:[
+            {label:'Backup date',value:exported},
+            {label:'Transactions',value:countLabel(summary.transactions,'transaction')},
+            {label:'Accounts',value:countLabel(summary.accounts,'account')},
+            {label:'Goals',value:countLabel(summary.goals,'goal')},
+            {label:'Trackers',value:countLabel((summary.debts||0)+(summary.holdings||0)+(summary.creditLogs||0),'item')},
+            {label:'Rules',value:countLabel(summary.rules||0,'rule')}
+          ],
+          impact:['Current local data will be replaced by the backup contents.','Export your current workspace first if you need to keep it.']
+        });
+        if(!ok){ input.value=''; return; }
+        state=mergeState(defaultState,incoming);
+        state.settings.lastRestore=new Date().toISOString();
+        state.settings.startupSeenBuild=APP_BUILD_ID;
+        saveState();
+        closeAnyDrawer();
+        finish('Backup JSON imported.');
+      }catch(err){
+        const preview=document.getElementById('backupImportPreview');
+        if(preview) preview.innerHTML=`<div class="mini-item"><div><b>Import failed</b><br><span>${html(err.message||'Could not read this JSON file.')}</span></div><strong class="bad">Error</strong></div>`;
+        toast('Could not import backup JSON.');
+      }finally{ input.value=''; }
+    });
+  };
+
+  window.loadDemoData=async function(options={}){
+    if(!options.force && typeof workspaceHasUserData==='function' && workspaceHasUserData()){
+      const ok=await mmConfirmDanger('Demo mode replaces the current workspace with sample data.', {
+        title:'Load demo workspace?',
+        confirmText:'Load demo',
+        details:workspaceSummary(),
+        impact:['Current local transactions, budgets, accounts, trackers, rules, and settings will be replaced.','Export a backup first if you want to keep this workspace.']
+      });
+      if(!ok) return;
+    }
+    return originalLoadDemoData.apply(this,arguments);
+  };
+
+  window.chooseFirstRun=async function(mode){
+    if(mode==='continue'){ completeFirstRun(); toast('Current workspace continued.'); renderAll(); return; }
+    if(mode==='demo'){
+      if(typeof workspaceHasUserData==='function' && workspaceHasUserData()){
+        const ok=await mmConfirmDanger('Demo mode replaces the current workspace with sample data.', {
+          title:'Load demo workspace?',
+          confirmText:'Load demo',
+          details:workspaceSummary(),
+          impact:['Current local transactions, budgets, accounts, trackers, rules, and settings will be replaced.','Export a backup first if you want to keep this workspace.']
+        });
+        if(!ok) return;
+      }
+      completeFirstRun();
+      originalLoadDemoData.call(window);
+      return;
+    }
+    if(mode==='import'){ completeFirstRun(); showView('import'); toast('Import center opened. Drop your CSV to begin.'); return; }
+    if(mode==='fresh' && typeof workspaceHasUserData==='function' && workspaceHasUserData()){
+      const ok=await mmConfirmDanger('Start fresh keeps your appearance settings but clears your current finance workspace.', {
+        title:'Start fresh?',
+        confirmText:'Clear workspace',
+        details:workspaceSummary(),
+        impact:['Clears transactions, imports, budgets, goals, credit logs, accounts, debts, holdings, rules, and saved mappings.','Your theme and app appearance are kept.']
+      });
+      if(!ok) return;
+    }
+    resetWorkspaceForFreshStart();
+    saveState();
+    closeFirstRun();
+    showView('overview');
+    toast('Fresh workspace ready. Add data whenever you want.');
+  };
+
+  const priorRenderAll=window.renderAll;
+  if(typeof priorRenderAll==='function' && !priorRenderAll.__r2ActionSystemWrapped){
+    window.renderAll=function(){ const out=priorRenderAll.apply(this,arguments); requestAnimationFrame(todayBuild); return out; };
+    window.renderAll.__r2ActionSystemWrapped=true;
+  }
+  const priorShowView=window.showView;
+  if(typeof priorShowView==='function' && !priorShowView.__r2ActionSystemWrapped){
+    window.showView=function(){ const out=priorShowView.apply(this,arguments); requestAnimationFrame(todayBuild); return out; };
+    window.showView.__r2ActionSystemWrapped=true;
+  }
+  todayBuild();
 })();
