@@ -1,0 +1,7 @@
+MoneyMap v0.1.4
+
+- Removed the Monarch-style external-style action from net-worth dot popovers.
+- Kept chart point details local-only with account, asset, liability, and change rows.
+- Hardened the Accounts page against older account-renderer races that could show a new build label without the matching desktop changes.
+- Added clickable chart-point fallback behavior to the older Accounts chart path.
+- Bumped the canonical build and cache token to v0.1.4.

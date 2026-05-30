@@ -1,4 +1,4 @@
-/* MoneyMap transaction drawer v0.1.3 — polished desktop and mobile editor */
+/* MoneyMap transaction drawer v0.1.4 — polished desktop and mobile editor */
 (function(){
   'use strict';
 

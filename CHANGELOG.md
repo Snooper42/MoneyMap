@@ -1,10 +1,18 @@
+# Changelog
+
+## v0.1.4
+- Removed the external-style action to keep chart details explicitly local and private.
+- Hardened the desktop Accounts page so older account renderers do not overwrite the new chart and icon layout.
+- Added clickable net-worth point popovers to the fallback Accounts chart path.
+- Bumped the canonical build and cache token to v0.1.4.
+
 # MoneyMap changelog
 
-## v0.1.3
-- Added clickable, Monarch-style net-worth chart dots with persistent popovers and an Explain this change action.
+## v0.1.4
+- Added clickable, Monarch-style net-worth chart dots with persistent popovers and an external-style action.
 - Rebuilt the desktop Accounts page around a chart-first performance card, grouped account list, and summary panel.
 - Added custom selectable account icons and saved the selected icon with each account.
-- Updated the canonical build label and cache token to v0.1.3.
+- Updated the canonical build label and cache token to v0.1.4.
 
 ## v0.1.2
 - Bumped the canonical build label to v0.1.2 and added a unique asset cache token.

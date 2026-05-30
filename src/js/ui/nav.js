@@ -1,4 +1,4 @@
-/* MoneyMap nav — v0.1.3
+/* MoneyMap nav — v0.1.4
    ─────────────────────────────────────────────────────────────────
    Replaces emoji/text icons with a clean SVG set.
    Adds user-editable bottom bar (up to 4 slots).
@@ -456,7 +456,7 @@
     _custAdd:        null, /* set during customizer render */
     _custRemove:     null,
     _custReset:      null,
-    _version:        'v0.1.3'
+    _version:        'v0.1.4'
   };
 
   /* Also expose on MoneyMap namespace */

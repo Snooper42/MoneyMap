@@ -1,6 +1,0 @@
-MoneyMap v0.1.3
-
-- Added clickable Monarch-style net-worth chart dots with persistent detail popovers and change explanations.
-- Rebuilt the desktop Accounts page around the net-worth performance chart, account groups, and a cleaner summary panel.
-- Added custom selectable account icons saved per account.
-- Bumped the canonical build and cache token to v0.1.3.

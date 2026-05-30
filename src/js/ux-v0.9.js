@@ -6,7 +6,7 @@
   if (window.__MoneyMapV09Loaded) return;
   window.__MoneyMapV09Loaded = true;
 
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.4';
   const GROUPS = [
     {id:'all', label:'All', icon:'◌', types:[]},
     {id:'cash', label:'Cash', icon:'$', types:['Checking','Savings','Cash','Money Market']},
@@ -30,6 +30,20 @@
   const n = value => typeof nval === 'function' ? nval(value) : Number(value || 0);
   const signed = a => typeof accountSignedValue === 'function' ? accountSignedValue(a) : n(a.balance);
   const byId = id => document.getElementById(id);
+  const V09_ICON_SVG = {
+    cash:'<svg viewBox="0 0 24 24"><path d="M4 7h16v13H4z"/><path d="M16 12h4"/><path d="M7 7V5h10v2"/></svg>',
+    investments:'<svg viewBox="0 0 24 24"><path d="M4 19V5"/><path d="M4 19h16"/><path d="m7 15 4-4 3 3 5-7"/></svg>',
+    property:'<svg viewBox="0 0 24 24"><path d="M4 11 12 4l8 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-6h4v6"/></svg>',
+    valuables:'<svg viewBox="0 0 24 24"><path d="m12 21 8-12-4-5H8L4 9z"/><path d="M4 9h16"/><path d="m8 4 4 17 4-17"/></svg>',
+    debt:'<svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/><path d="M7 15h4"/></svg>',
+    other:'<svg viewBox="0 0 24 24"><path d="M4 12V5h7l9 9-7 7z"/><path d="M8.5 8.5h.01"/></svg>'
+  };
+  function v09AccountIconHtml(account, groupId){
+    if(window.MoneyMapAccountIcons?.iconMarkup) return window.MoneyMapAccountIcons.iconMarkup(account);
+    return V09_ICON_SVG[groupId] || V09_ICON_SVG.other;
+  }
+  let v09ChartModel = null;
+
 
   function ensureBuildLabel(){
     window.MONEYMAP_EXPECTED_BUILD = BUILD;
@@ -118,13 +132,16 @@
     const rows = latestHistory().map(row => ({
       date: row.date,
       netWorth: n(row.netWorth),
+      assets: n(row.assets),
+      liabilities: n(row.liabilities),
       label: row.note || 'Snapshot',
+      accountSnapshot: Array.isArray(row.accountSnapshot) ? row.accountSnapshot : [],
       live: false
     }));
     const live = currentBreakdown();
     const liveDate = new Date().toISOString().slice(0,10);
     if (!rows.length || rows[rows.length - 1].date !== liveDate || Math.abs(n(rows[rows.length - 1].netWorth) - n(live.netWorth)) > 0.01) {
-      rows.push({ date: liveDate, netWorth: n(live.netWorth), label: 'Current balance', live: true });
+      rows.push({ date: liveDate, netWorth: n(live.netWorth), assets: n(live.assets), liabilities: n(live.liabilities), label: 'Current balance', accountSnapshot: includedAccountsList().map(a => ({name:a.name, type:a.type, institution:a.institution, balance:a.balance})), live: true });
     }
     if (range === 'all') return rows;
     const now = new Date();
@@ -220,7 +237,7 @@
             const value = signed(item);
             const updated = item.updatedAt || item.createdAt || '';
             return `<button type="button" class="v09-account-row" onclick="openDrawer('account', findById('accounts','${esc(item.id)}'))">
-              <span class="v09-account-avatar">${esc(group.icon)}</span>
+              <span class="v09-account-avatar">${v09AccountIconHtml(item, group.id)}</span>
               <span class="v09-account-copy">
                 <b>${esc(item.name || 'Account')}</b>
                 <span>${esc(item.type || group.label)}${item.institution ? ` · ${esc(item.institution)}` : ''}</span>
@@ -283,6 +300,85 @@
 
   function getCss(name, fallback=''){
     return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || fallback;
+  }
+
+  function hideV09ChartTip(){
+    document.querySelectorAll('.v09-nw-popover-local').forEach(tip => tip.remove());
+  }
+  function v09TipDate(point){
+    const stamp = new Date(`${point.date}T00:00:00`);
+    return Number.isNaN(stamp.getTime()) ? point.date : stamp.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'});
+  }
+  function showV09ChartTip(idx){
+    const model = v09ChartModel;
+    if (!model || !model.points[idx]) return;
+    hideV09ChartTip();
+    const point = model.points[idx];
+    const prev = idx > 0 ? model.points[idx - 1] : null;
+    const delta = prev ? n(point.netWorth) - n(prev.netWorth) : null;
+    const accounts = (point.accountSnapshot || []).slice(0,3).map(a => {
+      const liab = /credit|loan|debt|mortgage|liability/i.test(String(a.type || ''));
+      const val = liab ? -Math.abs(n(a.balance)) : n(a.balance);
+      return `<div class="tip-row"><span>${esc(a.name || a.type || 'Account')}</span><b class="${val < 0 ? 'bad' : ''}">${moneyExact(val)}</b></div>`;
+    }).join('');
+    const tip = document.createElement('div');
+    tip.className = 'v09-nw-popover-local';
+    tip.innerHTML = `<div class="tip-head"><span>${esc(prev ? `${v09TipDate(prev)} - ${v09TipDate(point)}` : v09TipDate(point))}</span><button type="button" aria-label="Close" data-close="1">×</button></div>`+
+      `<div class="tip-row"><span>Net worth</span><b>${moneyExact(point.netWorth)}</b></div>`+
+      `<div class="tip-row"><span>Change</span><b class="${delta === null ? '' : delta >= 0 ? 'good' : 'bad'}">${delta === null ? '—' : `${delta >= 0 ? '+' : ''}${moneyExact(delta)}`}</b></div>`+
+      ((point.assets !== undefined && point.assets !== null) ? `<div class="tip-row"><span>Assets</span><b>${moneyExact(point.assets)}</b></div>` : '')+
+      ((point.liabilities !== undefined && point.liabilities !== null) ? `<div class="tip-row"><span>Liabilities</span><b class="bad">${moneyExact(point.liabilities)}</b></div>` : '')+
+      accounts+
+      `<div class="tip-note">Local snapshot detail only. Nothing is sent anywhere.</div>`;
+    model.wrap.style.position = 'relative';
+    model.wrap.appendChild(tip);
+    tip.querySelector('[data-close]')?.addEventListener('click', event => { event.stopPropagation(); hideV09ChartTip(); });
+    const pxX = model.x(idx);
+    const pxY = model.y(n(point.netWorth));
+    requestAnimationFrame(() => {
+      const tipW = tip.offsetWidth || 300;
+      const left = Math.max(8, Math.min((model.wrap.clientWidth || model.width) - tipW - 8, pxX - tipW / 2));
+      let top = pxY - (tip.offsetHeight || 140) - 18;
+      if (top < 6) top = pxY + 22;
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+      tip.style.setProperty('--arrow-x', `${Math.max(18, Math.min(tipW - 18, pxX - left))}px`);
+    });
+  }
+  function bindV09ChartEvents(canvas){
+    if (!canvas || canvas.dataset.v09ClickableBound) return;
+    canvas.dataset.v09ClickableBound = '1';
+    canvas.style.cursor = 'pointer';
+    const pick = (clientX, clientY) => {
+      const model = v09ChartModel;
+      if (!model || !model.points.length) return null;
+      const rect = canvas.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      let best = null;
+      let bestDist = Infinity;
+      model.points.forEach((point, idx) => {
+        const dx = model.x(idx) - x;
+        const dy = model.y(n(point.netWorth)) - y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < bestDist) { best = idx; bestDist = dist; }
+      });
+      return bestDist <= 44 ? best : null;
+    };
+    canvas.addEventListener('click', event => {
+      const idx = pick(event.clientX, event.clientY);
+      if (idx === null) { hideV09ChartTip(); return; }
+      showV09ChartTip(idx);
+      event.stopPropagation();
+    });
+    canvas.addEventListener('touchend', event => {
+      const touch = event.changedTouches && event.changedTouches[0];
+      if (!touch) return;
+      const idx = pick(touch.clientX, touch.clientY);
+      if (idx === null) return;
+      showV09ChartTip(idx);
+      event.preventDefault();
+    }, {passive:false});
   }
 
   function renderAccountsChart(){
@@ -379,6 +475,8 @@
       const label = dayRange <= 90 ? stamp.toLocaleDateString(undefined, {month:'short', day:'numeric'}) : stamp.toLocaleDateString(undefined, {month:'short', year:'2-digit'});
       ctx.fillText(label, Math.max(0, Math.min(width - 50, x(idx) - 18)), height - 10);
     });
+    v09ChartModel = {canvas, wrap, points, width, height, x, y, pad};
+    bindV09ChartEvents(canvas);
   }
 
   function accountTitleFromType(type){
@@ -506,6 +604,11 @@
     ensureBuildLabel();
     ensureAccountsNav();
     try { buildNav?.(); buildMobileNav?.(); } catch (e) {}
+    if (window.MoneyMapUseAccountsDesktopV014 && typeof window.renderAccountsDashboard === 'function') {
+      const activeAccounts = byId('view-accounts')?.classList.contains('active');
+      if (activeAccounts) requestAnimationFrame(() => { window.renderAccountsDashboard(); window.MoneyMapRefreshAccountChart?.(); });
+      return;
+    }
     renderAccountsPage();
     requestAnimationFrame(renderAccountsChart);
   }
@@ -532,6 +635,7 @@
   }
 
   function init(){
+    document.addEventListener('click', event => { if (!event.target.closest('.v09-nw-popover-local') && !event.target.closest('#v09AccountsChart')) hideV09ChartTip(); }, {passive:true});
     wrapOpenCloseDrawer();
     wrapRenderFunctions();
     ensureAccountsNav();

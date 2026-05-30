@@ -9,7 +9,7 @@ Local-first, privacy-first personal finance. No bank login, no sync, no backend.
 Patch releases. No breaking changes.
 
 - [x] v0.1.2 — Mobile dashboard, More sheet, cache-busting, and transaction editor polish
-- [x] v0.1.3 — Desktop Accounts polish, clickable net-worth dots, and custom account icons
+- [x] v0.1.4 — Desktop Accounts polish, clickable net-worth dots, and custom account icons
 - [ ] v0.1.4 — CSS consolidation: merge patch CSS files into canonical layers
 - [ ] v0.1.5 — Review mode swipe gesture improvements + category quick-pick grid
 - [ ] v0.1.6 — Net worth chart: mobile touch pan / pinch-to-zoom on multi-year history

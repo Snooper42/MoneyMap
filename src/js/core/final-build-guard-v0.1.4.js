@@ -1,7 +1,7 @@
-/* MoneyMap final build guard v0.1.3 — prevents old patch layers from relabeling the live build. */
+/* MoneyMap final build guard v0.1.4 — prevents old patch layers from relabeling the live build. */
 (function(){
   'use strict';
-  var BUILD=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||'v0.1.3';
+  var BUILD=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||'v0.1.4';
   function mark(){
     try{
       window.MONEYMAP_EXPECTED_BUILD=BUILD;
@@ -18,3 +18,5 @@
   setTimeout(mark,1300);
   setInterval(mark,2000);
 })();
+
+// v0.1.4 feature sentinels are intentionally local-only and do not call network APIs.

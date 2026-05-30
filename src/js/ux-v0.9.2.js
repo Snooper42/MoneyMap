@@ -6,7 +6,7 @@
   if(window.__MoneyMapV092Loaded) return;
   window.__MoneyMapV092Loaded = true;
 
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.4';
   const GROUPS = [
     {id:'cash', label:'Cash', types:['Checking','Savings','Cash','Money Market']},
     {id:'investments', label:'Investments', types:['Brokerage','Retirement','HSA','Crypto Wallet']},

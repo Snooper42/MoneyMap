@@ -18,7 +18,7 @@
    This removes imprecise hover/tap selection and keeps category totals aligned
    with the transaction filter users land on after clicking a category. */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.4';
   const EXCLUDED_SPEND_CATEGORIES=new Set(['Income','Transfers']);
   const CATEGORY_ALIASES={
     'transfer':'Transfers',

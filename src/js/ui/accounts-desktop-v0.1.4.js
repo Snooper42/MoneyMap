@@ -1,8 +1,10 @@
-/* MoneyMap v0.1.3 — desktop accounts polish, clickable net-worth dots, and custom account icons. */
+/* MoneyMap v0.1.4 — desktop accounts polish, local clickable net-worth dots, and custom account icons. */
 (function(){
   'use strict';
 
-  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.3';
+  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.4';
+  window.MoneyMapUseAccountsDesktopV014 = true;
+  window.MoneyMapAccountsDesktopReady = BUILD;
   var models = {};
 
   function esc(value){
@@ -82,26 +84,6 @@
     {id:'other', label:'Other', icon:'tag'}
   ];
   function groupLabel(id){ var g=GROUPS.find(function(x){ return x.id===id; }); return g ? g.label : 'Other'; }
-  function currentAccountFilter(){
-    if(!state.settings) state.settings={};
-    var id=state.settings.accountFilterV013 || 'all';
-    return id==='all' || GROUPS.some(function(g){ return g.id===id; }) ? id : 'all';
-  }
-  window.MoneyMapSetAccountFilter=function(id){
-    if(!state.settings) state.settings={};
-    state.settings.accountFilterV013=(id==='all' || GROUPS.some(function(g){ return g.id===id; })) ? id : 'all';
-    if(typeof saveState==='function') saveState();
-    renderAccountsDesktop();
-  };
-  window.MoneyMapFocusAccountFilters=function(){
-    var row=document.querySelector('.mm-account-filter-row-v013');
-    if(row){ row.scrollIntoView({block:'center', behavior:'smooth'}); row.querySelector('button')?.focus({preventScroll:true}); }
-  };
-  function filterRowHtml(accounts){
-    var active=currentAccountFilter();
-    var allCount=accounts.length;
-    return '<div class="mm-account-filter-row-v013" role="tablist" aria-label="Account filters"><button type="button" class="'+(active==='all'?'active':'')+'" onclick="MoneyMapSetAccountFilter(\'all\')">All '+allCount+'</button>'+GROUPS.map(function(g){ var count=accounts.filter(function(a){ return groupForAccount(a)===g.id; }).length; return '<button type="button" class="'+(active===g.id?'active':'')+'" onclick="MoneyMapSetAccountFilter(\''+esc(g.id)+'\')">'+esc(g.label)+' '+count+'</button>'; }).join('')+'</div>';
-  }
   function defaultIconKey(a){
     return (a && a.iconKey && ICON_MAP[a.iconKey]) ? a.iconKey : (TYPE_ICON[(a && a.type) || ''] || GROUPS.find(function(g){ return g.id===groupForAccount(a); })?.icon || 'bank');
   }
@@ -109,7 +91,7 @@
     var key=typeof keyOrAccount === 'string' ? keyOrAccount : defaultIconKey(keyOrAccount || {});
     var icon=ICON_MAP[key] || ICON_MAP.bank;
     var group=(typeof keyOrAccount === 'string') ? icon.group : groupForAccount(keyOrAccount || {});
-    return '<span class="mm-acct-icon-v013 '+esc(group)+' '+esc(extra||'')+'" title="'+esc(icon.label)+'">'+icon.svg+'</span>';
+    return '<span class="mm-acct-icon-v014 '+esc(group)+' '+esc(extra||'')+'" title="'+esc(icon.label)+'">'+icon.svg+'</span>';
   }
   window.MoneyMapAccountIcons = {icons:ICONS, iconMarkup:iconMarkup, defaultIconKey:defaultIconKey, groupForAccount:groupForAccount};
 
@@ -132,7 +114,7 @@
   function accountSnapshotRow(a){
     var liab=isLiability(a.type);
     var val=liab ? -Math.abs(n(a.balance)) : n(a.balance);
-    return '<div class="mm-nw-tip-account-v013"><span>'+esc(a.name || a.type || 'Account')+'</span><b class="'+(val<0?'bad':'')+'">'+fmtMoney(val)+'</b></div>';
+    return '<div class="mm-nw-tip-account-v014"><span>'+esc(a.name || a.type || 'Account')+'</span><b class="'+(val<0?'bad':'')+'">'+fmtMoney(val)+'</b></div>';
   }
   function changeFor(rows, idx){
     var current=rows[idx];
@@ -279,7 +261,7 @@
   }
   function showTip(canvasId, idx, persist){
     var model=models[canvasId]; if(!model || !model.rows[idx]) return;
-    var old=model.wrap.querySelector('.mm-nw-popover-v013');
+    var old=model.wrap.querySelector('.mm-nw-popover-v014');
     if(old) old.remove();
     var row=model.rows[idx];
     var ch=changeFor(model.rows, idx);
@@ -287,17 +269,17 @@
     var dateTitle=ch.prev ? (fmtDate(ch.prev.date).split(',')[0]+' - '+fmtDate(row.date).split(',')[0]) : fmtDate(row.date).split(',')[0];
     var accounts=snapshotAccounts(row).slice(0,3).map(accountSnapshotRow).join('');
     var tip=document.createElement('div');
-    tip.className='mm-nw-popover-v013';
+    tip.className='mm-nw-popover-v014';
     tip.dataset.persist=persist?'1':'0';
-    tip.innerHTML='<div class="mm-nw-tip-title-v013"><span>'+esc(dateTitle)+'</span><button type="button" aria-label="Close" data-mm-nw-close="1">×</button></div>'+
-      '<div class="mm-nw-tip-values-v013"><div><span>Net worth</span><b>'+fmtMoney(row.netWorth)+'</b></div><div><span>Change</span><b class="'+(delta===null?'':(delta>=0?'good':'bad'))+'">'+(delta===null?'—':((delta>=0?'+':'')+fmtMoney(delta)))+'</b></div></div>'+
-      (accounts ? '<div class="mm-nw-tip-accounts-v013">'+accounts+'</div>' : '')+
-      '<button type="button" class="mm-nw-tip-button-v013" onclick="MoneyMapExplainNetWorthChange(\''+esc(canvasId)+'\','+idx+')"><span>Explain this change</span><b>›</b></button>';
+    tip.innerHTML='<div class="mm-nw-tip-title-v014"><span>'+esc(dateTitle)+'</span><button type="button" aria-label="Close" data-mm-nw-close="1">×</button></div>'+
+      '<div class="mm-nw-tip-values-v014"><div><span>Net worth</span><b>'+fmtMoney(row.netWorth)+'</b></div><div><span>Change</span><b class="'+(delta===null?'':(delta>=0?'good':'bad'))+'">'+(delta===null?'—':((delta>=0?'+':'')+fmtMoney(delta)))+'</b></div></div>'+
+      (accounts ? '<div class="mm-nw-tip-accounts-v014">'+accounts+'</div>' : '')+
+      '<div class="mm-nw-tip-local-v014">Local snapshot detail only. Nothing is sent anywhere.</div>';
     model.wrap.appendChild(tip);
     tip.querySelector('[data-mm-nw-close]')?.addEventListener('click', function(event){ event.stopPropagation(); hideTips(); models[canvasId].activeIdx=null; drawNetWorthChart(canvasId, {force:true}); });
     requestAnimationFrame(function(){ positionTip(model, idx, tip); });
   }
-  function hideTips(){ document.querySelectorAll('.mm-nw-popover-v013').forEach(function(tip){ tip.remove(); }); }
+  function hideTips(){ document.querySelectorAll('.mm-nw-popover-v014').forEach(function(tip){ tip.remove(); }); }
   function activate(canvasId, idx, persist){
     if(idx === null || idx === undefined) return;
     if(models[canvasId]) models[canvasId].activeIdx=idx;
@@ -305,62 +287,39 @@
     showTip(canvasId, idx, persist);
   }
   function bindChart(canvasId){
-    var model=models[canvasId]; if(!model || model.canvas.dataset.v013Bound) return;
+    var model=models[canvasId]; if(!model || model.canvas.dataset.v014Bound) return;
     var canvas=model.canvas;
-    canvas.dataset.v013Bound='1';
+    canvas.dataset.v014Bound='1';
     canvas.addEventListener('mousemove', function(event){
       var idx=hit(canvasId,event.clientX,event.clientY);
-      if(idx===null){ if(!canvas.dataset.v013Pinned){ if(models[canvasId]) models[canvasId].activeIdx=null; hideTips(); drawNetWorthChart(canvasId,{force:true}); } return; }
-      canvas.dataset.v013Hover=String(idx);
-      if(!canvas.dataset.v013Pinned) activate(canvasId, idx, false);
+      if(idx===null){ if(!canvas.dataset.v014Pinned){ if(models[canvasId]) models[canvasId].activeIdx=null; hideTips(); drawNetWorthChart(canvasId,{force:true}); } return; }
+      canvas.dataset.v014Hover=String(idx);
+      if(!canvas.dataset.v014Pinned) activate(canvasId, idx, false);
     });
     canvas.addEventListener('mouseleave', function(){
-      if(canvas.dataset.v013Pinned) return;
+      if(canvas.dataset.v014Pinned) return;
       if(models[canvasId]) models[canvasId].activeIdx=null;
       hideTips(); drawNetWorthChart(canvasId,{force:true});
     });
     canvas.addEventListener('click', function(event){
       var idx=hit(canvasId,event.clientX,event.clientY);
-      if(idx===null){ delete canvas.dataset.v013Pinned; hideTips(); if(models[canvasId]) models[canvasId].activeIdx=null; drawNetWorthChart(canvasId,{force:true}); return; }
-      canvas.dataset.v013Pinned='1';
+      if(idx===null){ delete canvas.dataset.v014Pinned; hideTips(); if(models[canvasId]) models[canvasId].activeIdx=null; drawNetWorthChart(canvasId,{force:true}); return; }
+      canvas.dataset.v014Pinned='1';
       activate(canvasId, idx, true);
       event.stopPropagation();
     });
     canvas.addEventListener('touchend', function(event){
       var t=event.changedTouches && event.changedTouches[0]; if(!t) return;
       var idx=hit(canvasId,t.clientX,t.clientY); if(idx===null) return;
-      canvas.dataset.v013Pinned='1';
+      canvas.dataset.v014Pinned='1';
       activate(canvasId, idx, true);
       event.preventDefault();
     }, {passive:false});
     canvas.addEventListener('focus', function(){ var rows=models[canvasId]?.rows || []; if(rows.length) activate(canvasId, rows.length-1, false); });
-    canvas.addEventListener('blur', function(){ delete canvas.dataset.v013Pinned; hideTips(); });
+    canvas.addEventListener('blur', function(){ delete canvas.dataset.v014Pinned; hideTips(); });
   }
 
-  window.MoneyMapExplainNetWorthChange=function(canvasId, idx){
-    var model=models[canvasId] || models.netWorthCanvas || models.accountsNetWorthCanvas;
-    if(!model || !model.rows[idx]) return;
-    var ch=changeFor(model.rows, idx), row=ch.current, prev=ch.prev;
-    var delta=ch.delta;
-    var details=[
-      {label:'Current snapshot', value:fmtDate(row.date)},
-      {label:'Net worth', value:fmtMoney(row.netWorth)},
-      {label:'Change', value:delta===null?'No previous snapshot':((delta>=0?'+':'')+fmtMoney(delta))}
-    ];
-    if(prev) details.splice(1,0,{label:'Previous snapshot', value:fmtDate(prev.date)});
-    var impacts=[];
-    if(prev){
-      accountChanges(prev,row).slice(0,5).forEach(function(x){ impacts.push(x.name+': '+(x.delta>=0?'+':'')+fmtMoney(x.delta)); });
-    }
-    if(!impacts.length && snapshotAccounts(row).length){ impacts=snapshotAccounts(row).slice(0,5).map(function(a){ return (a.name||a.type||'Account')+': '+fmtMoney(isLiability(a.type)?-Math.abs(n(a.balance)):n(a.balance)); }); }
-    if(!impacts.length) impacts.push('No per-account breakdown was saved for this point. Future snapshots now include account-level detail.');
-    if(typeof mmDialog === 'function'){
-      mmDialog({type:'confirm', title:'Net worth change', message:'This explains the selected chart point using saved snapshots.', confirmText:'Done', cancelText:'Close', icon:'↗', details:details, impact:impacts});
-    } else if(typeof toast === 'function'){
-      toast('Change: '+(delta===null?'no prior snapshot':((delta>=0?'+':'')+fmtMoney(delta))));
-    }
-  };
-
+  /* Net-worth point popovers are local display only. No explain action is exposed. */
   var oldRenderNetWorth=window.renderNetWorthChart;
   window.renderNetWorthChart=function(){ drawNetWorthChart('netWorthCanvas', {height:260}); };
 
@@ -372,20 +331,18 @@
   }
   function accountCard(a){
     var val=signed(a), included=a.includeNetWorth!==false;
-    return '<button type="button" class="mm-account-row-v013" onclick="openDrawer(\'account\', findById(\'accounts\',\''+esc(a.id)+'\'))">'+
+    return '<button type="button" class="mm-account-row-v014" onclick="openDrawer(\'account\', findById(\'accounts\',\''+esc(a.id)+'\'))">'+
       iconMarkup(a)+
-      '<span class="mm-account-copy-v013"><h4>'+esc(a.name||'Account')+'</h4><p>'+esc(a.institution||'Manual')+' · '+esc(a.type||'Account')+'</p></span>'+
-      '<span class="mm-account-value-v013"><strong class="'+(val<0?'bad':'good')+'">'+fmtMoney(val)+'</strong><span>'+(included?'Included':'Excluded')+' · '+esc(fmtDate(String(a.updatedAt||'').slice(0,10)) || 'not dated')+'</span></span>'+
+      '<span class="mm-account-copy-v014"><h4>'+esc(a.name||'Account')+'</h4><p>'+esc(a.institution||'Manual')+' · '+esc(a.type||'Account')+'</p></span>'+
+      '<span class="mm-account-value-v014"><strong class="'+(val<0?'bad':'good')+'">'+fmtMoney(val)+'</strong><span>'+(included?'Included':'Excluded')+' · '+esc(fmtDate(String(a.updatedAt||'').slice(0,10)) || 'not dated')+'</span></span>'+
       '</button>';
   }
   function groupedAccountHtml(accounts){
-    if(!accounts.length) return '<div class="mm-account-empty-v013"><div><b>No accounts yet.</b><p>Add checking, savings, investments, property, cards, or loans.</p><button class="btn btn-primary" onclick="openDrawer(\'account\')">Add account</button></div></div>';
-    var activeFilter=currentAccountFilter();
-    var groupsToRender=activeFilter==='all' ? GROUPS : GROUPS.filter(function(g){ return g.id===activeFilter; });
-    return groupsToRender.map(function(group){
+    if(!accounts.length) return '<div class="mm-account-empty-v014"><div><b>No accounts yet.</b><p>Add checking, savings, investments, property, cards, or loans.</p><button class="btn btn-primary" onclick="openDrawer(\'account\')">Add account</button></div></div>';
+    return GROUPS.map(function(group){
       var summary=accountGroupSummary(accounts, group.id);
       if(!summary.items.length) return '';
-      return '<section class="mm-account-group-v013"><div class="mm-account-group-head-v013"><div class="mm-account-group-title-v013">'+iconMarkup(group.icon, group.id)+'<div><b>'+esc(group.label)+'</b><span>'+summary.items.length+' account'+(summary.items.length===1?'':'s')+' · '+summary.included.length+' included</span></div></div><strong class="mm-account-group-total-v013 '+(summary.value<0?'bad':'good')+'">'+fmtMoney(summary.value)+'</strong></div><div class="mm-account-card-list-v013">'+summary.items.sort(function(a,b){ return Math.abs(signed(b))-Math.abs(signed(a)); }).map(accountCard).join('')+'</div></section>';
+      return '<section class="mm-account-group-v014"><div class="mm-account-group-head-v014"><div class="mm-account-group-title-v014">'+iconMarkup(group.icon, group.id)+'<div><b>'+esc(group.label)+'</b><span>'+summary.items.length+' account'+(summary.items.length===1?'':'s')+' · '+summary.included.length+' included</span></div></div><strong class="mm-account-group-total-v014 '+(summary.value<0?'bad':'good')+'">'+fmtMoney(summary.value)+'</strong></div><div class="mm-account-card-list-v014">'+summary.items.sort(function(a,b){ return Math.abs(signed(b))-Math.abs(signed(a)); }).map(accountCard).join('')+'</div></section>';
     }).join('');
   }
   function summaryHtml(accounts, b){
@@ -393,10 +350,10 @@
     var assetPct=Math.max(0,Math.min(100,Math.abs(n(b.assets))/total*100));
     var debtPct=Math.max(0,Math.min(100,Math.abs(n(b.liabilities))/total*100));
     var rows=GROUPS.map(function(g){ return accountGroupSummary(accounts,g.id); }).filter(function(s){ return s.items.length; });
-    return '<div class="mm-summary-tabs-v013"><button type="button" class="active">Totals</button><button type="button" onclick="showView(\'networth\')">History</button></div>'+
-      '<div class="mm-summary-block-v013"><div class="mm-summary-row-v013"><span>Assets</span><b>'+fmtMoney(b.assets)+'</b></div><div class="mm-summary-bar-v013"><i class="assets" style="width:'+assetPct.toFixed(2)+'%"></i><i class="liabilities" style="width:'+debtPct.toFixed(2)+'%"></i></div><div class="mm-summary-row-v013"><span>Liabilities</span><b class="bad">'+fmtMoney(b.liabilities)+'</b></div></div>'+
-      '<div class="mm-summary-block-v013">'+rows.map(function(s){ return '<div class="mm-summary-row-v013"><span>'+iconMarkup(GROUPS.find(function(g){return g.id===s.id;})?.icon || 'tag', s.id)+esc(groupLabel(s.id))+'</span><b class="'+(s.value<0?'bad':'good')+'">'+fmtMoney(s.value)+'</b></div>'; }).join('')+'</div>'+
-      '<div class="mm-summary-block-v013"><button class="btn btn-primary" style="width:100%" onclick="exportTrackerCsv(\'accounts\')">Download CSV</button></div>';
+    return '<div class="mm-summary-tabs-v014"><button type="button" class="active">Totals</button><button type="button" onclick="showView(\'networth\')">History</button></div>'+
+      '<div class="mm-summary-block-v014"><div class="mm-summary-row-v014"><span>Assets</span><b>'+fmtMoney(b.assets)+'</b></div><div class="mm-summary-bar-v014"><i class="assets" style="width:'+assetPct.toFixed(2)+'%"></i><i class="liabilities" style="width:'+debtPct.toFixed(2)+'%"></i></div><div class="mm-summary-row-v014"><span>Liabilities</span><b class="bad">'+fmtMoney(b.liabilities)+'</b></div></div>'+
+      '<div class="mm-summary-block-v014">'+rows.map(function(s){ return '<div class="mm-summary-row-v014"><span>'+iconMarkup(GROUPS.find(function(g){return g.id===s.id;})?.icon || 'tag', s.id)+esc(groupLabel(s.id))+'</span><b class="'+(s.value<0?'bad':'good')+'">'+fmtMoney(s.value)+'</b></div>'; }).join('')+'</div>'+
+      '<div class="mm-summary-block-v014"><button class="btn btn-primary" style="width:100%" onclick="exportTrackerCsv(\'accounts\')">Download CSV</button></div>';
   }
   function deltaLabel(rows){
     if(rows.length<2) return 'No prior snapshot yet';
@@ -411,14 +368,14 @@
   }
   function renderAccountsDesktop(){
     var sec=ensureAccountsView();
-    sec.classList.add('mm-accounts-v013');
+    sec.classList.add('mm-accounts-v014');
     var accounts=(state && state.accounts) ? state.accounts.slice() : [];
     var b=netWorthBreak();
     var rows=currentRows();
     var net=b.netWorth;
-    sec.innerHTML='<div class="page-head mm-accounts-head-v013"><div><h2 class="section-title">Accounts</h2><p class="section-sub">Manual balances in a cleaner desktop layout with clickable performance dots and account-specific icons.</p></div><div class="actions"><button class="btn" onclick="MoneyMapFocusAccountFilters()">Filters</button><button class="btn" onclick="showView(\'accounts\'); MoneyMapRefreshAccountChart()">Refresh all</button><button class="btn" onclick="showView(\'networth\')">History</button><button class="btn btn-primary" onclick="openDrawer(\'account\')">Add account</button></div></div>'+
-      '<section class="card mm-accounts-chart-card-v013"><div class="mm-accounts-chart-top-v013"><div><span class="mm-accounts-kicker-v013">Net worth</span><strong class="mm-accounts-net-v013 '+(net<0?'bad':'')+'">'+fmtMoney(net)+'</strong><p class="mm-accounts-net-sub-v013">'+esc(deltaLabel(rows))+'</p></div><div class="mm-accounts-chart-controls-v013"><div class="mm-accounts-control-pill-v013">Net worth performance <span>click dots</span></div><div class="mm-accounts-control-pill-v013">Snapshot range <span>'+rows.length+' point'+(rows.length===1?'':'s')+'</span></div></div></div><div class="mm-accounts-chart-wrap-v013"><canvas id="accountsNetWorthCanvas" aria-label="Clickable net worth performance chart" tabindex="0"></canvas></div></section>'+
-      '<div class="mm-accounts-grid-v013"><section class="card mm-accounts-list-card-v013"><div class="mm-accounts-list-head-v013"><div><h3>Accounts</h3><p>Click any row to edit its balance, type, and icon.</p></div><button class="btn btn-small" onclick="openDrawer(\'account\')">Add</button></div>'+filterRowHtml(accounts)+groupedAccountHtml(accounts)+'</section><aside class="card mm-accounts-summary-v013"><h3>Summary</h3>'+summaryHtml(accounts,b)+'</aside></div>';
+    sec.innerHTML='<div class="page-head mm-accounts-head-v014"><div><h2 class="section-title">Accounts</h2><p class="section-sub">Manual balances in a cleaner desktop layout with private local chart popovers and account-specific icons.</p></div><div class="actions"><button class="btn" onclick="showView(\'accounts\'); MoneyMapRefreshAccountChart()">Refresh all</button><button class="btn" onclick="showView(\'networth\')">History</button><button class="btn btn-primary" onclick="openDrawer(\'account\')">Add account</button></div></div>'+
+      '<section class="card mm-accounts-chart-card-v014"><div class="mm-accounts-chart-top-v014"><div><span class="mm-accounts-kicker-v014">Net worth</span><strong class="mm-accounts-net-v014 '+(net<0?'bad':'')+'">'+fmtMoney(net)+'</strong><p class="mm-accounts-net-sub-v014">'+esc(deltaLabel(rows))+'</p></div><div class="mm-accounts-chart-controls-v014"><div class="mm-accounts-control-pill-v014">Net worth performance <span>click dots</span></div><div class="mm-accounts-control-pill-v014">Snapshot range <span>'+rows.length+' point'+(rows.length===1?'':'s')+'</span></div></div></div><div class="mm-accounts-chart-wrap-v014"><canvas id="accountsNetWorthCanvas" aria-label="Clickable net worth performance chart" tabindex="0"></canvas></div></section>'+
+      '<div class="mm-accounts-grid-v014"><section class="card mm-accounts-list-card-v014"><div class="mm-accounts-list-head-v014"><div><h3>Accounts</h3><p>Click any row to edit its balance, type, and icon.</p></div><button class="btn btn-small" onclick="openDrawer(\'account\')">Add</button></div>'+groupedAccountHtml(accounts)+'</section><aside class="card mm-accounts-summary-v014"><h3>Summary</h3>'+summaryHtml(accounts,b)+'</aside></div>';
     requestAnimationFrame(function(){ drawNetWorthChart('accountsNetWorthCanvas', {height:300, force:true}); });
   }
   window.MoneyMapRefreshAccountChart=function(){ requestAnimationFrame(function(){ drawNetWorthChart('accountsNetWorthCanvas', {height:300, force:true}); drawNetWorthChart('netWorthCanvas', {height:260, force:true}); }); };
@@ -427,11 +384,11 @@
   window.renderAccountsDashboard=function(){ renderAccountsDesktop(); markBuild(); };
 
   function iconPickerMarkup(selected){
-    return '<div class="v013-icon-picker"><label>Account icon</label><input type="hidden" id="acctIconKey" value="'+esc(selected)+'"><div class="v013-icon-grid">'+ICONS.map(function(icon){ return '<button type="button" class="v013-icon-choice '+(icon.id===selected?'active':'')+'" title="'+esc(icon.label)+'" onclick="MoneyMapSetAccountIcon(\''+esc(icon.id)+'\')">'+iconMarkup(icon.id)+'</button>'; }).join('')+'</div></div>';
+    return '<div class="v014-icon-picker"><label>Account icon</label><input type="hidden" id="acctIconKey" value="'+esc(selected)+'"><div class="v014-icon-grid">'+ICONS.map(function(icon){ return '<button type="button" class="v014-icon-choice '+(icon.id===selected?'active':'')+'" title="'+esc(icon.label)+'" onclick="MoneyMapSetAccountIcon(\''+esc(icon.id)+'\')">'+iconMarkup(icon.id)+'</button>'; }).join('')+'</div></div>';
   }
   window.MoneyMapSetAccountIcon=function(key){
     var hidden=document.getElementById('acctIconKey'); if(hidden) hidden.value=key;
-    document.querySelectorAll('.v013-icon-choice').forEach(function(btn){ btn.classList.toggle('active', btn.getAttribute('onclick')?.indexOf("'"+key+"'")>-1); });
+    document.querySelectorAll('.v014-icon-choice').forEach(function(btn){ btn.classList.toggle('active', btn.getAttribute('onclick')?.indexOf("'"+key+"'")>-1); });
   };
   function enhanceAccountDrawer(data){
     var body=document.getElementById('drawerBody'); if(!body || document.getElementById('acctIconKey')) return;
@@ -439,14 +396,14 @@
     var anchor=body.querySelector('.v092-field-group') || body.querySelector('.form-row') || body.firstElementChild;
     if(anchor){ anchor.insertAdjacentHTML('afterend', iconPickerMarkup(selected)); }
     var type=document.getElementById('acctType');
-    if(type && !type.dataset.v013IconBound){
-      type.dataset.v013IconBound='1';
+    if(type && !type.dataset.v014IconBound){
+      type.dataset.v014IconBound='1';
       type.addEventListener('change', function(){
         var hidden=document.getElementById('acctIconKey');
         if(hidden && !hidden.dataset.userTouched){ MoneyMapSetAccountIcon(defaultIconKey({type:type.value})); }
       });
     }
-    document.querySelectorAll('.v013-icon-choice').forEach(function(btn){ btn.addEventListener('click', function(){ var h=document.getElementById('acctIconKey'); if(h) h.dataset.userTouched='1'; }); });
+    document.querySelectorAll('.v014-icon-choice').forEach(function(btn){ btn.addEventListener('click', function(){ var h=document.getElementById('acctIconKey'); if(h) h.dataset.userTouched='1'; }); });
   }
   var priorOpenDrawer=window.openDrawer;
   if(typeof priorOpenDrawer === 'function'){
@@ -510,9 +467,9 @@
   }
   window.addEventListener('resize', function(){ requestAnimationFrame(function(){ drawNetWorthChart('accountsNetWorthCanvas', {height:300, force:true}); drawNetWorthChart('netWorthCanvas', {height:260}); }); }, {passive:true});
   document.addEventListener('click', function(event){
-    if(!event.target.closest('.mm-nw-popover-v013') && !event.target.closest('canvas')){
+    if(!event.target.closest('.mm-nw-popover-v014') && !event.target.closest('canvas')){
       Object.keys(models).forEach(function(id){ if(models[id]) models[id].activeIdx=null; });
-      document.querySelectorAll('canvas[data-v013-pinned]').forEach(function(c){ delete c.dataset.v013Pinned; });
+      document.querySelectorAll('canvas[data-v014-pinned]').forEach(function(c){ delete c.dataset.v014Pinned; });
       hideTips();
       drawNetWorthChart('accountsNetWorthCanvas', {height:300, force:true});
       drawNetWorthChart('netWorthCanvas', {height:260});
@@ -520,4 +477,6 @@
   });
   document.addEventListener('DOMContentLoaded', function(){ markBuild(); requestAnimationFrame(function(){ if(document.getElementById('view-accounts')?.classList.contains('active')) renderAccountsDesktop(); }); });
   setTimeout(function(){ markBuild(); if(document.getElementById('view-accounts')?.classList.contains('active')) renderAccountsDesktop(); }, 350);
+  setTimeout(function(){ markBuild(); if(document.getElementById('view-accounts')?.classList.contains('active')) renderAccountsDesktop(); }, 900);
+  setTimeout(function(){ markBuild(); if(document.getElementById('view-accounts')?.classList.contains('active')) renderAccountsDesktop(); }, 1800);
 })();

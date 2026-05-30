@@ -43,7 +43,7 @@ Open `http://localhost:8080` — tap **Explore with demo data** to see the full 
 
 ## Version
 
-Current: `v0.1.3` — see [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md)
+Current: `v0.1.4` — see [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md)
 
 Patch notes: `CHANGELOG.md`
 
