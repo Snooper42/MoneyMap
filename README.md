@@ -6,7 +6,7 @@ MoneyMap is a private, local-first personal finance planner.
 
 This milestone continues the migration from a single-file app into a GitHub Pages-compatible static project.
 
-```text
+```text 
 index.html
 README.md
 docs/
