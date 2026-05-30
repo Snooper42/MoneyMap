@@ -52,7 +52,7 @@ function renderSettings(){
     el.setAttribute('aria-pressed', String(visible));
   });
   const usage=document.getElementById('storageUsage'); if(usage){ usage.textContent=storageStatusText(); }
-  const build=document.getElementById('appBuildLabel'); if(build) build.textContent='v0.4';
+  const build=document.getElementById('appBuildLabel'); if(build) build.textContent='v0.5';
   updateStorageWarningBanner();
   const backupLabel = lastBackupText();
   const backupAge = backupFreshnessLabel();

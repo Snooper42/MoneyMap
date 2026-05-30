@@ -1,5 +1,5 @@
 /* MoneyMap investments module.
-   v0.4 cleans the investment tracker into a portfolio-first view while preserving the manual/local data shape. */
+   v0.5 cleans the investment tracker into a portfolio-first view while preserving the manual/local data shape. */
 
 function includedHoldings(){ return (state.holdings||[]).filter(h=>h.includeNetWorth!==false); }
 
@@ -100,7 +100,7 @@ function renderInvestments(){
   const alloc=allocationRows(); const list=document.getElementById('allocationList');
   if(list){ list.innerHTML=alloc.length?alloc.map((a,i)=>`<button type="button" class="mini-item allocation-row-v04" onclick="filterPortfolioAssetClass('${escapeJs(a.name)}')"><div><b><span class="dot" style="background:${COLORS[i%COLORS.length]}"></span> ${escapeHtml(a.name)}</b><br><span>${pctFmt(a.pct)} of portfolio</span><div class="allocation-bar"><span style="width:${a.pct}%;background:${COLORS[i%COLORS.length]}"></span></div></div><strong>${money(a.value)}</strong></button>`).join(''):emptyMini('No allocation yet','Add holdings to see asset class weights.','Add holding','openDrawer(\'holding\')'); }
   const notes=document.getElementById('investmentNotes');
-  if(notes){ notes.innerHTML=`<div class="mini-item"><div><b>Double-count guard</b><br><span>Exclude holdings from net worth if the same portfolio is already included as an account balance.</span></div><span>Important</span></div><div class="mini-item"><div><b>Manual pricing</b><br><span>MoneyMap stays private and local. Prices do not update automatically.</span></div><span>Private</span></div><div class="mini-item"><div><b>Cleaner account split</b><br><span>Use Accounts for balances. Use Holdings for position-level detail.</span></div><span>v0.4</span></div>`; }
+  if(notes){ notes.innerHTML=`<div class="mini-item"><div><b>Double-count guard</b><br><span>Exclude holdings from net worth if the same portfolio is already included as an account balance.</span></div><span>Important</span></div><div class="mini-item"><div><b>Manual pricing</b><br><span>MoneyMap stays private and local. Prices do not update automatically.</span></div><span>Private</span></div><div class="mini-item"><div><b>Cleaner account split</b><br><span>Use Accounts for balances. Use Holdings for position-level detail.</span></div><span>v0.5</span></div>`; }
 }
 
 function allocationRows(){ const total=(state.holdings||[]).reduce((a,h)=>a+holdingValue(h),0); const map={}; (state.holdings||[]).forEach(h=>{ const k=normalizedAssetClass(h); map[k]=(map[k]||0)+holdingValue(h); }); return Object.entries(map).filter(([,v])=>v>0).sort((a,b)=>b[1]-a[1]).map(([name,value])=>({name,value,pct:total?value/total*100:0})); }
