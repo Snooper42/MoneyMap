@@ -16,7 +16,7 @@ What changed:
 
 ## File layout
 
-```text
+```text 
 index.html
 README.md
 docs/
