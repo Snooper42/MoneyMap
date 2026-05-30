@@ -2583,3 +2583,265 @@ window.addEventListener('keydown', event => {
   window.addEventListener('resize',afterRender,{passive:true});
   afterRender();
 })();
+
+
+/* ---- Refactor 1: mobile-first app shell and navigation ---- */
+(function(){
+  const BUILD='r1-mobile-shell-20260530';
+  const PRIMARY_MOBILE=['overview','accounts','transactions','budgets'];
+  const PRIMARY_DESKTOP=['overview','accounts','transactions','budgets','review','import'];
+  const SECONDARY=['review','import','networth','recurring','debt','investments','credit','goals','rules','settings'];
+  const NAV_META={
+    overview:{title:'Dashboard',mobile:'Home',sub:'Your money home base',icon:'⌂'},
+    accounts:{title:'Accounts',mobile:'Accounts',sub:'Manual balances',icon:'▤'},
+    transactions:{title:'Transactions',mobile:'Txns',sub:'Search and edit',icon:'≡'},
+    budgets:{title:'Budgets',mobile:'Budget',sub:'Monthly limits',icon:'◌'},
+    review:{title:'Weekly review',mobile:'Review',sub:'Clean up transactions',icon:'✓'},
+    import:{title:'Import CSV',mobile:'Import',sub:'Bring in bank exports',icon:'⇡'},
+    networth:{title:'Net worth',mobile:'Net worth',sub:'History and snapshots',icon:'◆'},
+    recurring:{title:'Subscriptions',mobile:'Subs',sub:'Recurring charges',icon:'↻'},
+    debt:{title:'Debt payoff',mobile:'Debt',sub:'Paydown plan',icon:'◒'},
+    investments:{title:'Investments',mobile:'Invest',sub:'Holdings tracker',icon:'△'},
+    credit:{title:'Credit',mobile:'Credit',sub:'Score history',icon:'◧'},
+    goals:{title:'Goals',mobile:'Goals',sub:'Savings targets',icon:'◇'},
+    rules:{title:'Rules',mobile:'Rules',sub:'Automation rules',icon:'⚡'},
+    settings:{title:'Settings',mobile:'Settings',sub:'Privacy and app tools',icon:'⚙'},
+    more:{title:'More',mobile:'More',sub:'More sections',icon:'•••'}
+  };
+  const PRIMARY_ACTION={
+    overview:{label:'Import',fn:"showView('import')"},
+    accounts:{label:'Add',fn:"openDrawer('account')"},
+    transactions:{label:'Add',fn:"openDrawer('transaction')"},
+    budgets:{label:'Add',fn:"openDrawer('budget')"},
+    review:{label:'Start',fn:'startWeeklyReview()'},
+    import:{label:'Upload',fn:"document.getElementById('csvInput')?.click()"},
+    networth:{label:'Snapshot',fn:'saveNetWorthSnapshot()'},
+    recurring:{label:'Detect',fn:'detectRecurring(false)'},
+    debt:{label:'Add',fn:"openDrawer('debt')"},
+    investments:{label:'Add',fn:"openDrawer('holding')"},
+    credit:{label:'Add',fn:"openDrawer('credit')"},
+    goals:{label:'Add',fn:"openDrawer('goal')"},
+    rules:{label:'Add',fn:"openDrawer('rule')"},
+    settings:{label:'Backup',fn:"openDrawer('backup')"}
+  };
+  const TOOL_ITEMS=[
+    {id:'quickAdd',title:'Quick add',sub:'Transaction, budget, goal',icon:'＋',fn:"openDrawer('quickAdd')"},
+    {id:'backup',title:'Backups',sub:'Export, import, reset',icon:'↧',fn:"openDrawer('backup')"},
+    {id:'command',title:'Search commands',sub:'Find actions fast',icon:'⌕',fn:'openCommandPalette()'}
+  ];
+  function html(s){ return (typeof escapeHtml==='function') ? escapeHtml(String(s ?? '')) : String(s ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
+  function meta(id){ return NAV_META[id] || {title:id,mobile:id,sub:'',icon:'•'}; }
+  function currentId(){ return activeView || 'overview'; }
+  function icon(id){
+    try{ if(typeof window.mmNavIcon==='function'){ return window.mmNavIcon(id) || meta(id).icon; } }catch(e){}
+    return meta(id).icon;
+  }
+  function viewExists(id){ return !!document.getElementById('view-'+id); }
+  function setBuildLabel(){
+    try{
+      document.documentElement.setAttribute('data-moneymap-build',BUILD);
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+    }catch(e){}
+  }
+  function navButton(id,extra=''){
+    const m=meta(id);
+    const active=id===currentId();
+    return `<button type="button" class="nav-btn ${extra} ${active?'active':''}" data-view="${html(id)}" onclick="showView('${html(id)}')" aria-current="${active?'page':'false'}"><span class="nav-icon">${icon(id)}</span><span class="nav-copy"><strong>${html(m.title)}</strong><span>${html(m.sub)}</span></span></button>`;
+  }
+  window.buildNav=function(){
+    const side=document.getElementById('sideNav');
+    if(!side) return;
+    const primary=PRIMARY_DESKTOP.filter(viewExists);
+    const secondary=SECONDARY.filter(id=>!primary.includes(id) && viewExists(id));
+    side.innerHTML=[
+      primary.map(id=>navButton(id)).join(''),
+      `<div class="nav-inline-head"><span>More</span></div>`,
+      secondary.map(id=>navButton(id,'secondary')).join('')
+    ].join('');
+  };
+  function ensureMobileHeader(){
+    const main=document.getElementById('mainContent');
+    if(!main) return null;
+    let header=document.getElementById('mobileShellHeader');
+    if(!header){
+      header=document.createElement('div');
+      header.id='mobileShellHeader';
+      header.className='mobile-shell-header';
+      main.insertBefore(header, main.firstElementChild || null);
+    }
+    return header;
+  }
+  function renderMobileHeader(){
+    const header=ensureMobileHeader();
+    if(!header) return;
+    const id=currentId();
+    const m=meta(id);
+    const action=PRIMARY_ACTION[id] || {label:'Quick add',fn:"openDrawer('quickAdd')"};
+    header.innerHTML=`<div class="mobile-shell-title"><span>MoneyMap</span><strong>${html(m.title)}</strong><small>${html(m.sub)}</small></div><div class="mobile-shell-actions"><button type="button" class="mobile-shell-primary" onclick="${action.fn}">${html(action.label)}</button><button type="button" class="mobile-shell-icon-btn" onclick="openCommandPalette()" aria-label="Search MoneyMap">⌕</button></div>`;
+  }
+  function ensureMoreSheet(){
+    let sheet=document.getElementById('mobileMoreSheet');
+    if(!sheet){
+      sheet=document.createElement('div');
+      sheet.id='mobileMoreSheet';
+      sheet.className='mobile-more-sheet';
+      document.body.appendChild(sheet);
+    }
+    sheet.onclick=e=>{ if(e.target===sheet) closeMobileMoreSheet(); };
+    return sheet;
+  }
+  function moreItem(id){
+    const m=meta(id);
+    const active=id===currentId();
+    return `<button type="button" class="mobile-more-item ${active?'active':''}" data-view="${html(id)}" onclick="closeMobileMoreSheet(); showView('${html(id)}')"><span class="mobile-more-icon">${icon(id)}</span><span class="mobile-more-copy"><strong>${html(m.title)}</strong><span>${html(m.sub)}</span></span></button>`;
+  }
+  function toolItem(t){
+    return `<button type="button" class="mobile-more-item" data-tool="${html(t.id)}" onclick="closeMobileMoreSheet(); ${t.fn}"><span class="mobile-more-icon">${html(t.icon)}</span><span class="mobile-more-copy"><strong>${html(t.title)}</strong><span>${html(t.sub)}</span></span></button>`;
+  }
+  function renderMoreSheet(){
+    const sheet=ensureMoreSheet();
+    const visibleSecondary=SECONDARY.filter(id=>!PRIMARY_MOBILE.includes(id) && viewExists(id));
+    sheet.innerHTML=`<div class="mobile-more-panel" role="dialog" aria-modal="true" aria-label="More MoneyMap sections"><div class="mobile-more-head"><div><b>More</b><span>Secondary pages and app tools.</span></div><button type="button" class="btn btn-small" onclick="closeMobileMoreSheet()">Close</button></div><div class="mobile-more-section-label">Pages</div><div class="mobile-more-grid">${visibleSecondary.map(moreItem).join('')}</div><div class="mobile-more-section-label">Tools</div><div class="mobile-more-grid tools">${TOOL_ITEMS.map(toolItem).join('')}</div></div>`;
+    sheet.setAttribute('aria-hidden', sheet.classList.contains('active')?'false':'true');
+  }
+  window.openMobileMoreSheet=function(){
+    const sheet=ensureMoreSheet();
+    renderMoreSheet();
+    sheet.classList.add('active');
+    sheet.setAttribute('aria-hidden','false');
+    document.body.classList.add('mm-more-open');
+  };
+  window.closeMobileMoreSheet=function(){
+    const sheet=document.getElementById('mobileMoreSheet');
+    if(sheet){ sheet.classList.remove('active'); sheet.setAttribute('aria-hidden','true'); }
+    document.body.classList.remove('mm-more-open','uxv62-more-open');
+  };
+  window.toggleMobileMore=function(open){
+    const sheet=ensureMoreSheet();
+    const next=typeof open==='boolean' ? open : !sheet.classList.contains('active');
+    next ? openMobileMoreSheet() : closeMobileMoreSheet();
+  };
+  window.buildMobileNav=function(){
+    const nav=document.getElementById('mobileNav');
+    if(!nav) return;
+    const id=currentId();
+    const moreActive=!PRIMARY_MOBILE.includes(id);
+    nav.innerHTML=PRIMARY_MOBILE.map(view=>{
+      const m=meta(view);
+      const active=view===id;
+      return `<button type="button" class="${active?'active':''}" onclick="showView('${view}')" aria-current="${active?'page':'false'}" aria-label="Open ${html(m.title)}"><span>${icon(view)}</span><span>${html(m.mobile || m.title)}</span></button>`;
+    }).join('')+`<button type="button" class="${moreActive?'active':''}" onclick="openMobileMoreSheet()" aria-current="${moreActive?'page':'false'}" aria-label="Open more sections"><span>${icon('more')}</span><span>More</span></button>`;
+    renderMoreSheet();
+    renderMobileHeader();
+  };
+  window.renderNavLayoutSettings=function(){
+    const el=document.getElementById('navLayoutSettings');
+    if(!el) return;
+    el.innerHTML=`<div class="card-header"><div><h3 class="card-title">Navigation layout</h3><p class="card-subtitle">Refactor 1 locks the mobile shell to four primary tabs plus More. This keeps iPhone navigation predictable.</p></div></div><div class="mini-list"><div class="mini-item"><div><b>Bottom bar</b><br><span>Dashboard, Accounts, Transactions, Budgets, More.</span></div><span class="pill">Fixed</span></div><div class="mini-item"><div><b>More menu</b><br><span>Review, Import, Net worth, Goals, Settings, and tools.</span></div><span class="pill">2 taps</span></div></div>`;
+  };
+  function injectStyle(){
+    const css=`
+      html,body{max-width:100%;overflow-x:hidden!important}
+      .app-shell,.main,.view{max-width:100%;min-width:0}
+      .mobile-shell-header{display:none}
+      @media(max-width:1180px){
+        body .app-shell{display:block!important;grid-template-columns:1fr!important;overflow-x:hidden!important;width:100%!important}
+        body .sidebar{display:none!important}
+        body .main{width:100%!important;max-width:1040px!important;min-width:0!important;margin:0 auto!important;overflow-x:hidden!important;padding-bottom:calc(86px + env(safe-area-inset-bottom))!important}
+        body .mobile-bar{display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:2200!important;width:100%!important;max-width:100vw!important;overflow:hidden!important}
+        body .mobile-bar button{min-width:0!important;width:100%!important;touch-action:manipulation!important}
+      }
+      @media(max-width:760px){
+        body{overscroll-behavior-x:none!important}
+        body.mm-more-open{overflow:hidden!important;touch-action:none!important}
+        body .main{padding:8px 10px calc(78px + env(safe-area-inset-bottom))!important;max-width:100%!important}
+        body .app-shell .main>.topbar{display:none!important}
+        body .mobile-shell-header{display:flex!important;position:sticky!important;top:0!important;z-index:2100!important;align-items:center!important;justify-content:space-between!important;gap:10px!important;min-height:60px!important;margin:-8px -10px 10px!important;padding:9px 10px calc(9px + 0px)!important;border-bottom:1px solid color-mix(in srgb,var(--line) 76%,transparent)!important;background:color-mix(in srgb,var(--bg) 97%,transparent)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;box-shadow:0 10px 22px rgba(0,0,0,.08)!important}
+        body .mobile-shell-title{display:grid!important;min-width:0!important;gap:1px!important;line-height:1.05!important}
+        body .mobile-shell-title span{font-family:var(--mono)!important;font-size:9px!important;letter-spacing:.16em!important;text-transform:uppercase!important;color:var(--muted)!important;font-weight:850!important}
+        body .mobile-shell-title strong{display:block!important;min-width:0!important;max-width:58vw!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:20px!important;letter-spacing:-.04em!important;color:var(--text)!important}
+        body .mobile-shell-title small{display:block!important;min-width:0!important;max-width:58vw!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important;font-size:11px!important;color:var(--muted)!important}
+        body .mobile-shell-actions{display:flex!important;align-items:center!important;gap:7px!important;flex:0 0 auto!important}
+        body .mobile-shell-primary,body .mobile-shell-icon-btn{border:1px solid var(--line)!important;background:var(--panel2)!important;color:var(--text)!important;border-radius:14px!important;min-height:40px!important;font-weight:850!important;box-shadow:0 8px 18px rgba(0,0,0,.08)!important}
+        body .mobile-shell-primary{padding:0 13px!important;background:linear-gradient(135deg,var(--accent),var(--accent2))!important;border-color:transparent!important;color:#08111f!important}
+        body .mobile-shell-icon-btn{width:40px!important;display:grid!important;place-items:center!important;font-size:18px!important}
+        body .mobile-bar{height:calc(64px + env(safe-area-inset-bottom))!important;padding:6px 6px calc(6px + env(safe-area-inset-bottom))!important;gap:4px!important;border-top:1px solid color-mix(in srgb,var(--line) 82%,transparent)!important;background:color-mix(in srgb,var(--panel) 98%,transparent)!important;backdrop-filter:blur(26px)!important;-webkit-backdrop-filter:blur(26px)!important;box-shadow:0 -12px 32px rgba(0,0,0,.18)!important}
+        body .mobile-bar button{display:grid!important;grid-template-rows:22px 14px!important;place-items:center!important;gap:2px!important;height:52px!important;min-height:52px!important;border:1px solid transparent!important;border-radius:15px!important;background:transparent!important;color:var(--muted)!important;padding:5px 2px!important;font-weight:850!important;letter-spacing:-.01em!important;overflow:hidden!important}
+        body .mobile-bar button span:first-child{font-size:18px!important;line-height:1!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+        body .mobile-bar button span:last-child{font-size:10px!important;line-height:1!important;max-width:100%!important;overflow:hidden!important;text-overflow:ellipsis!important;white-space:nowrap!important}
+        body .mobile-bar button.active{background:rgba(var(--accent-rgb),.12)!important;border-color:rgba(var(--accent-rgb),.24)!important;color:var(--accent)!important;box-shadow:none!important}
+        body .mobile-more-sheet{position:fixed!important;inset:0!important;z-index:3200!important;display:none!important;align-items:flex-end!important;justify-content:center!important;padding:10px 10px calc(76px + env(safe-area-inset-bottom))!important;background:rgba(2,6,23,.54)!important;backdrop-filter:blur(14px)!important;-webkit-backdrop-filter:blur(14px)!important}
+        body .mobile-more-sheet.active{display:flex!important}
+        body .mobile-more-panel{width:100%!important;max-width:620px!important;max-height:min(76vh,680px)!important;overflow:auto!important;overscroll-behavior:contain!important;border:1px solid color-mix(in srgb,var(--line) 80%,transparent)!important;border-radius:24px!important;background:linear-gradient(180deg,color-mix(in srgb,var(--panel) 98%,transparent),color-mix(in srgb,var(--panel2) 98%,transparent))!important;box-shadow:0 24px 80px rgba(0,0,0,.34)!important;padding:13px!important}
+        body .mobile-more-head{display:flex!important;align-items:center!important;justify-content:space-between!important;gap:12px!important;padding:2px 2px 12px!important}
+        body .mobile-more-head b{display:block!important;font-size:20px!important;letter-spacing:-.04em!important}
+        body .mobile-more-head span{display:block!important;color:var(--muted)!important;font-size:12px!important;margin-top:2px!important}
+        body .mobile-more-section-label{margin:10px 4px 7px!important;color:var(--muted)!important;font-family:var(--mono)!important;font-size:10px!important;font-weight:850!important;letter-spacing:.14em!important;text-transform:uppercase!important}
+        body .mobile-more-grid{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+        body .mobile-more-item{display:flex!important;align-items:center!important;gap:11px!important;min-height:62px!important;width:100%!important;padding:11px!important;border:1px solid var(--line)!important;border-radius:17px!important;background:var(--panel2)!important;color:var(--text)!important;text-align:left!important;touch-action:manipulation!important}
+        body .mobile-more-item.active{border-color:rgba(var(--accent-rgb),.36)!important;background:rgba(var(--accent-rgb),.11)!important;color:var(--accent)!important}
+        body .mobile-more-icon{display:grid!important;place-items:center!important;flex:0 0 36px!important;width:36px!important;height:36px!important;border-radius:14px!important;background:var(--panel3)!important;color:inherit!important;font-size:18px!important}
+        body .mobile-more-copy{min-width:0!important}
+        body .mobile-more-copy strong{display:block!important;font-size:14px!important;line-height:1.1!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+        body .mobile-more-copy span{display:block!important;margin-top:3px!important;color:var(--muted)!important;font-size:11.5px!important;line-height:1.2!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+        body .page-head{margin-top:8px!important;margin-bottom:12px!important;display:grid!important;grid-template-columns:1fr!important;gap:10px!important;min-width:0!important}
+        body .section-title{font-size:clamp(24px,7.5vw,32px)!important;line-height:1!important;overflow-wrap:anywhere!important}
+        body .section-sub{font-size:13px!important;line-height:1.42!important}
+        body .page-head>.actions,body .page-head>.btn{width:100%!important;justify-self:stretch!important}
+        body .page-head>.actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+        body .page-head>.actions .btn,body .page-head>.btn{width:100%!important;justify-content:center!important;min-width:0!important}
+        body .hero-row,body .command-actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
+        body .hero-row .btn,body .command-actions .btn{width:100%!important;justify-content:center!important}
+        body .card,body .metric-card,body .tracker-stat{max-width:100%!important;min-width:0!important}
+      }
+      @media(max-width:390px){
+        body .mobile-shell-title strong{font-size:18px!important;max-width:52vw!important}
+        body .mobile-shell-title small{max-width:52vw!important}
+        body .mobile-shell-primary{padding:0 10px!important;min-width:0!important}
+        body .mobile-shell-icon-btn{width:38px!important}
+        body .mobile-bar{gap:3px!important;padding-left:5px!important;padding-right:5px!important}
+        body .mobile-bar button span:last-child{font-size:9px!important}
+      }
+      @media(min-width:761px){body .mobile-shell-header{display:none!important}}
+      @media(print){body .mobile-shell-header,body .mobile-bar,body .mobile-more-sheet{display:none!important}}
+    `;
+    let style=document.getElementById('r1-mobile-shell-style');
+    if(!style){ style=document.createElement('style'); style.id='r1-mobile-shell-style'; document.head.appendChild(style); }
+    if(style.textContent!==css) style.textContent=css;
+  }
+  function syncShell(){
+    try{
+      injectStyle();
+      buildNav();
+      buildMobileNav();
+      renderMobileHeader();
+      renderNavLayoutSettings();
+      setBuildLabel();
+      document.querySelectorAll('button:not([type])').forEach(btn=>{ btn.type='button'; });
+    }catch(e){ console.warn('MoneyMap Refactor 1 shell sync failed', e); }
+  }
+  const priorShow=window.showView;
+  if(typeof priorShow==='function' && !priorShow.__r1MobileShellWrapped){
+    window.showView=function(id){
+      closeMobileMoreSheet();
+      const out=priorShow.apply(this,arguments);
+      requestAnimationFrame(syncShell);
+      return out;
+    };
+    window.showView.__r1MobileShellWrapped=true;
+  }
+  const priorRenderAll=window.renderAll;
+  if(typeof priorRenderAll==='function' && !priorRenderAll.__r1MobileShellWrapped){
+    window.renderAll=function(){
+      const out=priorRenderAll.apply(this,arguments);
+      requestAnimationFrame(syncShell);
+      return out;
+    };
+    window.renderAll.__r1MobileShellWrapped=true;
+  }
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMobileMoreSheet(); });
+  document.addEventListener('DOMContentLoaded',syncShell);
+  window.addEventListener('resize',syncShell,{passive:true});
+  window.addEventListener('orientationchange',syncShell,{passive:true});
+  syncShell();
+})();
