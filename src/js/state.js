@@ -3,7 +3,7 @@
 
 const STORAGE_KEY = window.MoneyMapConfig?.storageKey || 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = window.MoneyMapConfig?.buildId || 'v0.1.4';
+const APP_BUILD_ID = window.MoneyMapConfig?.buildId || 'v0.1.5';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;
@@ -12,7 +12,7 @@ let creditChartHoverIndex=null;
 let creditChartModel=null;
 const CATEGORIES = ['Income','Groceries','Dining','Coffee','Gas','Transportation','Shopping','Bills','Housing','Subscriptions','Health','Fitness','Entertainment','Travel','Education','Debt Payment','Savings','Investments','Transfers','Other'];
 const NAV = [
-  ['overview','Overview','Command center','⌁'],['import','Import','CSV dropzone','⇡'],['review','Review','Weekly cleanup','✓'],['transactions','Transactions','Search and edit','≡'],['budgets','Budgets','Monthly limits','◌'],['recurring','Subscriptions','Recurring charges','↻'],['networth','Net worth','Balances + history','◆'],['debt','Debt','Payoff plan','◒'],['investments','Investments','Holdings','△'],['credit','Credit','Score history','◧'],['goals','Goals','Targets','◇'],['rules','Rules','Autopilot','⚡'],['settings','Settings','Local app','⚙']
+  ['overview','Overview','Command center','⌁'],['import','Import','CSV dropzone','⇡'],['review','Review','Weekly cleanup','✓'],['transactions','Transactions','Search and edit','≡'],['budgets','Budgets','Monthly limits','◌'],['recurring','Subscriptions','Recurring charges','↻'],['networth','History','Snapshots','◆'],['debt','Debt','Payoff plan','◒'],['investments','Investments','Holdings','△'],['credit','Credit','Score history','◧'],['goals','Goals','Targets','◇'],['rules','Rules','Autopilot','⚡'],['settings','Settings','Local app','⚙']
 ];
 const defaultState = {
   version: 13,

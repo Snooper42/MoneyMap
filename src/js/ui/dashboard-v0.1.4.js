@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.4';
+  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
   if(window.__mmDashboardV012) return;
   window.__mmDashboardV012 = true;
 

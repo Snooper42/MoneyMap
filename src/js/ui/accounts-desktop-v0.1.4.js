@@ -2,7 +2,7 @@
 (function(){
   'use strict';
 
-  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.4';
+  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
   window.MoneyMapUseAccountsDesktopV014 = true;
   window.MoneyMapAccountsDesktopReady = BUILD;
   var models = {};
@@ -131,6 +131,15 @@
     return Object.values(map).map(function(x){ return {name:x.name, delta:x.after-x.before, before:x.before, after:x.after}; }).filter(function(x){ return Math.abs(x.delta) >= .005; }).sort(function(a,b){ return Math.abs(b.delta)-Math.abs(a.delta); });
   }
 
+  function measureCanvasSize(canvas, wrap, options){
+    options = options || {};
+    var wrapStyles = window.getComputedStyle ? getComputedStyle(wrap) : null;
+    var fixedH = Number(options.height || wrap.dataset.chartHeight || canvas.dataset.chartHeight || 0) || 270;
+    var width = Math.max(360, Math.round(wrap.clientWidth || canvas.clientWidth || parseFloat(wrapStyles && wrapStyles.width) || 680));
+    var height = Math.max(fixedH, Math.round(canvas.clientHeight || parseFloat(wrapStyles && wrapStyles.minHeight) || fixedH));
+    return {width:width, height:height};
+  }
+
   function drawNetWorthChart(canvasId, options){
     options=options || {};
     var canvas=document.getElementById(canvasId);
@@ -139,13 +148,14 @@
     if(!wrap) return;
     var visible=!!canvas.offsetParent || options.force;
     if(!visible) return;
-    var rect=wrap.getBoundingClientRect();
+    var size=measureCanvasSize(canvas, wrap, options);
     var dpr=window.devicePixelRatio || 1;
-    var cssW=Math.max(360, rect.width || 680);
-    var cssH=Math.max(options.height || 270, rect.height || options.height || 270);
+    var cssW=size.width;
+    var cssH=size.height;
+    wrap.style.minHeight=cssH+'px';
     canvas.width=Math.round(cssW*dpr);
     canvas.height=Math.round(cssH*dpr);
-    canvas.style.width='100%';
+    canvas.style.width=cssW+'px';
     canvas.style.height=cssH+'px';
     var ctx=canvas.getContext('2d');
     ctx.setTransform(dpr,0,0,dpr,0,0);
@@ -294,7 +304,10 @@
       var idx=hit(canvasId,event.clientX,event.clientY);
       if(idx===null){ if(!canvas.dataset.v014Pinned){ if(models[canvasId]) models[canvasId].activeIdx=null; hideTips(); drawNetWorthChart(canvasId,{force:true}); } return; }
       canvas.dataset.v014Hover=String(idx);
-      if(!canvas.dataset.v014Pinned) activate(canvasId, idx, false);
+      if(canvas.dataset.v014Pinned) return;
+      var current=models[canvasId] && models[canvasId].activeIdx;
+      if(current===idx && model.wrap.querySelector('.mm-nw-popover-v014')) return;
+      activate(canvasId, idx, false);
     });
     canvas.addEventListener('mouseleave', function(){
       if(canvas.dataset.v014Pinned) return;
@@ -374,7 +387,7 @@
     var rows=currentRows();
     var net=b.netWorth;
     sec.innerHTML='<div class="page-head mm-accounts-head-v014"><div><h2 class="section-title">Accounts</h2><p class="section-sub">Manual balances in a cleaner desktop layout with private local chart popovers and account-specific icons.</p></div><div class="actions"><button class="btn" onclick="showView(\'accounts\'); MoneyMapRefreshAccountChart()">Refresh all</button><button class="btn" onclick="showView(\'networth\')">History</button><button class="btn btn-primary" onclick="openDrawer(\'account\')">Add account</button></div></div>'+
-      '<section class="card mm-accounts-chart-card-v014"><div class="mm-accounts-chart-top-v014"><div><span class="mm-accounts-kicker-v014">Net worth</span><strong class="mm-accounts-net-v014 '+(net<0?'bad':'')+'">'+fmtMoney(net)+'</strong><p class="mm-accounts-net-sub-v014">'+esc(deltaLabel(rows))+'</p></div><div class="mm-accounts-chart-controls-v014"><div class="mm-accounts-control-pill-v014">Net worth performance <span>click dots</span></div><div class="mm-accounts-control-pill-v014">Snapshot range <span>'+rows.length+' point'+(rows.length===1?'':'s')+'</span></div></div></div><div class="mm-accounts-chart-wrap-v014"><canvas id="accountsNetWorthCanvas" aria-label="Clickable net worth performance chart" tabindex="0"></canvas></div></section>'+
+      '<section class="card mm-accounts-chart-card-v014"><div class="mm-accounts-chart-top-v014"><div><span class="mm-accounts-kicker-v014">Current net worth</span><strong class="mm-accounts-net-v014 '+(net<0?'bad':'')+'">'+fmtMoney(net)+'</strong><p class="mm-accounts-net-sub-v014">'+esc(deltaLabel(rows))+'</p></div><div class="mm-accounts-chart-controls-v014"><div class="mm-accounts-control-pill-v014">Performance chart <span>click dots</span></div><div class="mm-accounts-control-pill-v014">Snapshot history <span>'+rows.length+' point'+(rows.length===1?'':'s')+'</span></div></div></div><div class="mm-accounts-chart-wrap-v014" data-chart-height="300"><canvas id="accountsNetWorthCanvas" aria-label="Clickable net worth performance chart" tabindex="0"></canvas></div></section>'+
       '<div class="mm-accounts-grid-v014"><section class="card mm-accounts-list-card-v014"><div class="mm-accounts-list-head-v014"><div><h3>Accounts</h3><p>Click any row to edit its balance, type, and icon.</p></div><button class="btn btn-small" onclick="openDrawer(\'account\')">Add</button></div>'+groupedAccountHtml(accounts)+'</section><aside class="card mm-accounts-summary-v014"><h3>Summary</h3>'+summaryHtml(accounts,b)+'</aside></div>';
     requestAnimationFrame(function(){ drawNetWorthChart('accountsNetWorthCanvas', {height:300, force:true}); });
   }

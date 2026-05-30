@@ -101,7 +101,7 @@ function commandActions(){
     {icon:'＋',title:'Quick add',sub:'Transaction, budget, goal, account',key:'N',fn:()=>openDrawer('quickAdd')},
     {icon:'✓',title:'Weekly review',sub:'Clean transactions',key:'R',fn:()=>startWeeklyReview()},
     {icon:'◌',title:'Budgets',sub:'Manage category limits',key:'B',fn:()=>showView('budgets')},
-    {icon:'↗',title:'Net worth',sub:'Accounts and snapshots',key:'W',fn:()=>showView('networth')},
+    {icon:'↗',title:'History',sub:'Net worth snapshots',key:'W',fn:()=>showView('networth')},
     {icon:'◆',title:'Goals',sub:'Savings and payoff targets',key:'G',fn:()=>showView('goals')},
     {icon:'●',title:'Customize',sub:'Color wheel, layout, density',key:'C',fn:()=>openDrawer('customize')},
     {icon:'↧',title:'Export backup JSON',sub:'Portable full backup',key:'',fn:()=>exportBackupJson()},
@@ -122,7 +122,7 @@ function closeCommandPalette(){ document.getElementById('commandPalette')?.class
 function renderCommandPalette(){
   const q=String(document.getElementById('commandInput')?.value||'').toLowerCase().trim(); const out=document.getElementById('commandResults'); if(!out) return;
   const rows=commandActions().filter(a=>!q || (a.title+' '+a.sub).toLowerCase().includes(q));
-  out.innerHTML=rows.length?rows.map((a,i)=>`<button class="command-item ${i===0?'active':''}" data-command-index="${i}" onclick="runCommandAction(${i})"><i>${escapeHtml(a.icon)}</i><div><b>${escapeHtml(a.title)}</b><span>${escapeHtml(a.sub)}</span></div>${a.key?`<kbd>${escapeHtml(a.key)}</kbd>`:''}</button>`).join(''):`<div class="empty"><div><strong>No matching action.</strong><p>Try “budget”, “export”, “net worth”, or “customize”.</p></div></div>`;
+  out.innerHTML=rows.length?rows.map((a,i)=>`<button class="command-item ${i===0?'active':''}" data-command-index="${i}" onclick="runCommandAction(${i})"><i>${escapeHtml(a.icon)}</i><div><b>${escapeHtml(a.title)}</b><span>${escapeHtml(a.sub)}</span></div>${a.key?`<kbd>${escapeHtml(a.key)}</kbd>`:''}</button>`).join(''):`<div class="empty"><div><strong>No matching action.</strong><p>Try “budget”, “export”, “history”, or “customize”.</p></div></div>`;
 }
 
 function runCommandAction(renderedIndex){

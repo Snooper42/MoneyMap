@@ -103,13 +103,17 @@
 
 .mm-accounts-chart-wrap-v014 {
   position: relative;
-  min-height: 270px;
+  min-height: 300px;
+  height: 300px;
   border-radius: 20px;
   overflow: visible;
 }
 
 .mm-accounts-chart-wrap-v014 canvas,
 #netWorthCanvas {
+  display: block;
+  width: 100%;
+  max-width: 100%;
   cursor: pointer;
 }
 
