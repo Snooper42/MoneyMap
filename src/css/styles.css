@@ -1004,7 +1004,7 @@ body:before{opacity:.18!important;background-size:54px 54px!important}
   --ux-soft-shadow:0 10px 30px rgba(2,6,23,.10);
 }
 html{scroll-padding-bottom:calc(var(--ux-nav-h) + 18px)}
-body.uxv62-more-open{overflow:hidden}
+body.uxv62-more-open{overflow-y:auto;touch-action:auto}
 
 /* calmer, more consistent surfaces */
 .card,.metric-card,.hero-metric,.v60-card,.v60-panel,.v5-panel,.v5-control-card,.week-card,.tracker-stat,.budget-row,.mini-item,.snapshot-row{

@@ -2360,7 +2360,7 @@ window.addEventListener('keydown', event => {
     /* QA5: the mobile "More" sheet may lock background scroll, but ONLY on
        mobile widths. On desktop the document must always stay scrollable. */
     @media(min-width:1181px){body.uxv62-more-open{overflow:visible!important}}
-    @media(max-width:1180px){body.uxv62-more-open{overflow:hidden!important}}
+    @media(max-width:1180px){body.uxv62-more-open{overflow-y:auto!important;touch-action:auto!important}}
     .app-shell,.main,.view,.card,.metric-card,.table-wrap,.topbar,.searchbar,.actions{min-width:0!important;box-sizing:border-box!important}
     .first-run{z-index:4000!important}.drawer{z-index:3500!important}.drawer-panel{z-index:3501!important}.command-palette{z-index:3600!important}.mobile-more-sheet{z-index:3000!important}.toast{z-index:4100!important}
     body.first-run-open .topbar,body.first-run-open .mobile-bar,body.first-run-open .mobile-more-sheet{display:none!important}
@@ -2479,7 +2479,7 @@ window.addEventListener('keydown', event => {
    normal viewport scrolling. Changed to `overflow-x:clip`. This guard also makes
    sure the mobile "More" body-lock can never get stuck at desktop widths. */
 (function(){
-  const BUILD='qa6-20260530';
+  const BUILD='r2-4-cache-reset-20260530';
   function isDesktop(){ return window.innerWidth > 1180; }
   function unstickDesktopScroll(){
     try{
@@ -2520,7 +2520,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- QA6 deploy/navigation/dialog finalization ---- */
 (function(){
-  const BUILD='qa6-20260530';
+  const BUILD='r2-4-cache-reset-20260530';
   const NAV_ITEMS=[
     {id:'overview',title:'Overview',mobile:'Home',sub:'Command center'},
     {id:'accounts',title:'Accounts',mobile:'Accounts',sub:'Balances'},
@@ -2587,7 +2587,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- Refactor 1: mobile-first app shell and navigation ---- */
 (function(){
-  const BUILD='r2-action-system-20260530';
+  const BUILD='r2-4-cache-reset-20260530';
   const PRIMARY_MOBILE=['overview','accounts','transactions','budgets'];
   const PRIMARY_DESKTOP=['overview','accounts','transactions','budgets','review','import'];
   const SECONDARY=['review','import','networth','recurring','debt','investments','credit','goals','rules','settings'];
@@ -2849,7 +2849,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- Refactor 2: safe action system and destructive action copy ---- */
 (function(){
-  const BUILD='r2-action-system-20260530';
+  const BUILD='r2-4-cache-reset-20260530';
   const originalLoadDemoData=window.loadDemoData;
 
   function html(value){ return (typeof escapeHtml==='function') ? escapeHtml(String(value ?? '')) : String(value ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
@@ -3151,7 +3151,7 @@ window.addEventListener('keydown', event => {
 
 /* R2.1 global search fix: make the top search visibly return results. */
 (function(){
-  const BUILD='r2-3-hard-scroll-unlock-20260530';
+  const BUILD='r2-4-cache-reset-20260530';
   let searchResults=[];
   let activeIndex=0;
 
@@ -3338,7 +3338,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- R2.2: Firefox scroll guard and stuck-overlay recovery ---- */
 (function(){
-  const BUILD='r2-3-hard-scroll-unlock-20260530';
+  const BUILD='r2-4-cache-reset-20260530';
   const STYLE_ID='r22-firefox-scroll-guard-style';
 
   function markBuild(){
@@ -3442,7 +3442,7 @@ window.addEventListener('keydown', event => {
    become the page scroll container. Active dialogs still keep their own
    internal scroll, but stale classes are cleared immediately. */
 (function(){
-  const BUILD='r2-3-hard-scroll-unlock-20260530';
+  const BUILD='r2-4-cache-reset-20260530';
   const STYLE_ID='r23-hard-scroll-unlock-style';
 
   function activeDialog(){
@@ -3563,4 +3563,115 @@ window.addEventListener('keydown', event => {
   document.addEventListener('keyup', e=>{ if(e.key==='Escape') requestAnimationFrame(hardUnlock); }, {passive:true});
   setInterval(hardUnlock, 500);
   afterRender();
+})();
+
+
+/* ---- R2.4: cache reset / stale asset guard ----
+   Keeps GitHub Pages, Firefox, and mobile browsers from mixing old CSS/JS
+   after a partial deploy or cached index.html. This does not clear user data. */
+(function(){
+  const BUILD='r2-4-cache-reset-20260530';
+  const RELOAD_KEY='moneymap-cache-reload-'+BUILD;
+  const STYLE_ID='r24-cache-reset-style';
+
+  function markBuild(){
+    try{
+      window.MONEYMAP_EXPECTED_BUILD = BUILD;
+      document.documentElement.setAttribute('data-moneymap-build', BUILD);
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+    }catch(e){}
+  }
+
+  function injectStyle(){
+    const css=`
+      .cache-reset-notice{
+        position:fixed;left:16px;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:99999;
+        max-width:720px;margin:0 auto;padding:14px 16px;border-radius:18px;
+        background:var(--panel,#111827);border:1px solid var(--line,rgba(148,163,184,.25));
+        box-shadow:0 18px 60px rgba(0,0,0,.35);color:var(--text,#e5e7eb);display:none;gap:12px;align-items:center;justify-content:space-between;
+      }
+      .cache-reset-notice.active{display:flex;}
+      .cache-reset-notice b{display:block;margin-bottom:2px;}
+      .cache-reset-notice span{display:block;color:var(--muted,#9ca3af);font-size:13px;line-height:1.35;}
+      .cache-reset-notice button{border:0;border-radius:999px;padding:9px 12px;font-weight:800;background:var(--accent,#fb923c);color:#061018;cursor:pointer;white-space:nowrap;}
+      @media(max-width:640px){.cache-reset-notice{align-items:stretch;flex-direction:column;bottom:calc(82px + env(safe-area-inset-bottom));}.cache-reset-notice button{width:100%;}}
+    `;
+    let style=document.getElementById(STYLE_ID);
+    if(!style){ style=document.createElement('style'); style.id=STYLE_ID; document.head.appendChild(style); }
+    if(style.textContent!==css) style.textContent=css;
+  }
+
+  function unregisterWorkersAndCaches(){
+    try{
+      if('serviceWorker' in navigator){
+        navigator.serviceWorker.getRegistrations().then(regs=>regs.forEach(reg=>{
+          const scope=String(reg.scope||'');
+          if(!scope || scope.includes(location.origin)) reg.unregister().catch(()=>{});
+        })).catch(()=>{});
+      }
+    }catch(e){}
+    try{
+      if(window.caches && caches.keys){
+        caches.keys().then(keys=>keys.forEach(key=>{
+          if(/moneymap|money-map|workbox|precache|runtime/i.test(key)) caches.delete(key).catch(()=>{});
+        })).catch(()=>{});
+      }
+    }catch(e){}
+  }
+
+  function showCacheNotice(current){
+    try{
+      injectStyle();
+      let notice=document.getElementById('cacheResetNotice');
+      if(!notice){
+        notice=document.createElement('div');
+        notice.id='cacheResetNotice';
+        notice.className='cache-reset-notice';
+        notice.innerHTML=`<div><b>Cached files detected</b><span>MoneyMap loaded mixed assets: ${current||'unknown'} instead of ${BUILD}. Reload once to finish the update.</span></div><button type="button">Reload</button>`;
+        document.body.appendChild(notice);
+        notice.querySelector('button')?.addEventListener('click',()=>forceReload(true));
+      }
+      notice.classList.add('active');
+    }catch(e){}
+  }
+
+  function forceReload(userInitiated){
+    try{ unregisterWorkersAndCaches(); }catch(e){}
+    try{ if(!userInitiated) sessionStorage.setItem(RELOAD_KEY,'1'); }catch(e){}
+    const url=new URL(location.href);
+    url.searchParams.set('mmcache', BUILD+'-'+Date.now());
+    location.replace(url.toString());
+  }
+
+  function verifyAssets(){
+    markBuild();
+    unregisterWorkersAndCaches();
+    let stateBuild=null;
+    try{ stateBuild=(typeof APP_BUILD_ID!=='undefined') ? APP_BUILD_ID : null; }catch(e){}
+    const stale=stateBuild && stateBuild!==BUILD;
+    if(stale){
+      let alreadyReloaded=false;
+      try{ alreadyReloaded=sessionStorage.getItem(RELOAD_KEY)==='1'; }catch(e){}
+      if(!alreadyReloaded){ forceReload(false); return; }
+      showCacheNotice(stateBuild);
+    }
+  }
+
+  const priorRenderAll=window.renderAll;
+  if(typeof priorRenderAll==='function' && !priorRenderAll.__r24CacheResetWrapped){
+    window.renderAll=function(){ const out=priorRenderAll.apply(this,arguments); requestAnimationFrame(verifyAssets); return out; };
+    window.renderAll.__r24CacheResetWrapped=true;
+  }
+  const priorShowView=window.showView;
+  if(typeof priorShowView==='function' && !priorShowView.__r24CacheResetWrapped){
+    window.showView=function(){ const out=priorShowView.apply(this,arguments); requestAnimationFrame(verifyAssets); return out; };
+    window.showView.__r24CacheResetWrapped=true;
+  }
+
+  document.addEventListener('DOMContentLoaded', verifyAssets);
+  window.addEventListener('pageshow', verifyAssets, {passive:true});
+  window.addEventListener('focus', verifyAssets, {passive:true});
+  setTimeout(verifyAssets, 80);
+  setTimeout(verifyAssets, 1200);
+  markBuild();
 })();
