@@ -1,0 +1,3 @@
+MoneyMap v0.1.2
+Flat static GitHub Pages package. index.html is at the zip root.
+Serve from this folder with python -m http.server 8080.

@@ -1,6 +1,0 @@
-MoneyMap v0.7 install notes
-
-1. Replace the existing app files with this build.
-2. Hard refresh the browser so the new CSS and JS query strings load.
-3. Existing localStorage data should remain compatible.
-4. Supported upload types now include CSV, TSV, TXT, semicolon-delimited, and pipe-delimited exports.

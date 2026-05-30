@@ -8,11 +8,11 @@ Local-first, privacy-first personal finance. No bank login, no sync, no backend.
 
 Patch releases. No breaking changes.
 
-- [ ] v0.1.1 — CSS consolidation: merge 10 patch CSS files into 4 canonical files
-- [ ] v0.1.2 — Extract `app.js` bottom IIFEs (account groups, r25 patch) into `src/js/ui/`
-- [ ] v0.1.3 — Review mode swipe gesture improvements + category quick-pick grid
-- [ ] v0.1.4 — Net worth chart: mobile touch pan / pinch-to-zoom on multi-year history
-- [ ] v0.1.5 — Transaction card: long-press context menu (edit, delete, categorize, split)
+- [x] v0.1.2 — Mobile dashboard, More sheet, cache-busting, and transaction editor polish
+- [ ] v0.1.3 — CSS consolidation: merge patch CSS files into canonical layers
+- [ ] v0.1.4 — Review mode swipe gesture improvements + category quick-pick grid
+- [ ] v0.1.5 — Net worth chart: mobile touch pan / pinch-to-zoom on multi-year history
+- [ ] v0.1.6 — Transaction card: long-press context menu (edit, delete, categorize, split)
 
 ---
 

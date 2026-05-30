@@ -1,5 +1,5 @@
 /* MoneyMap import parsers.
-   Split from ux-v0.7.js in v0.8. Handles delimited bank exports only, no network access. */
+   Handles delimited bank exports only, no network access. */
 (function(){
   'use strict';
 

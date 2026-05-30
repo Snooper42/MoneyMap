@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.1';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
   let booted = false;
 
   const moneyText = (value, opts) => {
@@ -270,7 +270,7 @@
       </section>`;
   }
 
-  // v0.8: import parsing and import workflow moved to src/js/import/*.js.
+  // Import parsing and import workflow moved to src/js/import/*.js.
 
   window.v07OpenMonth = function(key){
     try { showView('transactions'); } catch(e) {}

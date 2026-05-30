@@ -1,4 +1,4 @@
-/* MoneyMap nav — v0.9.9
+/* MoneyMap nav — v0.1.2
    ─────────────────────────────────────────────────────────────────
    Replaces emoji/text icons with a clean SVG set.
    Adds user-editable bottom bar (up to 4 slots).
@@ -73,6 +73,13 @@
     networth: svg(
       '<polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>' +
       '<polyline points="17 6 23 6 23 12"/>'
+    ),
+
+    accounts: svg(
+      '<rect x="3" y="5" width="18" height="14" rx="2.5"/>' +
+      '<path d="M3 10h18"/>' +
+      '<path d="M7 15h4"/>' +
+      '<path d="M15 15h2"/>'
     ),
 
     debt: svg(
@@ -157,12 +164,41 @@
 
   /* ── Section metadata ──────────────────────────────────────── */
 
-  var SECTIONS = (typeof NAV !== 'undefined' ? NAV : []).map(function (n) {
-    return { id: n[0], title: n[1], sub: n[2] };
-  });
+  function sections() {
+    var raw = [];
+    try { raw = (typeof NAV !== 'undefined' && Array.isArray(NAV)) ? NAV : []; } catch (e) { raw = []; }
+    var out = raw.map(function (n) { return { id: n[0], title: n[1], sub: n[2] }; });
+
+    /* Accounts is mounted by later legacy layers on some builds. Keep it available
+       even when those layers update NAV after this file has loaded. */
+    if (!out.some(function (s) { return s.id === 'accounts'; })) {
+      var insertAt = out.findIndex(function (s) { return s.id === 'networth'; });
+      out.splice(insertAt >= 0 ? insertAt + 1 : out.length, 0, { id: 'accounts', title: 'Accounts', sub: 'Manual balances' });
+    }
+
+    return out;
+  }
 
   function sectionMeta(id) {
-    return SECTIONS.find(function (s) { return s.id === id; }) || { id: id, title: id, sub: '' };
+    return sections().find(function (s) { return s.id === id; }) || { id: id, title: id, sub: '' };
+  }
+
+  function sectionExists(id) {
+    return sections().some(function (s) { return s.id === id; });
+  }
+
+  function text(v) {
+    try { return typeof escapeHtml === 'function' ? escapeHtml(String(v == null ? '' : v)) : String(v == null ? '' : v).replace(/[&<>"']/g, function (c) { return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); } catch (e) { return ''; }
+  }
+  function js(v) {
+    try {
+      if (typeof escapeJs === 'function') return escapeJs(String(v == null ? '' : v));
+      return String(v == null ? '' : v)
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    } catch (e) { return ''; }
   }
 
   /* ── User preferences ──────────────────────────────────────── */
@@ -173,20 +209,29 @@
   function getUserItems() {
     try {
       var saved = state && state.settings && state.settings.mobileNavItems;
-      if (Array.isArray(saved) && saved.length >= 1 && saved.length <= MAX_ITEMS) {
-        var valid = saved.filter(function (id) {
-          return SECTIONS.some(function (s) { return s.id === id; });
-        });
-        if (valid.length >= 1) return valid;
+      if (Array.isArray(saved) && saved.length >= 2 && saved.length <= MAX_ITEMS) {
+        var valid = saved.filter(function (id) { return sectionExists(id); });
+        var unique = valid.filter(function (id, idx) { return valid.indexOf(id) === idx; });
+        if (unique.length >= 2 && unique.includes('overview') && unique.includes('review')) return unique;
       }
     } catch (e) {}
     return DEFAULT_ITEMS.slice();
   }
 
+  function normalizeUserItems(items) {
+    var valid = (Array.isArray(items) ? items : []).filter(function (id) { return sectionExists(id); });
+    var unique = [];
+    valid.forEach(function (id) { if (!unique.includes(id)) unique.push(id); });
+    if (!unique.includes('overview')) unique.unshift('overview');
+    if (!unique.includes('review')) unique.splice(Math.min(1, unique.length), 0, 'review');
+    return unique.slice(0, MAX_ITEMS);
+  }
+
   function setUserItems(items) {
+    var next = normalizeUserItems(items);
     try {
       if (state && state.settings) {
-        state.settings.mobileNavItems = items.slice(0, MAX_ITEMS);
+        state.settings.mobileNavItems = next;
         if (typeof saveState === 'function') saveState();
       }
     } catch (e) {}
@@ -206,10 +251,10 @@
       var meta = sectionMeta(id);
       var isActive = (typeof activeView !== 'undefined') && activeView === id;
       return '<button type="button" class="mm-nav-btn' + (isActive ? ' active' : '') + '" ' +
-        'onclick="showView(\'' + id + '\')" ' +
-        'aria-label="' + meta.title + '">' +
+        'onclick="showView(\'' + js(id) + '\')" ' +
+        'aria-label="' + text(meta.title) + '">' +
         '<span class="mm-nav-icon">' + (ICONS[id] || ICONS.overview) + '</span>' +
-        '<span class="mm-nav-label">' + meta.title + '</span>' +
+        '<span class="mm-nav-label">' + text(meta.title) + '</span>' +
         '</button>';
     });
 
@@ -232,18 +277,18 @@
     var current = (typeof activeView !== 'undefined') ? activeView : '';
 
     /* All sections not in the bottom bar */
-    var moreItems = SECTIONS.filter(function (s) {
+    var moreItems = sections().filter(function (s) {
       return !userItems.includes(s.id);
     });
 
     var grid = moreItems.map(function (s) {
       var isActive = current === s.id;
       return '<button type="button" class="mm-more-item' + (isActive ? ' active' : '') + '" ' +
-        'onclick="showView(\'' + s.id + '\')" aria-label="Open ' + s.title + '">' +
+        'onclick="showView(\'' + js(s.id) + '\');toggleMobileMore(false)" aria-label="Open ' + text(s.title) + '">' +
         '<span class="mm-more-icon">' + (ICONS[s.id] || ICONS.overview) + '</span>' +
         '<span class="mm-more-copy">' +
-          '<strong>' + s.title + '</strong>' +
-          '<span>' + s.sub + '</span>' +
+          '<strong>' + text(s.title) + '</strong>' +
+          '<span>' + text(s.sub) + '</span>' +
         '</span>' +
         '</button>';
     }).join('');
@@ -297,14 +342,14 @@
     var userItems = getUserItems().slice(); /* working copy */
 
     function render() {
-      var allSections = SECTIONS;
+      var allSections = sections();
 
       var selectedHtml = userItems.map(function (id, idx) {
         var s = sectionMeta(id);
-        return '<div class="mm-cust-slot" data-id="' + id + '">' +
+        return '<div class="mm-cust-slot" data-id="' + text(id) + '">' +
           '<span class="mm-cust-slot-icon">' + (ICONS[id] || ICONS.overview) + '</span>' +
-          '<span class="mm-cust-slot-name">' + s.title + '</span>' +
-          '<button type="button" class="mm-cust-remove" onclick="MM_NAV._custRemove(\'' + id + '\')" aria-label="Remove ' + s.title + '">' +
+          '<span class="mm-cust-slot-name">' + text(s.title) + '</span>' +
+          '<button type="button" class="mm-cust-remove" onclick="MM_NAV._custRemove(\'' + js(id) + '\')" aria-label="Remove ' + text(s.title) + '">' +
             ICONS.close +
           '</button>' +
           '</div>';
@@ -320,10 +365,10 @@
         .map(function (s) {
           var canAdd = userItems.length < MAX_ITEMS;
           return '<button type="button" class="mm-cust-chip' + (canAdd ? '' : ' mm-cust-chip-disabled') + '" ' +
-            (canAdd ? 'onclick="MM_NAV._custAdd(\'' + s.id + '\')"' : 'disabled aria-disabled="true"') +
-            ' aria-label="Add ' + s.title + ' to bar">' +
+            (canAdd ? 'onclick="MM_NAV._custAdd(\'' + js(s.id) + '\')"' : 'disabled aria-disabled="true"') +
+            ' aria-label="Add ' + text(s.title) + ' to bar">' +
             '<span class="mm-cust-chip-icon">' + (ICONS[s.id] || ICONS.overview) + '</span>' +
-            '<span>' + s.title + '</span>' +
+            '<span>' + text(s.title) + '</span>' +
             '</button>';
         }).join('');
 
@@ -353,13 +398,13 @@
     MM_NAV._custAdd = function (id) {
       if (userItems.length >= MAX_ITEMS) return;
       if (!userItems.includes(id)) userItems.push(id);
+      userItems = normalizeUserItems(userItems);
       setUserItems(userItems);
       render();
     };
 
     MM_NAV._custRemove = function (id) {
-      userItems = userItems.filter(function (x) { return x !== id; });
-      if (!userItems.length) userItems = [DEFAULT_ITEMS[0]]; /* always keep at least one */
+      userItems = normalizeUserItems(userItems.filter(function (x) { return x !== id; }));
       setUserItems(userItems);
       render();
     };
@@ -411,7 +456,7 @@
     _custAdd:        null, /* set during customizer render */
     _custRemove:     null,
     _custReset:      null,
-    _version:        'v0.9.9'
+    _version:        'v0.1.2'
   };
 
   /* Also expose on MoneyMap namespace */
@@ -423,8 +468,12 @@
     buildNav();
     /* Sync mobileNavItems default into state if missing */
     try {
-      if (state && state.settings && !state.settings.mobileNavItems) {
-        state.settings.mobileNavItems = DEFAULT_ITEMS.slice();
+      if (state && state.settings) {
+        var current = state.settings.mobileNavItems;
+        if (!Array.isArray(current) || current.length < 2 || !current.includes('overview') || !current.includes('review')) {
+          state.settings.mobileNavItems = DEFAULT_ITEMS.slice();
+          if (typeof saveState === 'function') saveState();
+        }
       }
     } catch (e) {}
   }

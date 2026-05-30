@@ -1,10 +1,11 @@
 /* MoneyMap cache guard.
-   Split from app.js in v0.8 so build checks are isolated from feature code. */
+   Keeps build checks isolated from feature code. */
 (function(){
   'use strict';
 
-  const BUILD = window.MoneyMapConfig?.buildId || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.1';
-  const RELOAD_KEY = 'moneymap-cache-reload-' + BUILD;
+  const BUILD = window.MoneyMapConfig?.buildId || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  const TOKEN = window.MoneyMapConfig?.cacheBust || window.MONEYMAP_ASSET_TOKEN || BUILD;
+  const RELOAD_KEY = 'moneymap-cache-reload-' + TOKEN;
   const STYLE_ID = 'moneymap-cache-guard-style';
 
   function markBuild(){
@@ -84,7 +85,7 @@
     try{ unregisterWorkersAndCaches(); }catch(e){}
     try{ if(!userInitiated) sessionStorage.setItem(RELOAD_KEY, '1'); }catch(e){}
     const url = new URL(location.href);
-    url.searchParams.set('mmcache', BUILD + '-' + Date.now());
+    url.searchParams.set('mmcache', TOKEN + '-' + Date.now());
     location.replace(url.toString());
   }
 

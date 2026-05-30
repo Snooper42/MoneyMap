@@ -1,3 +1,12 @@
+# MoneyMap changelog
+
+## v0.1.2
+- Bumped the canonical build label to v0.1.2 and added a unique asset cache token.
+- Reworked the mobile dashboard into a chart-first overview with Review, net worth trend, cash flow, category spend, budget pressure, recurring charges, and activity cards.
+- Rebuilt mobile More/customize behavior so Accounts and Review remain available and stale one-item bottom bars are corrected.
+- Polished the transaction editor and rounded saved/displayed amounts to cents.
+- Removed old package-only install notes from the release zip to prevent stale build instructions.
+
 # Changelog
 
 ## v0.1.1

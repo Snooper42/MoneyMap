@@ -1,10 +1,10 @@
-/* MoneyMap dashboard v0.1.1 — chart-first mobile/desktop overview */
+/* MoneyMap dashboard v0.1.2 — chart-first mobile/desktop overview */
 (function(){
   'use strict';
 
-  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.1';
-  if(window.__mmDashboardV011) return;
-  window.__mmDashboardV011 = true;
+  var BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.2';
+  if(window.__mmDashboardV012) return;
+  window.__mmDashboardV012 = true;
 
   function esc(v){
     if(typeof escapeHtml === 'function') return escapeHtml(String(v ?? ''));
@@ -94,7 +94,7 @@
     var deltaText = delta===null ? 'No prior snapshot' : (delta>=0?'+':'')+fmt(delta)+' since last save';
     var deltaCls = delta===null ? '' : (delta>=0?'good':'bad');
     return '<section class="mm11-hero-card">' +
-      '<div class="mm11-hero-copy"><div class="mm11-kicker">Dashboard</div><h2>'+esc(fmt(nw.netWorth))+'</h2><p>Current net worth from included accounts, holdings, and debts.</p><div class="mm11-inline-stats"><span><b class="good">'+esc(fmt(nw.assets))+'</b> assets</span><span><b class="bad">'+esc(fmt(nw.liabilities))+'</b> liabilities</span><span><b class="'+deltaCls+'">'+esc(deltaText)+'</b></span></div></div>' +
+      '<div class="mm11-hero-copy"><div class="mm11-kicker">Chart-first overview</div><h2>'+esc(fmt(nw.netWorth))+'</h2><p>Current net worth from included accounts, holdings, and debts.</p><div class="mm11-inline-stats"><span><b class="good">'+esc(fmt(nw.assets))+'</b> assets</span><span><b class="bad">'+esc(fmt(nw.liabilities))+'</b> liabilities</span><span><b class="'+deltaCls+'">'+esc(deltaText)+'</b></span></div></div>' +
       '<div class="mm11-hero-chart"><div class="mm11-chart-head"><span>Net worth trend</span><button type="button" class="btn btn-small" onclick="saveNetWorthSnapshot()">Save snapshot</button></div>'+sparkline(vals)+'</div>' +
       '</section>';
   }
@@ -118,7 +118,7 @@
       var width=Math.max(3,Math.round(r.value/max*100));
       return '<button type="button" class="mm11-cat-row" onclick="showCategoryTransactions(\''+js(r.name)+'\')"><span class="mm11-cat-rank">'+(i+1)+'</span><span class="mm11-cat-copy"><b>'+esc(r.name)+'</b><i><em style="width:'+width+'%"></em></i></span><span class="mm11-cat-value"><b>'+esc(fmt(r.value))+'</b><small>'+pct+'%</small></span></button>';
     }).join('') : '<div class="mm11-empty-chart">Import transactions to see category charts.</div>';
-    return '<section class="mm11-card"><div class="mm11-card-head"><div><h3>Spend mix</h3><p>Top visible categories</p></div><button type="button" class="btn btn-small" onclick="showView(\'transactions\')">View all</button></div><div class="mm11-cat-list">'+html+'</div></section>';
+    return '<section class="mm11-card"><div class="mm11-card-head"><div><h3>Spending by category</h3><p>Top visible categories</p></div><button type="button" class="btn btn-small" onclick="showView(\'transactions\')">View all</button></div><div class="mm11-cat-list">'+html+'</div></section>';
   }
   function buildReviewCard(){
     var open=unreviewedTx();
@@ -147,7 +147,7 @@
     var rec=[];
     try{ rec=upcomingRecurringItems(3); }catch(e){ rec=[]; }
     var html=rec.length ? rec.map(function(r){ return '<button type="button" class="mm11-risk-row" onclick="showView(\'recurring\')"><div><b>'+esc(r.merchant)+'</b><span>'+esc(typeof dateFmt==='function'?dateFmt(r.nextDate):r.nextDate)+' · '+esc((r.daysUntil<=0?'due now':r.daysUntil+' days'))+'</span></div><strong>'+esc(fmt(r.monthly))+'</strong></button>'; }).join('') : '<div class="mm11-empty-chart">Import more history to detect bills.</div>';
-    return '<section class="mm11-card"><div class="mm11-card-head"><div><h3>Bills watch</h3><p>Detected recurring charges</p></div><button type="button" class="btn btn-small" onclick="showView(\'recurring\')">Open</button></div><div class="mm11-risk-list">'+html+'</div></section>';
+    return '<section class="mm11-card"><div class="mm11-card-head"><div><h3>Upcoming recurring</h3><p>Detected subscriptions and bills</p></div><button type="button" class="btn btn-small" onclick="showView(\'recurring\')">Open</button></div><div class="mm11-risk-list">'+html+'</div></section>';
   }
 
   function ensureReviewInMobileNav(){
@@ -177,26 +177,26 @@
     var view=document.getElementById('view-overview');
     if(!view) return;
     var isOverview = (typeof activeView !== 'undefined' ? activeView : 'overview') === 'overview' || view.classList.contains('active');
-    document.body.classList.add('mm-v011-dashboard');
-    document.body.classList.toggle('mm-v011-overview-active', !!isOverview);
+    document.body.classList.add('mm-v012-dashboard');
+    document.body.classList.toggle('mm-v012-overview-active', !!isOverview);
     ensureReviewInMobileNav();
-    var host=document.getElementById('mm-dash-v011-host');
-    if(!host){ host=document.createElement('div'); host.id='mm-dash-v011-host'; host.className='mm-dash-v011'; view.insertBefore(host,view.firstChild); }
+    var host=document.getElementById('mm-dash-v012-host');
+    if(!host){ host=document.createElement('div'); host.id='mm-dash-v012-host'; host.className='mm-dash-v012'; view.insertBefore(host,view.firstChild); }
     host.innerHTML=buildTopRail()+buildHero()+'<div class="mm11-primary-grid">'+buildCashChart()+buildCategoryChart()+'</div><div class="mm11-secondary-grid">'+buildReviewCard()+buildBudgetCard()+buildRecurringCard()+buildActivityCard()+'</div>';
     try{ if(typeof buildMobileNav==='function') buildMobileNav(); }catch(e){}
     markBuild();
   }
 
-  if(window.MoneyMapRenderBus) window.MoneyMapRenderBus.register('dashboard-v011',renderDashboard,92);
+  if(window.MoneyMapRenderBus) window.MoneyMapRenderBus.register('dashboard-v012',renderDashboard,92);
   var oldRender=window.renderAll;
-  if(typeof oldRender==='function' && !oldRender.__mmDashV011Wrapped){
+  if(typeof oldRender==='function' && !oldRender.__mmDashV012Wrapped){
     window.renderAll=function(){ var out=oldRender.apply(this,arguments); requestAnimationFrame(renderDashboard); return out; };
-    window.renderAll.__mmDashV011Wrapped=true;
+    window.renderAll.__mmDashV012Wrapped=true;
   }
   var oldShow=window.showView;
-  if(typeof oldShow==='function' && !oldShow.__mmDashV011Wrapped){
+  if(typeof oldShow==='function' && !oldShow.__mmDashV012Wrapped){
     window.showView=function(id){ var out=oldShow.apply(this,arguments); requestAnimationFrame(renderDashboard); return out; };
-    window.showView.__mmDashV011Wrapped=true;
+    window.showView.__mmDashV012Wrapped=true;
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',function(){ requestAnimationFrame(renderDashboard); });
   else requestAnimationFrame(renderDashboard);

@@ -1,5 +1,5 @@
 /* MoneyMap import workflow.
-   Split from ux-v0.7.js in v0.8. Owns file support, batch creation, and post-import sorting. */
+   Owns file support, batch creation, and post-import sorting. */
 (function(){
   'use strict';
 

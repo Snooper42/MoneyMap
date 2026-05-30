@@ -1,6 +1,0 @@
-MoneyMap v0.9 install notes
-
-1. Replace the current local test folder with this build.
-2. Hard refresh the browser after opening localhost so the new build assets load.
-3. Confirm Settings shows build v0.9.
-4. Test the new Accounts page and Add account flow before deploying.
