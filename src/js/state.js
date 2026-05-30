@@ -3,7 +3,7 @@
 
 const STORAGE_KEY = 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = 'v0.5';
+const APP_BUILD_ID = 'v0.6';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;

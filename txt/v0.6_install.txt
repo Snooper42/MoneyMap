@@ -1,0 +1,8 @@
+MoneyMap v0.6 install notes
+
+1. Replace the existing MoneyMap folder with the contents of MoneyMap_v0_6_full_no_git.zip.
+2. If deploying to GitHub Pages or another static host, upload all files exactly as included.
+3. Open index.html or the hosted URL and hard refresh once.
+4. Confirm Settings shows build v0.6.
+5. Existing browser data remains under localStorage key moneymap_v1.
+6. To test the new flow, open Import, choose a CSV, confirm the auto-preview, and import. Home should show the updated spend history and import history immediately.
