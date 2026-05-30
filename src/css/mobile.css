@@ -130,8 +130,8 @@
    Keeps the existing UI, but prevents the top chrome and page actions from
    wrapping into broken intermediate states when the sidebar collapses. */
 @media(max-width:1180px){
-  html,body{max-width:100%;overflow-x:hidden!important}
-  body .app-shell{display:block!important;grid-template-columns:1fr!important;max-width:100%!important;overflow-x:hidden!important}
+  html,body{max-width:100%;overflow-x:clip!important}
+  body .app-shell{display:block!important;grid-template-columns:1fr!important;max-width:100%!important;overflow-x:clip!important}
   body .sidebar{display:none!important}
   body .main{width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;overflow-x:clip!important}
 
@@ -406,9 +406,9 @@
    Purpose: make the loaded build unmistakably different at tablet/phone widths
    without changing finance behavior or data logic. */
 @media (max-width: 1100px){
-  body .app-shell{display:block!important;grid-template-columns:1fr!important;min-width:0!important;width:100%!important;overflow-x:hidden!important}
+  body .app-shell{display:block!important;grid-template-columns:1fr!important;min-width:0!important;width:100%!important;overflow-x:clip!important}
   body .sidebar{display:none!important}
-  body .main{width:100%!important;max-width:980px!important;margin:0 auto!important;padding:14px 14px calc(86px + env(safe-area-inset-bottom,0px))!important;overflow-x:hidden!important}
+  body .main{width:100%!important;max-width:980px!important;margin:0 auto!important;padding:14px 14px calc(86px + env(safe-area-inset-bottom,0px))!important;overflow-x:clip!important}
   body .mobile-bar{display:grid!important;position:fixed!important;left:0!important;right:0!important;bottom:0!important;z-index:500!important}
   body .topbar{position:sticky!important;top:0!important;z-index:250!important;margin:-14px -14px 14px!important;padding:10px 14px!important;border-bottom:1px solid color-mix(in srgb,var(--line) 74%,transparent)!important;background:color-mix(in srgb,var(--bg) 94%,transparent)!important;backdrop-filter:blur(20px)!important;-webkit-backdrop-filter:blur(20px)!important;display:grid!important;grid-template-columns:minmax(220px,1fr) auto!important;align-items:center!important;gap:10px!important}
   body .searchbar{min-width:0!important;width:100%!important;max-width:none!important}
@@ -420,7 +420,7 @@
 }
 
 @media (max-width: 760px){
-  body{overflow-x:hidden!important}
+  body{overflow-x:clip!important}
   body .main{padding:8px 10px calc(74px + env(safe-area-inset-bottom,0px))!important}
   body .topbar{margin:-8px -10px 10px!important;padding:8px 10px 9px!important;grid-template-columns:1fr!important;gap:8px!important}
   body .searchbar{height:40px!important;min-height:40px!important;border-radius:15px!important}
@@ -507,14 +507,21 @@
    Final loaded CSS fallback. The same rules are also injected at runtime
    after legacy app polish layers so they win the cascade. */
 :root{--mm-qa3-safe-bottom:env(safe-area-inset-bottom,0px)}
-html,body{max-width:100%!important;overflow-x:hidden!important}
+html,body{max-width:100%!important;overflow-x:clip!important}
+/* QA5: never let the document itself become a clipped/locked scroll box.
+   overflow-x:clip (above) avoids turning overflow-y into auto, so the
+   viewport stays the scroll container in every browser, incl. Firefox. */
+html{overflow-y:visible!important;height:auto!important}
+body{overflow-y:visible!important;min-height:100vh}
+@media(min-width:1181px){body.uxv62-more-open{overflow:visible!important}}
+@media(max-width:1180px){body.uxv62-more-open{overflow:hidden!important}}
 .app-shell,.main,.view,.card,.metric-card,.table-wrap,.topbar,.searchbar,.actions{min-width:0!important;box-sizing:border-box!important}
 .first-run{z-index:4000!important}.drawer{z-index:3500!important}.drawer-panel{z-index:3501!important}.command-palette{z-index:3600!important}.mobile-more-sheet{z-index:3000!important}.toast{z-index:4100!important}
 body.first-run-open .topbar,body.first-run-open .mobile-bar,body.first-run-open .mobile-more-sheet{display:none!important}
 @media(max-width:1180px){
-  body .app-shell{display:block!important;grid-template-columns:1fr!important;width:100%!important;overflow-x:hidden!important}
+  body .app-shell{display:block!important;grid-template-columns:1fr!important;width:100%!important;overflow-x:clip!important}
   body .sidebar{display:none!important}
-  body .main{width:100%!important;max-width:1040px!important;margin:0 auto!important;padding:16px 14px calc(82px + var(--mm-qa3-safe-bottom))!important;overflow-x:hidden!important}
+  body .main{width:100%!important;max-width:1040px!important;margin:0 auto!important;padding:16px 14px calc(82px + var(--mm-qa3-safe-bottom))!important;overflow-x:clip!important}
   body .topbar{position:sticky!important;top:0!important;z-index:120!important;display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;align-items:center!important;gap:8px!important;margin:-16px -14px 14px!important;padding:10px 14px!important;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)!important;background:color-mix(in srgb,var(--bg) 96%,transparent)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;overflow:visible!important}
   body .searchbar{grid-column:auto!important;width:100%!important;max-width:none!important;min-width:0!important;height:42px!important;min-height:42px!important;overflow:hidden!important}
   body .searchbar input{min-width:0!important;text-overflow:ellipsis!important}

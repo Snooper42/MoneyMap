@@ -67,7 +67,7 @@ body{
   min-height:100vh;
   color:var(--text);
   font-family:var(--font);
-  overflow-x:hidden;
+  overflow-x:clip;
   background:
     radial-gradient(900px 520px at -14% -16%, rgba(var(--accent-rgb),.16), transparent 62%),
     radial-gradient(760px 520px at 112% -12%, color-mix(in srgb,var(--accent2) 18%, transparent), transparent 60%),

@@ -2354,14 +2354,20 @@ window.addEventListener('keydown', event => {
   try{ document.documentElement.setAttribute('data-moneymap-build', BUILD); }catch(e){}
   const css=`
     :root{--mm-qa3-safe-bottom:env(safe-area-inset-bottom,0px)}
-    html,body{max-width:100%!important;overflow-x:hidden!important}
+    html,body{max-width:100%!important;overflow-x:clip!important}
+    html{overflow-y:visible!important;height:auto!important}
+    body{overflow-y:visible!important;min-height:100vh}
+    /* QA5: the mobile "More" sheet may lock background scroll, but ONLY on
+       mobile widths. On desktop the document must always stay scrollable. */
+    @media(min-width:1181px){body.uxv62-more-open{overflow:visible!important}}
+    @media(max-width:1180px){body.uxv62-more-open{overflow:hidden!important}}
     .app-shell,.main,.view,.card,.metric-card,.table-wrap,.topbar,.searchbar,.actions{min-width:0!important;box-sizing:border-box!important}
     .first-run{z-index:4000!important}.drawer{z-index:3500!important}.drawer-panel{z-index:3501!important}.command-palette{z-index:3600!important}.mobile-more-sheet{z-index:3000!important}.toast{z-index:4100!important}
     body.first-run-open .topbar,body.first-run-open .mobile-bar,body.first-run-open .mobile-more-sheet{display:none!important}
     @media(max-width:1180px){
-      body .app-shell{display:block!important;grid-template-columns:1fr!important;width:100%!important;overflow-x:hidden!important}
+      body .app-shell{display:block!important;grid-template-columns:1fr!important;width:100%!important;overflow-x:clip!important}
       body .sidebar{display:none!important}
-      body .main{width:100%!important;max-width:1040px!important;margin:0 auto!important;padding:16px 14px calc(82px + var(--mm-qa3-safe-bottom))!important;overflow-x:hidden!important}
+      body .main{width:100%!important;max-width:1040px!important;margin:0 auto!important;padding:16px 14px calc(82px + var(--mm-qa3-safe-bottom))!important;overflow-x:clip!important}
       body .topbar{position:sticky!important;top:0!important;z-index:120!important;display:grid!important;grid-template-columns:minmax(0,1fr) max-content!important;align-items:center!important;gap:8px!important;margin:-16px -14px 14px!important;padding:10px 14px!important;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent)!important;background:color-mix(in srgb,var(--bg) 96%,transparent)!important;backdrop-filter:blur(22px)!important;-webkit-backdrop-filter:blur(22px)!important;overflow:visible!important}
       body .searchbar{grid-column:auto!important;width:100%!important;max-width:none!important;min-width:0!important;height:42px!important;min-height:42px!important;overflow:hidden!important}
       body .searchbar input{min-width:0!important;text-overflow:ellipsis!important}
@@ -2463,4 +2469,51 @@ window.addEventListener('keydown', event => {
   const css=`@media(max-width:820px){body #view-transactions .table-wrap{display:none!important}body #view-transactions .tx-card-list{display:grid!important;gap:10px!important;margin-top:10px!important}}`;
   function apply(){let s=document.getElementById('qa3-transaction-guard'); if(!s){s=document.createElement('style'); s.id='qa3-transaction-guard'; document.head.appendChild(s);} s.textContent=css;}
   apply(); document.addEventListener('DOMContentLoaded',apply); window.addEventListener('resize',apply,{passive:true});
+})();
+
+
+/* ---- MoneyMap QA5 scroll-restore + desktop more-sheet guard + build relabel ----
+   Root cause of the "page cannot scroll" report (esp. Windows/Firefox):
+   unconditional `overflow-x:hidden` on html/body forced the cross axis to
+   compute to `auto`, turning <html> into the scroll container and suppressing
+   normal viewport scrolling. Changed to `overflow-x:clip`. This guard also makes
+   sure the mobile "More" body-lock can never get stuck at desktop widths. */
+(function(){
+  const BUILD='qa5-20260530';
+  function isDesktop(){ return window.innerWidth > 1180; }
+  function unstickDesktopScroll(){
+    try{
+      if(isDesktop()){
+        // Never leave the body scroll-locked on desktop.
+        if(document.body.classList.contains('uxv62-more-open')){
+          document.body.classList.remove('uxv62-more-open');
+          const sheet=document.getElementById('mobileMoreSheet');
+          if(sheet){ sheet.classList.remove('active'); sheet.setAttribute('aria-hidden','true'); }
+        }
+        // Defensive: clear any inline overflow lock a prior layer may have set.
+        if(document.body.style.overflow==='hidden') document.body.style.overflow='';
+        if(document.documentElement.style.overflow==='hidden') document.documentElement.style.overflow='';
+      }
+    }catch(e){}
+  }
+  function markBuild(){
+    try{
+      document.documentElement.setAttribute('data-moneymap-build', BUILD);
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{
+        el.textContent='Pre-v1 alpha · '+BUILD;
+      });
+    }catch(e){}
+  }
+  function run(){ unstickDesktopScroll(); markBuild(); }
+  // Wrap renderAll so the build label survives every re-render (runs last).
+  try{
+    const prev=window.renderAll;
+    if(typeof prev==='function' && !prev.__qa5Wrapped){
+      const wrapped=function(){ const out=prev.apply(this,arguments); requestAnimationFrame(run); return out; };
+      wrapped.__qa5Wrapped=true; window.renderAll=wrapped;
+    }
+  }catch(e){}
+  document.addEventListener('DOMContentLoaded',run);
+  window.addEventListener('resize',unstickDesktopScroll,{passive:true});
+  run();
 })();
