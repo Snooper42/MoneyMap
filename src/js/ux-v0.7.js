@@ -1,9 +1,9 @@
 /* MoneyMap v0.7 import, home, and net-worth usability refresh.
-   Final-loaded patch layer on top of the existing v0.5 bundle. */
+   Final-loaded patch layer on top of the existing v0.1.9 bundle. */
 (function(){
   'use strict';
 
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   let booted = false;
 
   const moneyText = (value, opts) => {

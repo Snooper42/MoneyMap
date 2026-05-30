@@ -6,7 +6,7 @@
   if (window.__MoneyMapV09Loaded) return;
   window.__MoneyMapV09Loaded = true;
 
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const GROUPS = [
     {id:'all', label:'All', icon:'◌', types:[]},
     {id:'cash', label:'Cash', icon:'$', types:['Checking','Savings','Cash','Money Market']},

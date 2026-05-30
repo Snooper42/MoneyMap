@@ -1424,7 +1424,7 @@ window.addEventListener('keydown', event => {
 /* ---- end pre-v1 focused UX polish ---- */
 
 
-/* ---- v0.5 deep UI and mobile polish ---- */
+/* ---- v0.1.9 deep UI and mobile polish ---- */
 (function(){
   const style=document.createElement('style');
   style.textContent=`
@@ -1452,13 +1452,13 @@ window.addEventListener('keydown', event => {
   `;
   document.head.appendChild(style);
 
-  window.APP_PRERELEASE_LABEL = 'v0.5';
+  window.APP_PRERELEASE_LABEL = 'v0.1.9';
 
   const originalBackupPayload = window.backupPayload;
   if(typeof originalBackupPayload === 'function'){
     window.backupPayload = function(){
       const payload = originalBackupPayload();
-      payload.releaseStage = 'v0.5';
+      payload.releaseStage = 'v0.1.9';
       payload.build = APP_BUILD_ID;
       return payload;
     };
@@ -1555,12 +1555,12 @@ window.addEventListener('keydown', event => {
     window.renderAll=function(){ baseRenderAll(); requestAnimationFrame(()=>{ window.buildMobileNav?.(); if(chartsReady) renderCharts(); }); };
   }
 })();
-/* ---- end v0.5 deep UI and mobile polish ---- */
+/* ---- end v0.1.9 deep UI and mobile polish ---- */
 
 
-/* ---- v0.5 recursive aggressive UI/UX polish waves ---- */
+/* ---- v0.1.9 recursive aggressive UI/UX polish waves ---- */
 (function(){
-  const PREV1_BUILD_LABEL = 'v0.5';
+  const PREV1_BUILD_LABEL = 'v0.1.9';
 
   function addStyle(id, css){
     let style = document.getElementById(id);
@@ -1664,7 +1664,7 @@ window.addEventListener('keydown', event => {
 
   function normalizeBuildLabels(){
     document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el => {
-      el.textContent = `${PREV1_BUILD_LABEL} · v0.5`;
+      el.textContent = `${PREV1_BUILD_LABEL} · v0.1.9`;
     });
   }
 
@@ -1712,7 +1712,7 @@ window.addEventListener('keydown', event => {
   if(typeof baseBackupPayload === 'function'){
     window.backupPayload = function(){
       const payload = baseBackupPayload();
-      payload.build = 'v0.5';
+      payload.build = 'v0.1.9';
       payload.releaseStage = PREV1_BUILD_LABEL;
       return payload;
     };
@@ -1762,12 +1762,12 @@ window.addEventListener('keydown', event => {
     normalizeBuildLabels();
   });
 })();
-/* ---- end v0.5 recursive aggressive UI/UX polish waves ---- */
+/* ---- end v0.1.9 recursive aggressive UI/UX polish waves ---- */
 
 
-/* ---- v0.5 mobile clarity + investments refresh ---- */
+/* ---- v0.1.9 mobile clarity + investments refresh ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   document.title='MoneyMap';
   function addStyle(css){ const style=document.createElement('style'); style.setAttribute('data-patch','v0.9.2-mobile-investments'); style.textContent=css; document.head.appendChild(style); }
   addStyle(`
@@ -1876,15 +1876,15 @@ window.addEventListener('keydown', event => {
   }
   const prevRenderAll=window.renderAll; if(typeof prevRenderAll==='function'){ window.renderAll=function(){ prevRenderAll(); requestAnimationFrame(afterPaint); }; }
   const prevShowView=window.showView; if(typeof prevShowView==='function'){ window.showView=function(id){ prevShowView(id); requestAnimationFrame(()=>{ afterPaint(); if(id==='investments') window.renderInvestments?.(); }); }; }
-  const prevBackup=window.backupPayload; if(typeof prevBackup==='function'){ window.backupPayload=function(){ const payload=prevBackup(); payload.build=BUILD; payload.releaseStage='v0.5'; return payload; }; }
+  const prevBackup=window.backupPayload; if(typeof prevBackup==='function'){ window.backupPayload=function(){ const payload=prevBackup(); payload.build=BUILD; payload.releaseStage='v0.1.9'; return payload; }; }
   requestAnimationFrame(()=>{ afterPaint(); window.renderInvestments?.(); });
 })();
-/* ---- end v0.5 mobile clarity + investments refresh ---- */
+/* ---- end v0.1.9 mobile clarity + investments refresh ---- */
 
 
-/* ---- v0.5 UI/UX rescue pass: mobile nav, tables, budgets, investments ---- */
+/* ---- v0.1.9 UI/UX rescue pass: mobile nav, tables, budgets, investments ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const ICONS={
     overview:'🏠', import:'⬆️', review:'✅', transactions:'🧾', budgets:'💸', recurring:'🔁',
     networth:'💎', debt:'🧭', investments:'📈', credit:'⭐', goals:'🎯', rules:'⚙️', settings:'🛠️'
@@ -2014,16 +2014,16 @@ window.addEventListener('keydown', event => {
 
   const oldRenderAll=window.renderAll; window.renderAll=function(){ oldRenderAll(); requestAnimationFrame(()=>{ document.querySelectorAll('#appBuildLabel').forEach(el=>el.textContent=''+BUILD); refreshBudgets(); markResponsiveTables(); refreshHoldingCards(); buildFriendlyMobileNav(); polishMoreSheet(); }); };
   const oldShowView=window.showView; window.showView=function(id){ oldShowView(id); requestAnimationFrame(()=>{ refreshBudgets(); markResponsiveTables(); refreshHoldingCards(); buildFriendlyMobileNav(); polishMoreSheet(); if(id==='investments') window.renderInvestments?.(); }); };
-  const oldPayload=window.backupPayload; if(typeof oldPayload==='function'){ window.backupPayload=function(){ const p=oldPayload(); p.build=BUILD; p.releaseStage='v0.5'; return p; }; }
+  const oldPayload=window.backupPayload; if(typeof oldPayload==='function'){ window.backupPayload=function(){ const p=oldPayload(); p.build=BUILD; p.releaseStage='v0.1.9'; return p; }; }
 
   requestAnimationFrame(()=>{ try{ renderNav(); }catch(e){} try{ renderAll(); }catch(e){} });
 })();
-/* ---- end v0.5 UI/UX rescue pass ---- */
+/* ---- end v0.1.9 UI/UX rescue pass ---- */
 
 
 /* ---- extracted script block 2: mm-v094-iphone-qa-script ---- */
 (function(){
-  window.APP_PRERELEASE_LABEL='v0.5';
+  window.APP_PRERELEASE_LABEL='v0.1.9';
   const SVG={
     Home:'<svg class="mm-nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-6h5v6"/></svg>',
     Review:'<svg class="mm-nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>',
@@ -2041,8 +2041,8 @@ window.addEventListener('keydown', event => {
   const oldBuild=window.buildMobileNav; window.buildMobileNav=function(){ if(typeof oldBuild==='function') oldBuild(); polishNav(); };
   const oldRenderAll=window.renderAll; if(typeof oldRenderAll==='function'){ window.renderAll=function(){ oldRenderAll(); requestAnimationFrame(polishNav); }; }
   const oldShow=window.showView; if(typeof oldShow==='function'){ window.showView=function(id){ oldShow(id); requestAnimationFrame(()=>{polishNav(); if(id==='investments') window.renderInvestments?.();}); }; }
-  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||APP_BUILD_ID||'v0.1.5'; }; }
-  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build='v0.5'; p.releaseStage='v0.5'; return p; }; }
+  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||APP_BUILD_ID||'v0.1.9'; }; }
+  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build='v0.1.9'; p.releaseStage='v0.1.9'; return p; }; }
   document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(polishNav));
   setTimeout(polishNav,250);
 })();
@@ -2050,7 +2050,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- extracted script block 3: mm-v095-nav-accounts-script ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const NAV_DEF=[
     {id:'overview',title:'Overview',mobile:'Home',sub:'Net worth snapshot'},
     {id:'accounts',title:'Accounts',mobile:'Accounts',sub:'Balances and edits'},
@@ -2058,13 +2058,13 @@ window.addEventListener('keydown', event => {
     {id:'budgets',title:'Budgets',mobile:'Budget',sub:'Monthly limits'},
     {id:'review',title:'Review',mobile:'Review',sub:'Weekly cleanup'},
     {id:'investments',title:'Investments',mobile:'Invest',sub:'Holdings'},
-    {id:'networth',title:'Net worth',mobile:'Worth',sub:'History and snapshots'},
+    {id:'networth',title:'History',mobile:'History',sub:'Snapshots'},
     {id:'import',title:'Import',mobile:'Import',sub:'CSV dropzone'},
     {id:'recurring',title:'Subscriptions',mobile:'Bills',sub:'Recurring charges'},
     {id:'debt',title:'Debt',mobile:'Debt',sub:'Payoff plan'},
     {id:'credit',title:'Credit',mobile:'Credit',sub:'Score history'},
     {id:'goals',title:'Goals',mobile:'Goals',sub:'Targets'},
-    {id:'rules',title:'Rules',mobile:'Rules',sub:'Autopilot'},
+    {id:'rules',title:'Rules',mobile:'Rules',sub:'Auto cleanup'},
     {id:'settings',title:'Settings',mobile:'Settings',sub:'Local app'}
   ];
   const DEF_PRIMARY=['overview','accounts','transactions','budgets','review','investments'];
@@ -2133,7 +2133,7 @@ window.addEventListener('keydown', event => {
   const oldRenderAll=window.renderAll; window.renderAll=function(){ if(typeof oldRenderAll==='function') oldRenderAll(); ensureAccountsView(); renderAccountsDashboard(); renderOverviewLanding(); ensureSettingsNavCard(); renderNavLayoutSettings(); buildNav(); buildMobileNav(); const build=document.getElementById('appBuildLabel'); if(build) build.textContent=''+BUILD; };
   const oldShow=window.showView; window.showView=function(id){ ensureAccountsView(); if(id==='accounts') activeView='accounts'; if(typeof oldShow==='function') oldShow(id); renderAccountsDashboard(); renderOverviewLanding(); buildNav(); buildMobileNav(); };
   const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); ensureSettingsNavCard(); renderNavLayoutSettings(); const build=document.getElementById('appBuildLabel'); if(build) build.textContent=''+BUILD; }; }
-  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build=BUILD; p.releaseStage='v0.5'; return p; }; }
+  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build=BUILD; p.releaseStage='v0.1.9'; return p; }; }
   document.addEventListener('DOMContentLoaded',()=>{ ensureAccountsView(); navSettings(); buildNav(); buildMobileNav(); renderAccountsDashboard(); renderOverviewLanding(); ensureSettingsNavCard(); renderNavLayoutSettings(); });
   setTimeout(()=>{ ensureAccountsView(); buildNav(); buildMobileNav(); renderAccountsDashboard(); renderOverviewLanding(); ensureSettingsNavCard(); renderNavLayoutSettings(); },250);
 })();
@@ -2141,7 +2141,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- extracted script block 4: mm-v096-desktop-qa-fixes-script ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   function hideLegacySidebarKickers(){
     const side=document.querySelector('.sidebar'); if(!side) return;
     [...side.children].forEach(el=>{
@@ -2168,7 +2168,7 @@ window.addEventListener('keydown', event => {
   const oldRenderInvest=window.renderInvestments; if(typeof oldRenderInvest==='function'){ window.renderInvestments=function(){ const r=oldRenderInvest.apply(this,arguments); removeDuplicateInvestmentEmpty(); return r; }; }
   const oldRenderAll=window.renderAll; if(typeof oldRenderAll==='function'){ window.renderAll=function(){ const r=oldRenderAll.apply(this,arguments); afterRender(); return r; }; }
   const oldShow=window.showView; if(typeof oldShow==='function'){ window.showView=function(id){ const r=oldShow.apply(this,arguments); requestAnimationFrame(afterRender); return r; }; }
-  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup.apply(this,arguments); p.build=BUILD; p.releaseStage='v0.5'; return p; }; }
+  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup.apply(this,arguments); p.build=BUILD; p.releaseStage='v0.1.9'; return p; }; }
   document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(afterRender));
   setTimeout(afterRender,300);
 })();
@@ -2176,7 +2176,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- extracted script block 5: mm-v097-declutter-js ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   function appFont(){ return getComputedStyle(document.body).fontFamily; }
   function setupCanvas(canvas,minW=620,minH=220){
@@ -2303,12 +2303,12 @@ window.addEventListener('keydown', event => {
   }
   const oldBackup=window.backupPayload;
   if(typeof oldBackup==='function'){
-    window.backupPayload=function(){ const payload=oldBackup(); payload.build=BUILD; payload.releaseStage='v0.5'; return payload; };
+    window.backupPayload=function(){ const payload=oldBackup(); payload.build=BUILD; payload.releaseStage='v0.1.9'; return payload; };
   }
   window.addEventListener('resize',()=>{ if(window.chartsReady!==false) requestAnimationFrame(()=>window.renderCharts?.()); });
 })();
 
-/* ---- v0.5 final responsive QA pass: mobile table cards ---- */
+/* ---- v0.1.9 final responsive QA pass: mobile table cards ---- */
 (function(){
   const BODY_IDS=['accountRows','debtRows','holdingRows','creditRows'];
   const fallbackLabels={
@@ -2351,7 +2351,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- MoneyMap QA2 verification and responsive relabel pass ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   try{ document.documentElement.setAttribute('data-moneymap-build', BUILD); }catch(e){}
   function markBuild(){
     try{
@@ -2522,7 +2522,7 @@ window.addEventListener('keydown', event => {
    normal viewport scrolling. Changed to `overflow-x:clip`. This guard also makes
    sure the mobile "More" body-lock can never get stuck at desktop widths. */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   function isDesktop(){ return window.innerWidth > 1180; }
   function unstickDesktopScroll(){
     try{
@@ -2563,7 +2563,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- QA6 deploy/navigation/dialog finalization ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const NAV_ITEMS=[
     {id:'overview',title:'Overview',mobile:'Home',sub:'Command center'},
     {id:'accounts',title:'Accounts',mobile:'Accounts',sub:'Balances'},
@@ -2571,13 +2571,13 @@ window.addEventListener('keydown', event => {
     {id:'budgets',title:'Budgets',mobile:'Budget',sub:'Monthly limits'},
     {id:'review',title:'Review',mobile:'Review',sub:'Weekly cleanup'},
     {id:'import',title:'Import',mobile:'Import',sub:'CSV dropzone'},
-    {id:'networth',title:'Net worth',mobile:'Net worth',sub:'History'},
+    {id:'networth',title:'History',mobile:'History',sub:'Snapshots'},
     {id:'recurring',title:'Subscriptions',mobile:'Subs',sub:'Recurring charges'},
     {id:'debt',title:'Debt',mobile:'Debt',sub:'Payoff plan'},
     {id:'investments',title:'Investments',mobile:'Invest',sub:'Holdings'},
     {id:'credit',title:'Credit',mobile:'Credit',sub:'Score history'},
     {id:'goals',title:'Goals',mobile:'Goals',sub:'Targets'},
-    {id:'rules',title:'Rules',mobile:'Rules',sub:'Autopilot'},
+    {id:'rules',title:'Rules',mobile:'Rules',sub:'Auto cleanup'},
     {id:'settings',title:'Settings',mobile:'Settings',sub:'Local app'}
   ];
   const FALLBACK_ICONS={overview:'⌂',accounts:'▤',transactions:'≡',budgets:'◌',review:'✓',import:'⇡',networth:'◆',recurring:'↻',debt:'◒',investments:'△',credit:'◧',goals:'◇',rules:'⚡',settings:'⚙',more:'•••'};
@@ -2630,7 +2630,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- Refactor 1: mobile-first app shell and navigation ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const PRIMARY_MOBILE=['overview','accounts','transactions','budgets'];
   const PRIMARY_DESKTOP=['overview','accounts','transactions','budgets','review','import'];
   const SECONDARY=['review','import','networth','recurring','debt','investments','credit','goals','rules','settings'];
@@ -2641,7 +2641,7 @@ window.addEventListener('keydown', event => {
     budgets:{title:'Budgets',mobile:'Budget',sub:'Monthly limits',icon:'◌'},
     review:{title:'Weekly review',mobile:'Review',sub:'Clean up transactions',icon:'✓'},
     import:{title:'Import CSV',mobile:'Import',sub:'Bring in bank exports',icon:'⇡'},
-    networth:{title:'Net worth',mobile:'Net worth',sub:'History and snapshots',icon:'◆'},
+    networth:{title:'History',mobile:'History',sub:'Snapshots',icon:'◆'},
     recurring:{title:'Subscriptions',mobile:'Subs',sub:'Recurring charges',icon:'↻'},
     debt:{title:'Debt payoff',mobile:'Debt',sub:'Paydown plan',icon:'◒'},
     investments:{title:'Investments',mobile:'Invest',sub:'Holdings tracker',icon:'△'},
@@ -2892,7 +2892,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- Refactor 2: safe action system and destructive action copy ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const originalLoadDemoData=window.loadDemoData;
 
   function html(value){ return (typeof escapeHtml==='function') ? escapeHtml(String(value ?? '')) : String(value ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
@@ -3194,7 +3194,7 @@ window.addEventListener('keydown', event => {
 
 /* R2.1 global search fix: make the top search visibly return results. */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   let searchResults=[];
   let activeIndex=0;
 
@@ -3381,7 +3381,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- R2.2: Firefox scroll guard and stuck-overlay recovery ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const STYLE_ID='r22-firefox-scroll-guard-style';
 
   function markBuild(){
@@ -3485,7 +3485,7 @@ window.addEventListener('keydown', event => {
    become the page scroll container. Active dialogs still keep their own
    internal scroll, but stale classes are cleared immediately. */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const STYLE_ID='r23-hard-scroll-unlock-style';
 
   function activeDialog(){
@@ -3615,9 +3615,9 @@ window.addEventListener('keydown', event => {
 /* R2.5 spend-map IIFE extracted to src/js/ui/spend-map.js in v0.9.6. */
 
 
-/* ---- v0.5: account groups, cleaner portfolio UI, and public version label ---- */
+/* ---- v0.1.9: account groups, cleaner portfolio UI, and public version label ---- */
 (function(){
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const ACCOUNT_GROUPS=[
     {id:'all',label:'All',hint:'Every manual balance'},
     {id:'cash',label:'Cash',hint:'Checking, savings, cash'},
@@ -3789,7 +3789,7 @@ window.addEventListener('keydown', event => {
   const oldSettings=window.renderSettings;
   if(typeof oldSettings==='function') window.renderSettings=function(){ const r=oldSettings.apply(this,arguments); markV04(); return r; };
   const oldBackup=window.backupPayload;
-  if(typeof oldBackup==='function') window.backupPayload=function(){ const p=oldBackup.apply(this,arguments); p.build=BUILD; p.releaseStage='v0.5'; return p; };
+  if(typeof oldBackup==='function') window.backupPayload=function(){ const p=oldBackup.apply(this,arguments); p.build=BUILD; p.releaseStage='v0.1.9'; return p; };
   document.addEventListener('DOMContentLoaded',()=>{ requestAnimationFrame(()=>{ renderAccountsDashboard(); renderOverviewLandingV04(); if(typeof renderInvestments==='function') renderInvestments(); markV04(); }); });
   setTimeout(()=>{ renderAccountsDashboard(); renderOverviewLandingV04(); if(typeof renderInvestments==='function') renderInvestments(); markV04(); },350);
 })();

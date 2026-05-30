@@ -1,0 +1,50 @@
+MoneyMap v0.1.10 — Dashboard Command Center Redesign + Accounts Premium UI
+Released: 2026-05-30
+
+MAJOR CHANGES
+
+Dashboard (view-overview)
+  - Complete visual redesign of the command center
+  - New full-width command band: prominent next-action headline, 4 answer buttons
+    (What changed / Where is money going / Am I on track / Upcoming charges), quick action row
+  - KPI strip moved to right side of band: Net worth, Cash flow, Review queue
+  - Quick actions bar: 6 compact actions (Import, Add, Review, Accounts, Snapshot, Backup)
+  - Main 2-column layout: Cash flow chart + Spending categories on left;
+    Budget pressure + Review status + Accounts summary on right
+  - 4-column bottom grid: Recent activity, Upcoming recurring, Goals, Debt snapshot
+  - Canonical renderer: src/js/ui/dashboard-v0.1.10.js
+  - Canonical CSS: src/css/dashboard-v0.1.10.css
+
+Accounts (view-accounts)
+  - Premium page header with gradient, large net worth number, delta label
+  - Compact category filter pill bar with per-category icons and totals
+  - Clear Assets vs Liabilities side headers with totals
+  - Account rows grouped by category section (group card with icon + metadata)
+  - More compact account rows with colored category badges
+  - Right-side summary card: allocation bar, category breakdown list, action buttons
+  - Canonical renderer: src/js/ui/accounts-v0.1.10.js
+  - Canonical CSS: src/css/accounts-v0.1.10.css
+
+Favicons
+  - Replaced with a clean, simple orange "M" on a rounded rectangle
+  - Light mode: cream background, orange #ea580c
+  - Dark mode: dark background, orange #fb923c
+
+Stale File Cleanup
+  - Removed from index.html: ux-v0.7.js, ux-v0.7.1.js, ux-v0.9.1.js, ux-v0.9.4.js
+  - Removed CSS layers: ux-v0.7.css, ux-v0.9.css, ux-v0.9.1.css, ux-v0.9.2.css,
+    ux-v0.9.4.css, ux-v0.9.6.css, ux-v0.9.7.css, ux-v0.9.8.css, ux-v0.9.9.css,
+    ux-v0.1.0.css, ux-v0.1.4.css, accounts-desktop-v0.1.9.css, desktop-v0.1.9.css
+  - Kept: ux-v0.9.js (accounts nav + drawer), ux-v0.9.2.js (editor form),
+    ux-v0.9.8.js (touch swipe for review)
+
+Build
+  - Version token: v0.1.10-20260530-1
+  - Build guard: final-build-guard-v0.1.10.js (no setInterval polling)
+  - Preview launchers updated for v0.1.10
+
+BACKWARD COMPATIBILITY
+  - All localStorage data preserved
+  - Existing accounts, transactions, goals, budgets, debts unchanged
+  - MoneyMapAccountTaxonomy API preserved
+  - Account icon system preserved

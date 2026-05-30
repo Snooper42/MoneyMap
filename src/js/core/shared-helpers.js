@@ -104,7 +104,7 @@
   /* ── Currency formatters ─────────────────────────────────── */
 
   function getCurrency() {
-    try { return (window.state && window.state.settings && window.state.settings.currency) || 'USD'; }
+    try { return ((typeof state !== 'undefined' && state && state.settings && state.settings.currency) || 'USD'); }
     catch (e) { return 'USD'; }
   }
 

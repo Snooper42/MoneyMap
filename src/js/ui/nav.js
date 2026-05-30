@@ -456,7 +456,7 @@
     _custAdd:        null, /* set during customizer render */
     _custRemove:     null,
     _custReset:      null,
-    _version:        'v0.1.5'
+    _version:        'v0.1.9'
   };
 
   /* Also expose on MoneyMap namespace */

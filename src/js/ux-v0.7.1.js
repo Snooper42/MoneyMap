@@ -1,9 +1,9 @@
 /* MoneyMap legacy storage targeted fixes.
-   Fixes stale v0.5 cache banner, dark-mode net-worth card contrast, and transaction cents. */
+   Fixes stale v0.1.9 cache banner, dark-mode net-worth card contrast, and transaction cents. */
 (function(){
   'use strict';
 
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   let booted = false;
 
   const esc = value => (typeof escapeHtml === 'function')

@@ -6,7 +6,7 @@
   if(window.__MoneyMapV091Loaded) return;
   window.__MoneyMapV091Loaded = true;
 
-  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.9';
   const MONTHS = 6;
 
   const esc = value => (typeof escapeHtml === 'function')

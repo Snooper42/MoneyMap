@@ -1,0 +1,14 @@
+MoneyMap v0.1.8
+
+Focus: Dashboard and Accounts polish before framework migration.
+
+Changes:
+- Dashboard command center tightened with a next-action strip, cleaner quick actions, and account category summary chips.
+- Accounts taxonomy expanded to cash, checking, savings, investments, retirement, property, vehicles, collectibles, jewelry, credit cards, mortgage, auto loans, student loans, personal loans, other assets, and other debt.
+- Accounts UI tightened with more stable row hover states, clearer side summary, category chips, and cleaner desktop spacing.
+- Favicons replaced with light and dark aesthetic orange-M SVG variants.
+- Build/cache token updated to v0.1.8.
+
+Privacy:
+- Static GitHub Pages compatible.
+- No backend, no analytics, no external APIs, and no change to existing localStorage data shape.

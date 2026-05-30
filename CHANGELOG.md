@@ -1,3 +1,63 @@
+## v0.1.10 — 2026-05-30 — Dashboard command center redesign + Accounts premium UI
+
+### Dashboard
+- Replaced two-column hero panel with full-width command band (accent gradient)
+- Command band: next-action headline, 4 answer buttons, KPI strip on right side
+- Quick actions row: 6 compact buttons (Import, Add, Review, Accounts, Snapshot, Backup)
+- Main grid: 2 columns — (Cash flow chart + Spending) | (Budgets + Review + Accounts)
+- Bottom row: 4 cards — Recent activity, Upcoming recurring, Goals, Debt
+- New canonical renderer: `src/js/ui/dashboard-v0.1.10.js`
+- New canonical CSS: `src/css/dashboard-v0.1.10.css`
+
+### Accounts
+- Premium page header with gradient, large net worth display, delta vs prior snapshot
+- Category filter pill bar with icons, totals, and debt grouping
+- Clear Assets / Liabilities side headers with section totals
+- Account groups rendered as card sections with icon and metadata header
+- More compact account rows with colored category type badges
+- Right-side summary: allocation bar, per-category list, action buttons
+- New canonical renderer: `src/js/ui/accounts-v0.1.10.js`
+- New canonical CSS: `src/css/accounts-v0.1.10.css`
+
+### Stale renderer cleanup
+- Removed from index.html: `ux-v0.7.js`, `ux-v0.7.1.js`, `ux-v0.9.1.js`, `ux-v0.9.4.js`
+- Removed CSS layers: 11 old ux-v0.* css files, old desktop and accounts css
+- Kept: `ux-v0.9.js` (accounts nav), `ux-v0.9.2.js` (editor), `ux-v0.9.8.js` (touch)
+
+### Favicons
+- New clean orange "M" on rounded rectangle for light and dark modes
+
+### Build
+- Version: v0.1.10, token: v0.1.10-20260530-1
+- Updated `final-build-guard-v0.1.10.js` (removed setInterval polling)
+- All localStorage data preserved, no schema changes
+
+## v0.1.9
+- Refined the desktop Dashboard into a clearer decision board with “What changed?”, “Where is money going?”, “Am I on track?”, and “Upcoming charges” cards.
+- Tightened Dashboard spacing, card hierarchy, quick actions, and command-center behavior while continuing to use only real local app state.
+- Tightened Accounts with a labeled filter panel, reset control, clearer summary metadata, renamed Snapshots actions, and more compact premium account rows.
+- Refined the account summary/sidebar so active groups, included accounts, and asset/debt totals read more clearly on desktop.
+- Replaced the favicon artwork with a simpler transparent orange `M` for both light and dark mode.
+- Hardened local preview launchers with `index.html` checks, Python command detection, and automatic fallback from port 8080 to 8081.
+- Bumped the canonical build/cache token to `v0.1.9` while preserving the existing `localStorage` data shape.
+
+## v0.1.8
+- Tightened the desktop Dashboard money brief with clearer next action, cash flow, review queue, top spending category, budget status, and net worth context.
+- Added Dashboard account category shortcuts that open the Accounts page with the matching filter active.
+- Added Accounts filters for all groups, assets, debt, and individual categories such as cash, checking, savings, property, vehicles, collectibles, jewelry, credit cards, mortgage, auto loans, student loans, and other debt.
+- Improved Accounts desktop density, active filter styling, summary category rows, row spacing, inclusion visibility, and category bars.
+- Replaced the favicon set with cleaner orange-M SVG icons for light and dark mode.
+- Added flat-preview launchers: `START_WINDOWS_PREVIEW.bat` and `START_MAC_PREVIEW.command`.
+- Bumped the canonical build/cache token to `v0.1.8` while preserving the existing `localStorage` data shape.
+
+## v0.1.6
+- Rebuilt Overview as a desktop command center with real local state for net worth, cash flow, review queue, budgets, categories, accounts, goals, debt, recurring charges, and recent activity.
+- Removed the two duplicate dashboard renderers from `index.html` and added a single final desktop dashboard renderer.
+- Fixed the duplicate final build guard reference and bumped the canonical build/cache token to `v0.1.6`.
+- Hardened net-worth canvas sizing so hover, click, and scroll cannot stretch chart containers.
+- Refined navigation labels so Accounts owns balances and History owns snapshots.
+- Updated the favicon with light and dark sideways-M dollar-mark SVG variants.
+
 ## v0.1.5
 - Fixed the desktop Accounts net-worth chart stretch bug caused by hover popovers changing canvas measurements during redraw.
 - Reduced chart redraw churn so hover inspection feels lighter and more stable.

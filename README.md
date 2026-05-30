@@ -8,11 +8,21 @@ Track spending, budgets, net worth, and goals entirely in your browser. Your dat
 
 ## Quick start
 
-```bash
-python3 -m http.server 8080
+From the extracted flat preview folder:
+
+```powershell
+python -m http.server 8080 --bind 127.0.0.1
 ```
 
-Open `http://localhost:8080` — tap **Explore with demo data** to see the full dashboard, or **Add my accounts** to start with real balances.
+Open `http://127.0.0.1:8080` and keep the terminal open while testing.
+
+On Mac, use:
+
+```bash
+python3 -m http.server 8080 --bind 127.0.0.1
+```
+
+The flat preview also includes `START_WINDOWS_PREVIEW.bat` and `START_MAC_PREVIEW.command` launchers.
 
 ---
 
@@ -43,7 +53,7 @@ Open `http://localhost:8080` — tap **Explore with demo data** to see the full 
 
 ## Version
 
-Current: `v0.1.5` — see [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md)
+Current: `v0.1.9` — see [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md)
 
 Patch notes: `CHANGELOG.md`
 
@@ -55,7 +65,7 @@ Patch notes: `CHANGELOG.md`
 src/
   js/
     core/     app-config, render-bus, shared-helpers, security, cache-guard
-    ui/       spend-map, onboarding, touch, nav, dashboard
+    ui/       spend-map, onboarding, touch, nav, desktop dashboard
     ux-v*.js  legacy patch layers (being consolidated)
   css/
     base.css layout.css components.css mobile.css ux-v*.css

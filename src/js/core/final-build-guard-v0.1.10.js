@@ -1,7 +1,7 @@
-/* MoneyMap final build guard v0.1.4 — prevents old patch layers from relabeling the live build. */
+/* MoneyMap final build guard v0.1.10 — keeps the live static release label consistent. */
 (function(){
   'use strict';
-  var BUILD=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||'v0.1.5';
+  var BUILD=(window.MoneyMapConfig&&window.MoneyMapConfig.buildId)||'v0.1.10';
   function mark(){
     try{
       window.MONEYMAP_EXPECTED_BUILD=BUILD;
@@ -13,10 +13,6 @@
   mark();
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',mark); else requestAnimationFrame(mark);
   window.addEventListener('pageshow',mark,{passive:true});
-  window.addEventListener('focus',mark,{passive:true});
-  setTimeout(mark,120);
-  setTimeout(mark,1300);
-  setInterval(mark,2000);
+  setTimeout(mark,150);
+  setTimeout(mark,1400);
 })();
-
-// v0.1.4 feature sentinels are intentionally local-only and do not call network APIs.

@@ -13,7 +13,7 @@ Patch releases. No breaking changes.
 - [ ] v0.1.4 — CSS consolidation: merge patch CSS files into canonical layers
 - [ ] v0.1.5 — Review mode swipe gesture improvements + category quick-pick grid
 - [ ] v0.1.6 — Net worth chart: mobile touch pan / pinch-to-zoom on multi-year history
-- [ ] v0.1.7 — Transaction card: long-press context menu (edit, delete, categorize, split)
+- [ ] v0.1.9 — Transaction card: long-press context menu (edit, delete, categorize, split)
 
 ---
 
