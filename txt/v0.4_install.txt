@@ -1,0 +1,26 @@
+MoneyMap v0.4 install notes
+
+Recommended path:
+1. Extract MoneyMap_v0_4_changed_files.zip.
+2. Copy the extracted folders/files into your existing GitHub Pages project.
+3. Replace files when prompted.
+4. Commit and deploy.
+5. Open the site with ?mmcache=v0.4 once, then hard refresh.
+
+Changed files:
+- index.html
+- src/js/state.js
+- src/js/settings.js
+- src/js/investments.js
+- src/js/app.js
+- src/css/components.css
+- txt/v0.4_install.txt
+- docs/PATCH_NOTES_v0.4.md
+
+Version label:
+- Settings now displays v0.4 under Build.
+
+Notes:
+- This does not delete localStorage or finance data.
+- Account grouping is derived from account Type and Name.
+- Holdings remain separate from account balances to avoid double counting.

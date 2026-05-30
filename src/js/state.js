@@ -3,7 +3,7 @@
 
 const STORAGE_KEY = 'moneymap_v1';
 const OLD_STORAGE_KEYS = ['moneymap_sick_v1'];
-const APP_BUILD_ID = 'r2-4-cache-reset-20260530';
+const APP_BUILD_ID = 'v0.4';
 let storageWriteFailed = false;
 let storageWarningShown = false;
 let storageMigrationNotice = null;
@@ -15,7 +15,7 @@ const NAV = [
   ['overview','Overview','Command center','⌁'],['import','Import','CSV dropzone','⇡'],['review','Review','Weekly cleanup','✓'],['transactions','Transactions','Search and edit','≡'],['budgets','Budgets','Monthly limits','◌'],['recurring','Subscriptions','Recurring charges','↻'],['networth','Net worth','Balances + history','◆'],['debt','Debt','Payoff plan','◒'],['investments','Investments','Holdings','△'],['credit','Credit','Score history','◧'],['goals','Goals','Targets','◇'],['rules','Rules','Autopilot','⚡'],['settings','Settings','Local app','⚙']
 ];
 const defaultState = {
-  version: 12,
+  version: 13,
   theme: 'light',
   appearance: { theme:'light', accent:'sunset', density:'compact', vibe:'minimal' },
   settings: { currency:'USD', showCents:false, incomeTarget:0, lastBackup:null, lastRestore:null, welcomeMode:'auto', firstRunComplete:false, startupSeenBuild:'', uiPolishV48:false, uiUsabilityV49:false, homeTiles:{intro:true, score:true}, uiParityV52:false, dashboardDensity:'balanced', commandPaletteSeen:false },

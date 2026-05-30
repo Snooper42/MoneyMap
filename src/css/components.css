@@ -919,3 +919,120 @@ body{min-height:100vh!important}
 body.mm-more-open,body.uxv62-more-open,body.mm-r22-more-active{overflow-y:auto!important;overflow-x:clip!important;touch-action:auto!important;position:static!important}
 .app-shell,.main,.view{height:auto!important;min-height:0!important;overflow-y:visible!important;overflow-x:clip!important}.main{-webkit-overflow-scrolling:touch!important}.mobile-more-sheet{touch-action:auto!important;overscroll-behavior:auto!important}.mobile-more-panel{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:auto!important;touch-action:auto!important}.global-search-panel{overflow-y:auto!important;-webkit-overflow-scrolling:touch!important;overscroll-behavior:auto!important;contain:none!important}
 @-moz-document url-prefix(){html,body{scrollbar-width:auto!important}.topbar,.mobile-shell-header,.mobile-bar,.global-search-panel,.mobile-more-sheet,.command-palette,.first-run,.mm-dialog{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}.topbar,.mobile-shell-header{background:var(--bg)!important}.mobile-bar,.global-search-panel,.mobile-more-panel{background:var(--panel)!important}body:before{display:none!important}}
+
+/* R2.5 spending map precision: DOM rows replace the fragile canvas hit-test on the dashboard. */
+.spend-map-list{
+  display:grid;
+  gap:10px;
+  width:100%;
+  min-height:210px;
+}
+.spend-map-row{
+  appearance:none;
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--text);
+  border-radius:16px;
+  padding:12px 14px;
+  display:grid;
+  grid-template-columns:minmax(110px,.75fr) minmax(140px,1.4fr) minmax(72px,auto);
+  align-items:center;
+  gap:14px;
+  text-align:left;
+  cursor:pointer;
+  min-width:0;
+  transition:transform .12s ease,border-color .12s ease,background .12s ease;
+}
+.spend-map-row:hover,
+.spend-map-row:focus-visible{
+  transform:translateY(-1px);
+  border-color:rgba(var(--accent-rgb),.45);
+  outline:0;
+}
+.spend-map-label{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  min-width:0;
+}
+.spend-map-dot{
+  width:9px;
+  height:9px;
+  border-radius:999px;
+  flex:0 0 auto;
+  background:var(--accent);
+}
+.spend-map-label-text{
+  display:grid;
+  min-width:0;
+}
+.spend-map-label-text b{
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size:13px;
+  font-weight:850;
+}
+.spend-map-label-text span{
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.25;
+}
+.spend-map-track{
+  position:relative;
+  height:12px;
+  border-radius:999px;
+  background:var(--panel3);
+  overflow:hidden;
+  min-width:0;
+}
+.spend-map-fill{
+  position:absolute;
+  inset:0 auto 0 0;
+  width:0;
+  min-width:3px;
+  border-radius:inherit;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+}
+.spend-map-amount{
+  text-align:right;
+  font-size:13px;
+  font-weight:900;
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+.spend-map-summary{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.35;
+}
+@media(max-width:700px){
+  .spend-map-list{min-height:0;gap:8px}
+  .spend-map-row{
+    grid-template-columns:1fr minmax(72px,auto);
+    gap:8px 10px;
+    padding:11px 12px;
+    border-radius:14px;
+  }
+  .spend-map-track{grid-column:1 / -1;height:10px;order:3}
+  .spend-map-amount{font-size:12.5px}
+}
+
+/* ---- v0.4 accounts and portfolio cleanup ---- */
+:root{--v04-soft-card:color-mix(in srgb,var(--panel2) 82%,transparent);--v04-line:color-mix(in srgb,var(--line) 78%,transparent)}
+.account-overview-v04{display:grid;grid-template-columns:minmax(260px,1.3fr) repeat(4,minmax(130px,.7fr));gap:12px;margin-bottom:var(--gap)}
+.account-net-card-v04,.account-mini-stat-v04{border:1px solid var(--v04-line);border-radius:22px;background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--panel2) 72%,transparent));box-shadow:var(--shadow2);padding:18px;min-width:0}
+.account-net-card-v04 span,.account-mini-stat-v04 span{display:block;font-size:10px;font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.account-net-card-v04 strong{display:block;margin-top:8px;font-size:clamp(34px,4vw,52px);line-height:.94;letter-spacing:-.065em;font-weight:950}
+.account-net-card-v04 p{margin:8px 0 0;color:var(--muted);font-size:13px;line-height:1.35}.account-mini-stat-v04 b{display:block;margin-top:8px;font-size:23px;line-height:1;letter-spacing:-.045em;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.accounts-shell-v04{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(280px,.55fr);gap:var(--gap)}.accounts-main-v04{overflow:visible!important}.accounts-side-v04{min-width:0}.account-tabs-v04{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:2px 0 12px;padding-bottom:1px}.account-tabs-v04::-webkit-scrollbar{display:none}
+.account-tab-v04{border:1px solid var(--line);background:var(--panel2);color:var(--muted);border-radius:999px;padding:9px 11px;min-height:38px;display:inline-flex;align-items:center;gap:8px;font-weight:850;white-space:nowrap;cursor:pointer}.account-tab-v04 b{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:999px;background:var(--panel3);color:var(--text);font-size:11px}.account-tab-v04.active{border-color:rgba(var(--accent-rgb),.34);background:rgba(var(--accent-rgb),.12);color:var(--accent)}
+.account-group-strip-v04{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:14px}.account-group-chip-v04{border:1px solid var(--line);border-radius:16px;background:var(--panel2);color:var(--text);padding:12px;text-align:left;display:grid;gap:4px;cursor:pointer}.account-group-chip-v04.active,.account-group-chip-v04:hover{border-color:rgba(var(--accent-rgb),.32);background:color-mix(in srgb,var(--accent) 9%,var(--panel2))}.account-group-chip-v04 span{font-size:12px;color:var(--muted);font-weight:850}.account-group-chip-v04 b{font-size:18px;letter-spacing:-.04em}.account-group-chip-v04 small{color:var(--muted);font-size:11px}.account-group-strip-v04.empty{border:1px dashed var(--line);border-radius:16px;padding:14px;color:var(--muted)}
+.account-group-v04{display:grid;gap:10px;margin-top:12px}.account-group-head-v04{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 2px}.account-group-head-v04 b{display:block;font-size:15px;letter-spacing:-.02em}.account-group-head-v04 span{display:block;margin-top:2px;color:var(--muted);font-size:12px}.account-group-head-v04 strong{font-size:17px;white-space:nowrap}
+.account-card-list-v04{display:grid;gap:9px}.account-card-v04{border:1px solid var(--line);border-radius:18px;background:linear-gradient(180deg,var(--panel),color-mix(in srgb,var(--panel2) 75%,transparent));padding:14px;box-shadow:0 8px 22px rgba(0,0,0,.045)}.account-card-v04-main{display:grid;grid-template-columns:42px minmax(0,1fr) auto;gap:12px;align-items:center}.account-icon-v04{width:42px;height:42px;border-radius:15px;display:grid;place-items:center;background:var(--panel3);border:1px solid var(--line);font-weight:900}.account-card-v04-copy h3{margin:0;font-size:16px;line-height:1.15;letter-spacing:-.025em}.account-card-v04-copy p{margin:4px 0 0;color:var(--muted);font-size:12.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.account-card-v04-balance{text-align:right}.account-card-v04-balance strong{display:block;font-size:18px;line-height:1;font-weight:900;white-space:nowrap}.account-card-v04-balance span{display:block;margin-top:4px;color:var(--muted);font-size:11px}.account-card-v04-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:11px;color:var(--muted);font-size:11.5px}.account-actions-v04{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px}.account-actions-v04 .btn{width:100%;justify-content:center}.v04-landing-groups{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}.v04-landing-group{border:1px solid var(--line);border-radius:15px;background:var(--panel2);color:var(--text);padding:10px;text-align:left;display:grid;gap:5px;cursor:pointer}.v04-landing-group span{color:var(--muted);font-size:11.5px;font-weight:850}.v04-landing-group strong{font-size:17px;letter-spacing:-.035em}.v04-landing-accounts{margin-top:8px}
+.portfolio-holdings-v04{display:grid;gap:13px;margin:6px 0 14px}.portfolio-group{border:1px solid var(--line);border-radius:20px;background:color-mix(in srgb,var(--panel2) 65%,transparent);padding:12px}.portfolio-group.is-highlighted{border-color:rgba(var(--accent-rgb),.42);box-shadow:0 0 0 3px rgba(var(--accent-rgb),.10)}.portfolio-group-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}.portfolio-group-head b{display:block;font-size:15px;letter-spacing:-.02em}.portfolio-group-head span{display:block;margin-top:2px;color:var(--muted);font-size:12px}.portfolio-group-head strong{font-size:18px;white-space:nowrap}.portfolio-card-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px}.holding-card-v04{border:1px solid var(--line);border-radius:18px;background:var(--panel);padding:14px;display:grid;gap:11px;box-shadow:0 8px 22px rgba(0,0,0,.04)}.holding-card-main{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center}.holding-symbol-badge{width:44px;height:44px;border-radius:16px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.16),var(--panel3));border:1px solid var(--line);display:grid;place-items:center;font-weight:950;font-size:11px;letter-spacing:-.04em;color:var(--text);overflow:hidden}.holding-copy h3{margin:0;font-size:16px;letter-spacing:-.025em;line-height:1.1}.holding-copy p{margin:4px 0 0;color:var(--muted);font-size:12.5px;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.holding-value-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}.holding-value-row strong{font-size:22px;letter-spacing:-.05em}.holding-value-row span{font-size:12px;font-weight:850}.holding-meter{height:8px;border-radius:999px;background:var(--panel3);overflow:hidden}.holding-meter span{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--accent),var(--accent2))}.holding-facts-v04{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.holding-facts-v04 div{border:1px solid var(--line);border-radius:13px;background:var(--panel2);padding:8px;min-width:0}.holding-facts-v04 span{display:block;color:var(--muted);font-size:10px;font-weight:850}.holding-facts-v04 b{display:block;margin-top:4px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.holding-actions-v04{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}.holding-actions-v04 .btn{width:100%;justify-content:center}.allocation-row-v04{width:100%;text-align:left;cursor:pointer}#view-investments .table-wrap{margin-top:4px}#view-investments .table-wrap table{min-width:860px}.v04-stat .metric-value{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(min-width:901px){#view-investments .portfolio-holdings-v04 + .table-wrap{display:none!important}.accounts-shell-v04 .card{min-width:0}}
+@media(max-width:1180px){.account-overview-v04{grid-template-columns:repeat(2,minmax(0,1fr))}.account-net-card-v04{grid-column:1/-1}.accounts-shell-v04{grid-template-columns:1fr}.portfolio-card-list{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.account-overview-v04{grid-template-columns:1fr 1fr;gap:9px}.account-net-card-v04{grid-column:1/-1;border-radius:18px;padding:16px}.account-mini-stat-v04{border-radius:16px;padding:13px}.account-mini-stat-v04 b{font-size:18px}.accounts-shell-v04{gap:12px}.accounts-main-v04{padding:15px!important}.account-tabs-v04{margin-inline:-2px}.account-tab-v04{padding:8px 10px;font-size:12px}.account-group-strip-v04{grid-template-columns:1fr 1fr;gap:8px}.account-group-chip-v04{border-radius:15px;padding:10px}.account-card-v04{border-radius:16px;padding:12px}.account-card-v04-main{grid-template-columns:38px minmax(0,1fr);align-items:start}.account-icon-v04{width:38px;height:38px;border-radius:14px}.account-card-v04-balance{grid-column:1/-1;text-align:left;display:flex;align-items:baseline;justify-content:space-between;gap:10px}.account-card-v04-balance span{margin:0}.account-actions-v04{grid-template-columns:1fr}.v04-landing-groups{grid-template-columns:1fr}.portfolio-card-list{grid-template-columns:1fr}.holding-card-v04{border-radius:16px;padding:12px}.holding-card-main{grid-template-columns:40px minmax(0,1fr);align-items:start}.holding-symbol-badge{width:40px;height:40px;border-radius:14px}.holding-card-main .balance-badge{grid-column:1/-1;justify-self:start}.holding-value-row{display:grid;gap:4px}.holding-facts-v04{grid-template-columns:1fr 1fr 1fr}.holding-actions-v04{grid-template-columns:1fr}.portfolio-group{border-radius:17px;padding:10px}#view-investments .table-wrap{display:none!important}.account-group-head-v04,.portfolio-group-head{align-items:flex-start}.account-net-card-v04 strong{font-size:42px}}
+@media(max-width:390px){.account-overview-v04{grid-template-columns:1fr}.account-group-strip-v04{grid-template-columns:1fr}.holding-facts-v04{grid-template-columns:1fr 1fr}.account-net-card-v04 strong{font-size:36px}.portfolio-group-head,.account-group-head-v04{display:grid}.portfolio-group-head strong,.account-group-head-v04 strong{text-align:left}.account-card-v04-meta{display:grid;gap:6px}}

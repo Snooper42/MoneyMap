@@ -1,18 +1,20 @@
 # MoneyMap
 
-MoneyMap is a private, local-first personal finance planner.
+MoneyMap is a private, local-first personal finance planner for manual budgets, transactions, accounts, holdings, goals, and net worth snapshots.
 
-## QA6 deploy notes
+## Version
 
-This build is `qa6-20260530` / `v0.10.1-qa6`.
+Current build: `v0.4`
 
-What changed:
+## What changed in v0.4
 
-- Replaced native browser `confirm()` and `prompt()` dialogs with MoneyMap-styled modals.
-- Added safer delete confirmations for accounts, debts, holdings, goals, transactions, rules, saved mappings, backups, and resets.
-- Hardened sidebar and mobile navigation so pinned tabs and the More sheet rebuild consistently after every render.
-- Added an Accounts route to the stable navigation set.
-- Updated cache-busting query strings on all CSS and JavaScript assets so GitHub Pages serves the new files instead of stale browser-cached files.
+- Accounts are now grouped into Cash, Investments, Property, Valuables, Debt, and Other.
+- Account types now include collectibles, jewelry, precious metals, art, and crypto wallet options.
+- The Accounts page has a cleaner category-first layout inspired by modern finance dashboards.
+- Investment holdings now render as portfolio cards grouped by asset class.
+- Settings displays the active version as `v0.4`.
+- Install notes live in `txt/`.
+- Patch notes live in `docs/PATCH_NOTES_v0.4.md`.
 
 ## File layout
 
@@ -20,6 +22,9 @@ What changed:
 index.html
 README.md
 docs/
+  PATCH_NOTES_v0.4.md
+txt/
+  v0.4_install.txt
 src/
   css/
     base.css
@@ -44,7 +49,7 @@ No backend dependency was added. Data remains local-first in browser storage.
 
 ## Run locally
 
-Open `index.html` in a browser, or serve the folder locally:
+Open `index.html` directly, or serve the folder locally:
 
 ```bash
 python3 -m http.server 8000
@@ -58,15 +63,21 @@ http://localhost:8000
 
 ## GitHub Pages deployment
 
-Upload the folder contents to the repo root. Do not upload or replace the `.git` folder from any ZIP.
+Upload the folder contents to the repo root. Do not upload or replace a `.git` folder from any ZIP.
 
 After replacing files, commit and push:
 
 ```bash
 git status
-git add index.html README.md src/css/components.css src/css/mobile.css src/js/utils.js src/js/state.js src/js/storage.js src/js/navigation.js src/js/accounts.js src/js/transactions.js src/js/settings.js src/js/app.js
-git commit -m "Apply MoneyMap QA6 navigation and dialog fixes"
+git add index.html README.md docs/PATCH_NOTES_v0.4.md txt/v0.4_install.txt src/css/components.css src/js/state.js src/js/settings.js src/js/investments.js src/js/app.js
+git commit -m "Release MoneyMap v0.4 account and portfolio cleanup"
 git push
 ```
 
-If GitHub Pages still shows the old UI, hard refresh the browser and confirm the page source references `?v=qa6-20260530`.
+After deployment, open once with:
+
+```text
+?mmcache=v0.4
+```
+
+Then hard refresh the browser.

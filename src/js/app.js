@@ -1381,7 +1381,7 @@ window.addEventListener('keydown', event => {
 /* ---- end pre-v1 focused UX polish ---- */
 
 
-/* ---- v0.10.0-alpha deep UI and mobile polish ---- */
+/* ---- v0.4 deep UI and mobile polish ---- */
 (function(){
   const style=document.createElement('style');
   style.textContent=`
@@ -1409,13 +1409,13 @@ window.addEventListener('keydown', event => {
   `;
   document.head.appendChild(style);
 
-  window.APP_PRERELEASE_LABEL = 'Pre-v1 alpha';
+  window.APP_PRERELEASE_LABEL = 'v0.4';
 
   const originalBackupPayload = window.backupPayload;
   if(typeof originalBackupPayload === 'function'){
     window.backupPayload = function(){
       const payload = originalBackupPayload();
-      payload.releaseStage = 'pre-v1-alpha';
+      payload.releaseStage = 'v0.4';
       payload.build = APP_BUILD_ID;
       return payload;
     };
@@ -1490,7 +1490,7 @@ window.addEventListener('keydown', event => {
   if(typeof baseRenderSettings === 'function'){
     window.renderSettings = function(){
       baseRenderSettings();
-      const build=document.getElementById('appBuildLabel'); if(build) build.textContent='Pre-v1 alpha · '+APP_BUILD_ID;
+      const build=document.getElementById('appBuildLabel'); if(build) build.textContent=''+APP_BUILD_ID;
     };
   }
 
@@ -1512,12 +1512,12 @@ window.addEventListener('keydown', event => {
     window.renderAll=function(){ baseRenderAll(); requestAnimationFrame(()=>{ window.buildMobileNav?.(); if(chartsReady) renderCharts(); }); };
   }
 })();
-/* ---- end v0.10.0-alpha deep UI and mobile polish ---- */
+/* ---- end v0.4 deep UI and mobile polish ---- */
 
 
-/* ---- v0.10.0-alpha recursive aggressive UI/UX polish waves ---- */
+/* ---- v0.4 recursive aggressive UI/UX polish waves ---- */
 (function(){
-  const PREV1_BUILD_LABEL = 'Pre-v1 alpha';
+  const PREV1_BUILD_LABEL = 'v0.4';
 
   function addStyle(id, css){
     let style = document.getElementById(id);
@@ -1621,7 +1621,7 @@ window.addEventListener('keydown', event => {
 
   function normalizeBuildLabels(){
     document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el => {
-      el.textContent = `${PREV1_BUILD_LABEL} · v0.10.0-alpha`;
+      el.textContent = `${PREV1_BUILD_LABEL} · v0.4`;
     });
   }
 
@@ -1669,7 +1669,7 @@ window.addEventListener('keydown', event => {
   if(typeof baseBackupPayload === 'function'){
     window.backupPayload = function(){
       const payload = baseBackupPayload();
-      payload.build = 'v0.10.0-alpha';
+      payload.build = 'v0.4';
       payload.releaseStage = PREV1_BUILD_LABEL;
       return payload;
     };
@@ -1719,12 +1719,12 @@ window.addEventListener('keydown', event => {
     normalizeBuildLabels();
   });
 })();
-/* ---- end v0.10.0-alpha recursive aggressive UI/UX polish waves ---- */
+/* ---- end v0.4 recursive aggressive UI/UX polish waves ---- */
 
 
-/* ---- v0.10.0-alpha mobile clarity + investments refresh ---- */
+/* ---- v0.4 mobile clarity + investments refresh ---- */
 (function(){
-  const BUILD='v0.10.0-alpha';
+  const BUILD='v0.4';
   document.title='MoneyMap';
   function addStyle(css){ const style=document.createElement('style'); style.setAttribute('data-patch','v0.9.2-mobile-investments'); style.textContent=css; document.head.appendChild(style); }
   addStyle(`
@@ -1827,21 +1827,21 @@ window.addEventListener('keydown', event => {
   };
 
   function afterPaint(){
-    document.querySelectorAll('#appBuildLabel').forEach(el=>{el.textContent='Pre-v1 alpha · '+BUILD;});
+    document.querySelectorAll('#appBuildLabel').forEach(el=>{el.textContent=''+BUILD;});
     const budgetHeat=document.getElementById('budgetHeat'); if(budgetHeat){ const heat=budgetStats().sort((a,b)=>b.pct-a.pct).slice(0,5); budgetHeat.innerHTML=heat.length?`<div class="budget-board-list">${heat.map(v092BudgetCard).join('')}</div>`:emptyMini('No budgets','Create simple monthly caps.','Add budget','openDrawer(\'budget\')'); }
     const nav=document.getElementById('mobileNav'); if(nav){ nav.querySelectorAll('button').forEach(b=>{ const t=b.querySelector('span:last-child'); if(t){ t.textContent={Home:'Home',Overview:'Home',Review:'Review',Transactions:'Txns',Txns:'Txns',Budgets:'Budget',Budget:'Budget',More:'More'}[t.textContent.trim()]||t.textContent; } }); }
   }
   const prevRenderAll=window.renderAll; if(typeof prevRenderAll==='function'){ window.renderAll=function(){ prevRenderAll(); requestAnimationFrame(afterPaint); }; }
   const prevShowView=window.showView; if(typeof prevShowView==='function'){ window.showView=function(id){ prevShowView(id); requestAnimationFrame(()=>{ afterPaint(); if(id==='investments') window.renderInvestments?.(); }); }; }
-  const prevBackup=window.backupPayload; if(typeof prevBackup==='function'){ window.backupPayload=function(){ const payload=prevBackup(); payload.build=BUILD; payload.releaseStage='Pre-v1 alpha'; return payload; }; }
+  const prevBackup=window.backupPayload; if(typeof prevBackup==='function'){ window.backupPayload=function(){ const payload=prevBackup(); payload.build=BUILD; payload.releaseStage='v0.4'; return payload; }; }
   requestAnimationFrame(()=>{ afterPaint(); window.renderInvestments?.(); });
 })();
-/* ---- end v0.10.0-alpha mobile clarity + investments refresh ---- */
+/* ---- end v0.4 mobile clarity + investments refresh ---- */
 
 
-/* ---- v0.10.0-alpha UI/UX rescue pass: mobile nav, tables, budgets, investments ---- */
+/* ---- v0.4 UI/UX rescue pass: mobile nav, tables, budgets, investments ---- */
 (function(){
-  const BUILD='v0.10.0-alpha';
+  const BUILD='v0.4';
   const ICONS={
     overview:'🏠', import:'⬆️', review:'✅', transactions:'🧾', budgets:'💸', recurring:'🔁',
     networth:'💎', debt:'🧭', investments:'📈', credit:'⭐', goals:'🎯', rules:'⚙️', settings:'🛠️'
@@ -1969,18 +1969,18 @@ window.addEventListener('keydown', event => {
   const prevBuild=window.buildMobileNav; window.buildMobileNav=function(){ buildFriendlyMobileNav(); polishMoreSheet(); };
   const prevRenderNav=window.renderNav; if(typeof prevRenderNav==='function'){ window.renderNav=function(){ prevRenderNav(); document.querySelectorAll('.nav-btn').forEach(btn=>{ const id=btn.dataset.view; const icon=btn.querySelector('.nav-icon'); if(icon&&ICONS[id]) icon.textContent=ICONS[id]; }); }; }
 
-  const oldRenderAll=window.renderAll; window.renderAll=function(){ oldRenderAll(); requestAnimationFrame(()=>{ document.querySelectorAll('#appBuildLabel').forEach(el=>el.textContent='Pre-v1 alpha · '+BUILD); refreshBudgets(); markResponsiveTables(); refreshHoldingCards(); buildFriendlyMobileNav(); polishMoreSheet(); }); };
+  const oldRenderAll=window.renderAll; window.renderAll=function(){ oldRenderAll(); requestAnimationFrame(()=>{ document.querySelectorAll('#appBuildLabel').forEach(el=>el.textContent=''+BUILD); refreshBudgets(); markResponsiveTables(); refreshHoldingCards(); buildFriendlyMobileNav(); polishMoreSheet(); }); };
   const oldShowView=window.showView; window.showView=function(id){ oldShowView(id); requestAnimationFrame(()=>{ refreshBudgets(); markResponsiveTables(); refreshHoldingCards(); buildFriendlyMobileNav(); polishMoreSheet(); if(id==='investments') window.renderInvestments?.(); }); };
-  const oldPayload=window.backupPayload; if(typeof oldPayload==='function'){ window.backupPayload=function(){ const p=oldPayload(); p.build=BUILD; p.releaseStage='Pre-v1 alpha'; return p; }; }
+  const oldPayload=window.backupPayload; if(typeof oldPayload==='function'){ window.backupPayload=function(){ const p=oldPayload(); p.build=BUILD; p.releaseStage='v0.4'; return p; }; }
 
   requestAnimationFrame(()=>{ try{ renderNav(); }catch(e){} try{ renderAll(); }catch(e){} });
 })();
-/* ---- end v0.10.0-alpha UI/UX rescue pass ---- */
+/* ---- end v0.4 UI/UX rescue pass ---- */
 
 
 /* ---- extracted script block 2: mm-v094-iphone-qa-script ---- */
 (function(){
-  window.APP_PRERELEASE_LABEL='Pre-v1 alpha';
+  window.APP_PRERELEASE_LABEL='v0.4';
   const SVG={
     Home:'<svg class="mm-nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/><path d="M9.5 20v-6h5v6"/></svg>',
     Review:'<svg class="mm-nav-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg>',
@@ -1998,8 +1998,8 @@ window.addEventListener('keydown', event => {
   const oldBuild=window.buildMobileNav; window.buildMobileNav=function(){ if(typeof oldBuild==='function') oldBuild(); polishNav(); };
   const oldRenderAll=window.renderAll; if(typeof oldRenderAll==='function'){ window.renderAll=function(){ oldRenderAll(); requestAnimationFrame(polishNav); }; }
   const oldShow=window.showView; if(typeof oldShow==='function'){ window.showView=function(id){ oldShow(id); requestAnimationFrame(()=>{polishNav(); if(id==='investments') window.renderInvestments?.();}); }; }
-  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent='Pre-v1 alpha · v0.10.0-alpha'; }; }
-  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build='v0.10.0-alpha'; p.releaseStage='pre-v1-alpha'; return p; }; }
+  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent='v0.4'; }; }
+  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build='v0.4'; p.releaseStage='v0.4'; return p; }; }
   document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(polishNav));
   setTimeout(polishNav,250);
 })();
@@ -2007,7 +2007,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- extracted script block 3: mm-v095-nav-accounts-script ---- */
 (function(){
-  const BUILD='v0.10.0-alpha';
+  const BUILD='v0.4';
   const NAV_DEF=[
     {id:'overview',title:'Overview',mobile:'Home',sub:'Net worth snapshot'},
     {id:'accounts',title:'Accounts',mobile:'Accounts',sub:'Balances and edits'},
@@ -2087,10 +2087,10 @@ window.addEventListener('keydown', event => {
     el.className='mm-v095-landing'; el.innerHTML=`<div class="mm-v095-net-card"><div class="mm-v095-kicker">Net worth snapshot</div><div class="mm-v095-net-value ${b.netWorth>=0?'good':'bad'}">${money(b.netWorth)}</div><div class="mm-v095-net-meta">Calculated from included manual accounts, holdings, and debt. ${latest?`Last snapshot saved ${dateFmt(latest.date)}.`:'Save a snapshot when your balances look right.'}</div><div class="mm-v095-actions"><button class="btn btn-primary" onclick="showView('accounts')">Update accounts</button><button class="btn" onclick="saveNetWorthSnapshot()">Save snapshot</button><button class="btn" onclick="showView('networth')">History</button></div><div class="mm-v095-snapshot-grid"><div class="mm-v095-snap"><span>Assets</span><b class="good">${money(b.assets)}</b></div><div class="mm-v095-snap"><span>Liabilities</span><b class="bad">${money(b.liabilities)}</b></div><div class="mm-v095-snap"><span>Accounts</span><b>${(state.accounts||[]).length}</b></div></div></div><div class="mm-v095-account-panel"><div class="mm-v095-panel-head"><div><h3>Current accounts</h3><p>Edit balances directly from your landing page.</p></div><button class="btn btn-small" onclick="openDrawer('account')">Add</button></div><div class="mm-v095-account-list">${accounts.length?accounts.map(landingRow).join(''):emptyMini('No accounts yet','Add balances to make Overview your financial command center.','Add account','openDrawer(\'account\')')}</div><div class="mm-v095-account-actions"><button class="btn btn-small" onclick="showView('accounts')">Manage accounts</button><button class="btn btn-small" onclick="showView('investments')">Holdings</button></div></div>`;
   };
   function ensureSettingsNavCard(){ const grid=document.querySelector('#view-settings .settings-grid .stack'); if(!grid || document.getElementById('navLayoutSettings')) return; const card=document.createElement('div'); card.className='card mm-v095-tabs-card'; card.id='navLayoutSettings'; grid.insertBefore(card, grid.firstChild); }
-  const oldRenderAll=window.renderAll; window.renderAll=function(){ if(typeof oldRenderAll==='function') oldRenderAll(); ensureAccountsView(); renderAccountsDashboard(); renderOverviewLanding(); ensureSettingsNavCard(); renderNavLayoutSettings(); buildNav(); buildMobileNav(); const build=document.getElementById('appBuildLabel'); if(build) build.textContent='Pre-v1 alpha · '+BUILD; };
+  const oldRenderAll=window.renderAll; window.renderAll=function(){ if(typeof oldRenderAll==='function') oldRenderAll(); ensureAccountsView(); renderAccountsDashboard(); renderOverviewLanding(); ensureSettingsNavCard(); renderNavLayoutSettings(); buildNav(); buildMobileNav(); const build=document.getElementById('appBuildLabel'); if(build) build.textContent=''+BUILD; };
   const oldShow=window.showView; window.showView=function(id){ ensureAccountsView(); if(id==='accounts') activeView='accounts'; if(typeof oldShow==='function') oldShow(id); renderAccountsDashboard(); renderOverviewLanding(); buildNav(); buildMobileNav(); };
-  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); ensureSettingsNavCard(); renderNavLayoutSettings(); const build=document.getElementById('appBuildLabel'); if(build) build.textContent='Pre-v1 alpha · '+BUILD; }; }
-  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build=BUILD; p.releaseStage='pre-v1-alpha'; return p; }; }
+  const oldSettings=window.renderSettings; if(typeof oldSettings==='function'){ window.renderSettings=function(){ oldSettings(); ensureSettingsNavCard(); renderNavLayoutSettings(); const build=document.getElementById('appBuildLabel'); if(build) build.textContent=''+BUILD; }; }
+  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup(); p.build=BUILD; p.releaseStage='v0.4'; return p; }; }
   document.addEventListener('DOMContentLoaded',()=>{ ensureAccountsView(); navSettings(); buildNav(); buildMobileNav(); renderAccountsDashboard(); renderOverviewLanding(); ensureSettingsNavCard(); renderNavLayoutSettings(); });
   setTimeout(()=>{ ensureAccountsView(); buildNav(); buildMobileNav(); renderAccountsDashboard(); renderOverviewLanding(); ensureSettingsNavCard(); renderNavLayoutSettings(); },250);
 })();
@@ -2098,7 +2098,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- extracted script block 4: mm-v096-desktop-qa-fixes-script ---- */
 (function(){
-  const BUILD='v0.10.0-alpha';
+  const BUILD='v0.4';
   function hideLegacySidebarKickers(){
     const side=document.querySelector('.sidebar'); if(!side) return;
     [...side.children].forEach(el=>{
@@ -2113,7 +2113,7 @@ window.addEventListener('keydown', event => {
     if(cards && window.matchMedia('(min-width: 761px)').matches) cards.innerHTML='';
   }
   function polishBuildLabels(){
-    document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{el.textContent='Pre-v1 alpha · '+BUILD;});
+    document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{el.textContent=''+BUILD;});
     document.querySelectorAll('*').forEach(el=>{
       if(el.childNodes && el.childNodes.length===1 && el.childNodes[0].nodeType===3 && /v0\.9\.[0-9]-alpha/.test(el.textContent||'')){
         el.textContent=(el.textContent||'').replace(/v0\.9\.[0-9]-alpha/g,BUILD);
@@ -2125,7 +2125,7 @@ window.addEventListener('keydown', event => {
   const oldRenderInvest=window.renderInvestments; if(typeof oldRenderInvest==='function'){ window.renderInvestments=function(){ const r=oldRenderInvest.apply(this,arguments); removeDuplicateInvestmentEmpty(); return r; }; }
   const oldRenderAll=window.renderAll; if(typeof oldRenderAll==='function'){ window.renderAll=function(){ const r=oldRenderAll.apply(this,arguments); afterRender(); return r; }; }
   const oldShow=window.showView; if(typeof oldShow==='function'){ window.showView=function(id){ const r=oldShow.apply(this,arguments); requestAnimationFrame(afterRender); return r; }; }
-  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup.apply(this,arguments); p.build=BUILD; p.releaseStage='pre-v1-alpha'; return p; }; }
+  const oldBackup=window.backupPayload; if(typeof oldBackup==='function'){ window.backupPayload=function(){ const p=oldBackup.apply(this,arguments); p.build=BUILD; p.releaseStage='v0.4'; return p; }; }
   document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(afterRender));
   setTimeout(afterRender,300);
 })();
@@ -2133,7 +2133,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- extracted script block 5: mm-v097-declutter-js ---- */
 (function(){
-  const BUILD='v0.10.0-alpha';
+  const BUILD='v0.4';
   function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
   function appFont(){ return getComputedStyle(document.body).fontFamily; }
   function setupCanvas(canvas,minW=620,minH=220){
@@ -2256,16 +2256,16 @@ window.addEventListener('keydown', event => {
 
   const oldSettings=window.renderSettings;
   if(typeof oldSettings==='function'){
-    window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent='Pre-v1 alpha · '+BUILD; };
+    window.renderSettings=function(){ oldSettings(); const el=document.getElementById('appBuildLabel'); if(el) el.textContent=''+BUILD; };
   }
   const oldBackup=window.backupPayload;
   if(typeof oldBackup==='function'){
-    window.backupPayload=function(){ const payload=oldBackup(); payload.build=BUILD; payload.releaseStage='pre-v1-alpha'; return payload; };
+    window.backupPayload=function(){ const payload=oldBackup(); payload.build=BUILD; payload.releaseStage='v0.4'; return payload; };
   }
   window.addEventListener('resize',()=>{ if(window.chartsReady!==false) requestAnimationFrame(()=>window.renderCharts?.()); });
 })();
 
-/* ---- v0.10.0-alpha final responsive QA pass: mobile table cards ---- */
+/* ---- v0.4 final responsive QA pass: mobile table cards ---- */
 (function(){
   const BODY_IDS=['accountRows','debtRows','holdingRows','creditRows'];
   const fallbackLabels={
@@ -2308,11 +2308,11 @@ window.addEventListener('keydown', event => {
 
 /* ---- MoneyMap QA2 verification and responsive relabel pass ---- */
 (function(){
-  const BUILD='qa2-20260529';
+  const BUILD='v0.4';
   try{ document.documentElement.setAttribute('data-moneymap-build', BUILD); }catch(e){}
   function markBuild(){
     try{
-      document.querySelectorAll('#appBuildLabel').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+      document.querySelectorAll('#appBuildLabel').forEach(el=>{ el.textContent=''+BUILD; });
     }catch(e){}
   }
   function tableLabels(){
@@ -2413,7 +2413,7 @@ window.addEventListener('keydown', event => {
     if(s.textContent!==css) s.textContent=css;
   }
   function markBuild(){
-    try{ document.documentElement.setAttribute('data-moneymap-build', BUILD); document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{el.textContent='Pre-v1 alpha · '+BUILD;}); }catch(e){}
+    try{ document.documentElement.setAttribute('data-moneymap-build', BUILD); document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{el.textContent=''+BUILD;}); }catch(e){}
   }
   function syncOverlayState(){
     const first=document.getElementById('firstRun');
@@ -2479,7 +2479,7 @@ window.addEventListener('keydown', event => {
    normal viewport scrolling. Changed to `overflow-x:clip`. This guard also makes
    sure the mobile "More" body-lock can never get stuck at desktop widths. */
 (function(){
-  const BUILD='r2-4-cache-reset-20260530';
+  const BUILD='v0.4';
   function isDesktop(){ return window.innerWidth > 1180; }
   function unstickDesktopScroll(){
     try{
@@ -2500,7 +2500,7 @@ window.addEventListener('keydown', event => {
     try{
       document.documentElement.setAttribute('data-moneymap-build', BUILD);
       document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{
-        el.textContent='Pre-v1 alpha · '+BUILD;
+        el.textContent=''+BUILD;
       });
     }catch(e){}
   }
@@ -2520,7 +2520,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- QA6 deploy/navigation/dialog finalization ---- */
 (function(){
-  const BUILD='r2-4-cache-reset-20260530';
+  const BUILD='v0.4';
   const NAV_ITEMS=[
     {id:'overview',title:'Overview',mobile:'Home',sub:'Command center'},
     {id:'accounts',title:'Accounts',mobile:'Accounts',sub:'Balances'},
@@ -2572,7 +2572,7 @@ window.addEventListener('keydown', event => {
     const el=document.getElementById('navLayoutSettings'); if(!el) return; const s=navSettings();
     el.innerHTML=`<div class="card-header"><div><h3 class="card-title">Navigation layout</h3><p class="card-subtitle">Pin frequent sections to the sidebar and bottom bar. Other sections remain under More.</p></div><button type="button" class="btn btn-small" onclick="resetNavLayout()">Reset</button></div><div class="mm-v095-tab-list">${NAV_ITEMS.map(n=>{ const pinned=s.navPrimary.includes(n.id); const mobile=s.mobileTabs.includes(n.id); return `<div class="mm-v095-tab-row"><span class="mm-v095-tab-icon">${navIcon(n.id)}</span><div><b>${escapeHtml(n.title)}</b><span>${escapeHtml(n.sub)}</span></div><div class="mm-v095-tab-actions"><button type="button" class="btn btn-small ${pinned?'btn-primary':''}" onclick="toggleNavPrimary('${n.id}')">${pinned?'Sidebar':'More'}</button><button type="button" class="btn btn-small ${mobile?'btn-primary':''}" onclick="toggleMobileTab('${n.id}')">${mobile?'Bottom':'Mobile'}</button><button type="button" class="btn btn-small" onclick="moveNavPrimary('${n.id}',-1)">Up</button><button type="button" class="btn btn-small" onclick="moveNavPrimary('${n.id}',1)">Down</button></div></div>`; }).join('')}</div>`;
   };
-  function markBuild(){ try{ document.documentElement.setAttribute('data-moneymap-build',BUILD); document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; }); }catch(e){} }
+  function markBuild(){ try{ document.documentElement.setAttribute('data-moneymap-build',BUILD); document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent=''+BUILD; }); }catch(e){} }
   function afterRender(){ try{ document.querySelectorAll('button:not([type])').forEach(btn=>{ btn.type='button'; }); buildNav(); buildMobileNav(); renderMobileMoreGrid(); renderNavLayoutSettings(); markBuild(); }catch(e){ console.warn('MoneyMap QA6 afterRender failed',e); } }
   const priorShow=window.showView;
   if(typeof priorShow==='function' && !priorShow.__qa6Wrapped){ window.showView=function(id){ closeMobileMoreSheet(); const out=priorShow.apply(this,arguments); requestAnimationFrame(afterRender); return out; }; window.showView.__qa6Wrapped=true; }
@@ -2587,7 +2587,7 @@ window.addEventListener('keydown', event => {
 
 /* ---- Refactor 1: mobile-first app shell and navigation ---- */
 (function(){
-  const BUILD='r2-4-cache-reset-20260530';
+  const BUILD='v0.4';
   const PRIMARY_MOBILE=['overview','accounts','transactions','budgets'];
   const PRIMARY_DESKTOP=['overview','accounts','transactions','budgets','review','import'];
   const SECONDARY=['review','import','networth','recurring','debt','investments','credit','goals','rules','settings'];
@@ -2640,7 +2640,7 @@ window.addEventListener('keydown', event => {
   function setBuildLabel(){
     try{
       document.documentElement.setAttribute('data-moneymap-build',BUILD);
-      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent=''+BUILD; });
     }catch(e){}
   }
   function navButton(id,extra=''){
@@ -2849,12 +2849,12 @@ window.addEventListener('keydown', event => {
 
 /* ---- Refactor 2: safe action system and destructive action copy ---- */
 (function(){
-  const BUILD='r2-4-cache-reset-20260530';
+  const BUILD='v0.4';
   const originalLoadDemoData=window.loadDemoData;
 
   function html(value){ return (typeof escapeHtml==='function') ? escapeHtml(String(value ?? '')) : String(value ?? '').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c])); }
   function displayMoney(value, opts){ try{ return money(value, opts); }catch(e){ return String(value ?? '—'); } }
-  function todayBuild(){ try{ document.documentElement.setAttribute('data-moneymap-build',BUILD); document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; }); }catch(e){} }
+  function todayBuild(){ try{ document.documentElement.setAttribute('data-moneymap-build',BUILD); document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent=''+BUILD; }); }catch(e){} }
   function countLabel(count, singular, plural){ const n=Number(count||0); return `${n} ${n===1?singular:(plural||singular+'s')}`; }
   function workspaceSummary(){
     try{
@@ -3151,7 +3151,7 @@ window.addEventListener('keydown', event => {
 
 /* R2.1 global search fix: make the top search visibly return results. */
 (function(){
-  const BUILD='r2-4-cache-reset-20260530';
+  const BUILD='v0.4';
   let searchResults=[];
   let activeIndex=0;
 
@@ -3320,7 +3320,7 @@ window.addEventListener('keydown', event => {
 
   function afterRender(){
     attachGlobalSearch();
-    const build=document.getElementById('appBuildLabel'); if(build) build.textContent='Pre-v1 alpha · '+BUILD;
+    const build=document.getElementById('appBuildLabel'); if(build) build.textContent=''+BUILD;
   }
   const priorRenderAll=window.renderAll;
   if(typeof priorRenderAll==='function' && !priorRenderAll.__r21GlobalSearchWrapped){
@@ -3338,13 +3338,13 @@ window.addEventListener('keydown', event => {
 
 /* ---- R2.2: Firefox scroll guard and stuck-overlay recovery ---- */
 (function(){
-  const BUILD='r2-4-cache-reset-20260530';
+  const BUILD='v0.4';
   const STYLE_ID='r22-firefox-scroll-guard-style';
 
   function markBuild(){
     try{
       document.documentElement.setAttribute('data-moneymap-build', BUILD);
-      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent=''+BUILD; });
     }catch(e){}
   }
 
@@ -3442,7 +3442,7 @@ window.addEventListener('keydown', event => {
    become the page scroll container. Active dialogs still keep their own
    internal scroll, but stale classes are cleared immediately. */
 (function(){
-  const BUILD='r2-4-cache-reset-20260530';
+  const BUILD='v0.4';
   const STYLE_ID='r23-hard-scroll-unlock-style';
 
   function activeDialog(){
@@ -3455,7 +3455,7 @@ window.addEventListener('keydown', event => {
   function markBuild(){
     try{
       document.documentElement.setAttribute('data-moneymap-build', BUILD);
-      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent=''+BUILD; });
     }catch(e){}
   }
   function injectStyle(){
@@ -3570,7 +3570,7 @@ window.addEventListener('keydown', event => {
    Keeps GitHub Pages, Firefox, and mobile browsers from mixing old CSS/JS
    after a partial deploy or cached index.html. This does not clear user data. */
 (function(){
-  const BUILD='r2-4-cache-reset-20260530';
+  const BUILD='v0.4';
   const RELOAD_KEY='moneymap-cache-reload-'+BUILD;
   const STYLE_ID='r24-cache-reset-style';
 
@@ -3578,7 +3578,7 @@ window.addEventListener('keydown', event => {
     try{
       window.MONEYMAP_EXPECTED_BUILD = BUILD;
       document.documentElement.setAttribute('data-moneymap-build', BUILD);
-      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent='Pre-v1 alpha · '+BUILD; });
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent=''+BUILD; });
     }catch(e){}
   }
 
@@ -3674,4 +3674,339 @@ window.addEventListener('keydown', event => {
   setTimeout(verifyAssets, 80);
   setTimeout(verifyAssets, 1200);
   markBuild();
+})();
+
+/* ---- R2.5 Spending map precision patch ----
+   Replaces the dashboard spending map's canvas hit-testing with exact DOM rows.
+   This removes imprecise hover/tap selection and keeps category totals aligned
+   with the transaction filter users land on after clicking a category. */
+(function(){
+  const BUILD='v0.4';
+  const EXCLUDED_SPEND_CATEGORIES=new Set(['Income','Transfers']);
+  const CATEGORY_ALIASES={
+    'transfer':'Transfers',
+    'transfers':'Transfers',
+    'xfer':'Transfers',
+    'income':'Income',
+    'paycheck':'Income',
+    'salary':'Income'
+  };
+
+  function cleanCategoryName(cat){
+    let raw=String(cat ?? '').replace(/\s+/g,' ').trim();
+    if(!raw || /^uncategorized$/i.test(raw)) raw='Other';
+    const aliasKey=raw.toLowerCase();
+    if(CATEGORY_ALIASES[aliasKey]) return CATEGORY_ALIASES[aliasKey];
+    const known=[];
+    try{ if(Array.isArray(CATEGORIES)) known.push(...CATEGORIES); }catch(e){}
+    try{ (state.budgets||[]).forEach(b=>{ if(b?.category) known.push(b.category); }); }catch(e){}
+    const exact=known.find(k=>String(k).trim().toLowerCase()===aliasKey);
+    return exact ? String(exact).trim() : raw;
+  }
+
+  function isSpendTx(tx){
+    if(!tx || tx.hidden) return false;
+    const amount=Number(tx.amount);
+    if(!Number.isFinite(amount) || amount>=0) return false;
+    return !EXCLUDED_SPEND_CATEGORIES.has(cleanCategoryName(tx.category));
+  }
+
+  function categoryRows(txns){
+    const rows=new Map();
+    (txns||[]).forEach(tx=>{
+      if(!isSpendTx(tx)) return;
+      const category=cleanCategoryName(tx.category);
+      const amount=Math.abs(Number(tx.amount));
+      const current=rows.get(category) || {category,total:0,count:0};
+      current.total += amount;
+      current.count += 1;
+      rows.set(category,current);
+    });
+    return [...rows.values()].sort((a,b)=>b.total-a.total || a.category.localeCompare(b.category));
+  }
+
+  try{
+    spendingFor=function(txns){
+      return (txns||[]).reduce((sum,tx)=>isSpendTx(tx) ? sum+Math.abs(Number(tx.amount)) : sum, 0);
+    };
+    byCategory=function(txns){
+      return categoryRows(txns).map(row=>[row.category,row.total]);
+    };
+  }catch(e){}
+
+  window.openSpendCategory=function(category){
+    window.showCategoryTransactions(category);
+  };
+
+  const priorShowCategory=window.showCategoryTransactions;
+  window.showCategoryTransactions=function(category){
+    const clean=cleanCategoryName(category);
+    showView('transactions');
+    requestAnimationFrame(()=>{
+      try{ ensureTransactionFilterExtras?.(); }catch(e){}
+      const ids={
+        globalSearch:'',
+        transactionSearch:'',
+        filterCategory:clean,
+        filterVisibility:'visible',
+        filterAmountType:'spend',
+        filterDateFrom:'',
+        filterDateTo:''
+      };
+      Object.entries(ids).forEach(([id,value])=>{ const el=document.getElementById(id); if(el) el.value=value; });
+      const month=document.getElementById('filterMonth');
+      if(month) month.value=currentMonth();
+      renderAll();
+      document.getElementById('transactionSearch')?.scrollIntoView({behavior:'smooth',block:'center'});
+    });
+    return typeof priorShowCategory==='function' ? true : undefined;
+  };
+
+  function ensureSpendMapHost(){
+    let host=document.getElementById('spendMapList');
+    if(host) return host;
+    const canvas=document.getElementById('spendCanvas');
+    const wrap=canvas?.parentElement;
+    if(!wrap) return null;
+    wrap.classList.remove('chart-interactive','mm-chart-card','canvas-wrap');
+    wrap.classList.add('spend-map-list-wrap');
+    wrap.innerHTML='<div class="spend-map-list" id="spendMapList" aria-label="Monthly spending by category"></div><div class="spend-map-summary" id="spendMapSummary"></div>';
+    return document.getElementById('spendMapList');
+  }
+
+  function renderPreciseSpendMap(){
+    const host=ensureSpendMapHost();
+    if(!host) return;
+    const txns=monthTransactions(currentMonth());
+    const rows=categoryRows(txns).slice(0,6);
+    const total=rows.reduce((sum,row)=>sum+row.total,0);
+    const max=rows[0]?.total || 1;
+    const colors=(typeof COLORS!=='undefined' && COLORS.length) ? COLORS : ['var(--accent)','var(--accent2)','var(--accent3)'];
+    if(!rows.length){
+      host.innerHTML=emptyMini('No spending yet','Import transactions to see category breakdowns.','Import CSV','showView(\'import\')');
+      const summary=document.getElementById('spendMapSummary');
+      if(summary) summary.textContent='';
+      return;
+    }
+    host.innerHTML=rows.map((row,i)=>{
+      const pct=total ? Math.round(row.total/total*100) : 0;
+      const width=Math.max(3, Math.round(row.total/max*100));
+      const color=colors[i%colors.length];
+      const label=`${row.count} transaction${row.count===1?'':'s'} · ${pct}% of spending`;
+      return `<button type="button" class="spend-map-row" onclick="openSpendCategory('${escapeJs(row.category)}')" aria-label="Open ${escapeHtml(row.category)} transactions for ${monthLabel(currentMonth())}">
+        <span class="spend-map-label"><span class="spend-map-dot" style="background:${escapeHtml(color)}"></span><span class="spend-map-label-text"><b>${escapeHtml(row.category)}</b><span>${escapeHtml(label)}</span></span></span>
+        <span class="spend-map-track" aria-hidden="true"><span class="spend-map-fill" style="width:${width}%;background:linear-gradient(90deg,${escapeHtml(color)},var(--accent2))"></span></span>
+        <span class="spend-map-amount">${money(row.total)}</span>
+      </button>`;
+    }).join('');
+    const summary=document.getElementById('spendMapSummary');
+    if(summary){
+      const count=rows.reduce((sum,row)=>sum+row.count,0);
+      summary.textContent=`Showing ${rows.length} categor${rows.length===1?'y':'ies'} from ${count} spending transaction${count===1?'':'s'} in ${monthLabel(currentMonth())}. Tap a row to open the exact filtered transactions.`;
+    }
+  }
+
+  const priorRenderOverview=window.renderOverview;
+  if(typeof priorRenderOverview==='function' && !priorRenderOverview.__r25SpendMapWrapped){
+    window.renderOverview=function(){
+      const out=priorRenderOverview.apply(this,arguments);
+      renderPreciseSpendMap();
+      return out;
+    };
+    window.renderOverview.__r25SpendMapWrapped=true;
+  }
+
+  const priorRenderAll=window.renderAll;
+  if(typeof priorRenderAll==='function' && !priorRenderAll.__r25SpendMapWrapped){
+    window.renderAll=function(){
+      const out=priorRenderAll.apply(this,arguments);
+      requestAnimationFrame(renderPreciseSpendMap);
+      return out;
+    };
+    window.renderAll.__r25SpendMapWrapped=true;
+  }
+
+  window.addEventListener('resize',()=>requestAnimationFrame(renderPreciseSpendMap),{passive:true});
+  document.addEventListener('DOMContentLoaded',()=>requestAnimationFrame(renderPreciseSpendMap));
+  setTimeout(renderPreciseSpendMap,120);
+  try{ document.documentElement.dataset.moneymapBuild=BUILD; }catch(e){}
+})();
+
+/* ---- v0.4: account groups, cleaner portfolio UI, and public version label ---- */
+(function(){
+  const BUILD='v0.4';
+  const ACCOUNT_GROUPS=[
+    {id:'all',label:'All',hint:'Every manual balance'},
+    {id:'cash',label:'Cash',hint:'Checking, savings, cash'},
+    {id:'investments',label:'Investments',hint:'Brokerage, retirement, HSA, crypto'},
+    {id:'property',label:'Property',hint:'Homes, vehicles, real assets'},
+    {id:'valuables',label:'Valuables',hint:'Collectibles, jewelry, metals, art'},
+    {id:'liabilities',label:'Debt',hint:'Cards, loans, mortgages'},
+    {id:'other',label:'Other',hint:'Uncategorized accounts'}
+  ];
+  const GROUP_META={
+    all:{label:'All accounts',icon:'▦'},
+    cash:{label:'Cash',icon:'💵'},
+    investments:{label:'Investments',icon:'📈'},
+    property:{label:'Property',icon:'🏠'},
+    valuables:{label:'Valuables',icon:'◆'},
+    liabilities:{label:'Debt',icon:'−'},
+    other:{label:'Other',icon:'•'}
+  };
+  function groupForAccount(a){
+    const type=String(a?.type||'').toLowerCase();
+    const name=String(a?.name||'').toLowerCase();
+    const hay=`${type} ${name}`;
+    if(/credit|loan|debt|mortgage|liability/.test(hay)) return 'liabilities';
+    if(/checking|savings|cash|money market|wallet/.test(hay)) return 'cash';
+    if(/brokerage|retirement|ira|401|403|roth|hsa|investment|crypto/.test(hay)) return 'investments';
+    if(/property|real estate|home|house|vehicle|auto|car|boat|rv/.test(hay)) return 'property';
+    if(/collectible|jewel|watch|gold|silver|precious|metal|art|coin|card|memorabilia|valuables?/.test(hay)) return 'valuables';
+    if(/asset/.test(hay)) return 'other';
+    return 'cash';
+  }
+  function groupLabel(id){ return GROUP_META[id]?.label || id; }
+  function includedValue(accounts){ return accounts.filter(a=>a.includeNetWorth!==false).reduce((s,a)=>s+accountSignedValue(a),0); }
+  function groupSummary(id, accounts){
+    const items=id==='all' ? accounts : accounts.filter(a=>groupForAccount(a)===id);
+    const included=items.filter(a=>a.includeNetWorth!==false);
+    const value=included.reduce((s,a)=>s+accountSignedValue(a),0);
+    const assets=included.reduce((s,a)=>s+Math.max(0,accountSignedValue(a)),0);
+    const debt=included.reduce((s,a)=>s+Math.abs(Math.min(0,accountSignedValue(a))),0);
+    return {id,items,included,value,assets,debt};
+  }
+  function currentAccountFilter(){
+    state.settings=state.settings||{};
+    const val=state.settings.accountGroupFilter || 'all';
+    return ACCOUNT_GROUPS.some(g=>g.id===val) ? val : 'all';
+  }
+  window.setAccountGroupFilter=function(id){
+    state.settings=state.settings||{};
+    state.settings.accountGroupFilter=ACCOUNT_GROUPS.some(g=>g.id===id)?id:'all';
+    saveState();
+    renderAccountsDashboard();
+  };
+  function accountTypeIcon(a){
+    const id=groupForAccount(a);
+    return GROUP_META[id]?.icon || '•';
+  }
+  function accountGroupTabs(accounts){
+    const active=currentAccountFilter();
+    return `<div class="account-tabs-v04" role="tablist" aria-label="Account groups">${ACCOUNT_GROUPS.map(g=>{
+      const summary=groupSummary(g.id,accounts);
+      return `<button type="button" class="account-tab-v04 ${active===g.id?'active':''}" onclick="setAccountGroupFilter('${g.id}')" role="tab" aria-selected="${active===g.id}"><span>${escapeHtml(g.label)}</span><b>${summary.items.length}</b></button>`;
+    }).join('')}</div>`;
+  }
+  function accountGroupHero(accounts){
+    const summaries=ACCOUNT_GROUPS.filter(g=>g.id!=='all').map(g=>groupSummary(g.id,accounts)).filter(s=>s.items.length);
+    const total=includedValue(accounts);
+    if(!summaries.length) return `<div class="account-group-strip-v04 empty"><span>No account groups yet.</span></div>`;
+    return `<div class="account-group-strip-v04">${summaries.map(s=>`<button class="account-group-chip-v04 ${currentAccountFilter()===s.id?'active':''}" onclick="setAccountGroupFilter('${s.id}')"><span>${GROUP_META[s.id]?.icon||'•'} ${escapeHtml(groupLabel(s.id))}</span><b class="${s.value<0?'bad':'good'}">${money(s.value)}</b><small>${total?Math.round(Math.abs(s.value)/Math.max(1,Math.abs(total))*100):0}% of net</small></button>`).join('')}</div>`;
+  }
+  function accountCardV04(a){
+    const signed=accountSignedValue(a);
+    const included=a.includeNetWorth!==false;
+    const group=groupForAccount(a);
+    return `<article class="account-card-v04">
+      <div class="account-card-v04-main">
+        <div class="account-icon-v04" aria-hidden="true">${accountTypeIcon(a)}</div>
+        <div class="account-card-v04-copy"><h3>${escapeHtml(a.name||'Account')}</h3><p>${escapeHtml(a.institution||'Manual')} · ${escapeHtml(a.type||'Account')}</p></div>
+        <div class="account-card-v04-balance"><strong class="${signed<0?'bad':'good'}">${money(signed)}</strong><span>${escapeHtml(groupLabel(group))}</span></div>
+      </div>
+      <div class="account-card-v04-meta">
+        <span class="balance-badge ${included?'include':'exclude'}">${included?'In net worth':'Excluded'}</span>
+        <span>Updated ${a.updatedAt?dateFmt(String(a.updatedAt).slice(0,10)):'—'}</span>
+      </div>
+      <div class="account-actions-v04">
+        <button class="btn btn-small" onclick="toggleAccountInclude('${a.id}')">${included?'Exclude':'Include'}</button>
+        <button class="btn btn-small" onclick="openDrawer('account', findById('accounts','${a.id}'))">Edit</button>
+        <button class="btn btn-small btn-danger" onclick="deleteTrackerItem('accounts','${a.id}')">Delete</button>
+      </div>
+    </article>`;
+  }
+  function groupedAccountList(accounts){
+    const active=currentAccountFilter();
+    const visible=active==='all' ? accounts : accounts.filter(a=>groupForAccount(a)===active);
+    if(!accounts.length) return emptyMini('No accounts yet','Add checking, savings, investments, property, collectibles, jewelry, loans, or other manual balances.','Add account','openDrawer(\'account\')');
+    if(!visible.length) return emptyMini(`No ${groupLabel(active).toLowerCase()} accounts yet`,`Add one or switch back to All accounts.`, 'Add account', 'openDrawer(\'account\')');
+    const grouped={};
+    visible.slice().sort((a,b)=>Math.abs(accountSignedValue(b))-Math.abs(accountSignedValue(a))).forEach(a=>{
+      const key=active==='all'?groupForAccount(a):active;
+      grouped[key]=grouped[key]||[];
+      grouped[key].push(a);
+    });
+    return Object.entries(grouped).map(([group,items])=>{
+      const sum=groupSummary(group,items);
+      return `<section class="account-group-v04"><div class="account-group-head-v04"><div><b>${GROUP_META[group]?.icon||'•'} ${escapeHtml(groupLabel(group))}</b><span>${items.length} account${items.length===1?'':'s'} · ${sum.included.length} included</span></div><strong class="${sum.value<0?'bad':'good'}">${money(sum.value)}</strong></div><div class="account-card-list-v04">${items.map(accountCardV04).join('')}</div></section>`;
+    }).join('');
+  }
+  function ensureAccountsViewV04(){
+    let sec=document.getElementById('view-accounts');
+    if(!sec){
+      sec=document.createElement('section');
+      sec.className='view';
+      sec.id='view-accounts';
+      const overview=document.getElementById('view-overview');
+      overview?.after(sec);
+    }
+    sec.innerHTML=`<div class="page-head v04-page-head"><div><h2 class="section-title">Accounts</h2><p class="section-sub">Grouped manual balances for cash, investments, property, valuables, and debt.</p></div><div class="actions"><button class="btn" onclick="saveNetWorthSnapshot()">Save snapshot</button><button class="btn btn-primary" onclick="openDrawer('account')">Add account</button></div></div><div class="account-overview-v04" id="accountsMetrics"></div><div class="accounts-shell-v04"><div class="card accounts-main-v04"><div class="card-header"><div><h3 class="card-title">Accounts by category</h3><p class="card-subtitle">Use groups to avoid scanning one long list. Include only values that should count toward net worth.</p></div><button class="btn btn-small" onclick="openDrawer('account')">Add</button></div><div id="accountGroupTabsV04"></div><div id="accountGroupStripV04"></div><div id="accountsCardList"></div></div><div class="stack accounts-side-v04"><div class="card"><h3 class="card-title">Snapshot actions</h3><p class="card-subtitle">Save history only after balances look right.</p><div class="split-line"></div><div class="hero-row"><button class="btn btn-primary" onclick="saveNetWorthSnapshot()">Save current net worth</button><button class="btn" onclick="showView('networth')">View history</button></div></div><div class="card"><h3 class="card-title">Account tips</h3><div class="split-line"></div><div class="mini-list" id="accountTipsV04"></div></div></div></div>`;
+  }
+  window.renderAccountsDashboard=function(){
+    ensureAccountsViewV04();
+    const accounts=state.accounts||[];
+    const included=accounts.filter(a=>a.includeNetWorth!==false);
+    const assets=included.reduce((s,a)=>s+Math.max(0,accountSignedValue(a)),0);
+    const liabilities=included.reduce((s,a)=>s+Math.abs(Math.min(0,accountSignedValue(a))),0);
+    const cash=groupSummary('cash',accounts).value;
+    const investments=groupSummary('investments',accounts).value;
+    const valuables=groupSummary('valuables',accounts).value;
+    const metrics=document.getElementById('accountsMetrics');
+    if(metrics) metrics.innerHTML=`<div class="account-net-card-v04"><span>Net account value</span><strong class="${assets-liabilities>=0?'good':'bad'}">${money(assets-liabilities)}</strong><p>${included.length} included of ${accounts.length} total manual account${accounts.length===1?'':'s'}</p></div><div class="account-mini-stat-v04"><span>Cash</span><b>${money(cash)}</b></div><div class="account-mini-stat-v04"><span>Investments</span><b>${money(investments)}</b></div><div class="account-mini-stat-v04"><span>Valuables</span><b>${money(valuables)}</b></div><div class="account-mini-stat-v04"><span>Debt</span><b class="bad">${money(liabilities)}</b></div>`;
+    const tabs=document.getElementById('accountGroupTabsV04'); if(tabs) tabs.innerHTML=accountGroupTabs(accounts);
+    const strip=document.getElementById('accountGroupStripV04'); if(strip) strip.innerHTML=accountGroupHero(accounts);
+    const list=document.getElementById('accountsCardList'); if(list) list.innerHTML=groupedAccountList(accounts);
+    const tips=document.getElementById('accountTipsV04'); if(tips) tips.innerHTML=`<div class="mini-item"><div><b>Cash</b><br><span>Checking, savings, money market, and physical cash.</span></div><span>${money(cash)}</span></div><div class="mini-item"><div><b>Investments</b><br><span>Brokerage or retirement account balances. Exclude if holdings already count separately.</span></div><span>${money(investments)}</span></div><div class="mini-item"><div><b>Valuables</b><br><span>Jewelry, collectibles, art, metals, and other manually estimated items.</span></div><span>${money(valuables)}</span></div><div class="mini-item"><div><b>Debt</b><br><span>Cards, loans, mortgages, and other liabilities subtract from net worth.</span></div><span class="bad">${money(liabilities)}</span></div>`;
+  };
+  function renderOverviewLandingV04(){
+    const view=document.getElementById('view-overview'); if(!view) return;
+    let el=document.getElementById('accountSnapshotLanding'); if(!el){ el=document.createElement('div'); el.id='accountSnapshotLanding'; view.insertBefore(el, view.firstChild); }
+    const b=netWorthBreakdown();
+    const accounts=(state.accounts||[]).slice().sort((a,b)=>Math.abs(accountSignedValue(b))-Math.abs(accountSignedValue(a))).slice(0,4);
+    const snaps=(state.netWorthHistory||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date))); const latest=snaps[0];
+    const groups=ACCOUNT_GROUPS.filter(g=>g.id!=='all').map(g=>groupSummary(g.id,state.accounts||[])).filter(s=>s.items.length).slice(0,4);
+    el.className='mm-v095-landing v04-landing';
+    el.innerHTML=`<div class="mm-v095-net-card"><div class="mm-v095-kicker">Net worth snapshot</div><div class="mm-v095-net-value ${b.netWorth>=0?'good':'bad'}">${money(b.netWorth)}</div><div class="mm-v095-net-meta">Calculated from included accounts, holdings, and debt. ${latest?`Last snapshot saved ${dateFmt(latest.date)}.`:'Save a snapshot when balances look right.'}</div><div class="mm-v095-actions"><button class="btn btn-primary" onclick="showView('accounts')">Update accounts</button><button class="btn" onclick="saveNetWorthSnapshot()">Save snapshot</button><button class="btn" onclick="showView('networth')">History</button></div><div class="mm-v095-snapshot-grid"><div class="mm-v095-snap"><span>Assets</span><b class="good">${money(b.assets)}</b></div><div class="mm-v095-snap"><span>Liabilities</span><b class="bad">${money(b.liabilities)}</b></div><div class="mm-v095-snap"><span>Groups</span><b>${groups.length}</b></div></div></div><div class="mm-v095-account-panel v04-account-panel"><div class="mm-v095-panel-head"><div><h3>Account groups</h3><p>Cash, investments, valuables, property, and debt at a glance.</p></div><button class="btn btn-small" onclick="openDrawer('account')">Add</button></div><div class="v04-landing-groups">${groups.length?groups.map(s=>`<button class="v04-landing-group" onclick="showView('accounts'); setAccountGroupFilter('${s.id}')"><span>${GROUP_META[s.id]?.icon||'•'} ${escapeHtml(groupLabel(s.id))}</span><strong class="${s.value<0?'bad':'good'}">${money(s.value)}</strong></button>`).join(''):emptyMini('No accounts yet','Add balances to make Overview useful.','Add account','openDrawer(\'account\')')}</div><div class="mm-v095-account-list v04-landing-accounts">${accounts.length?accounts.map(a=>`<button class="mm-v095-account-row" onclick="openDrawer('account', findById('accounts','${a.id}'))"><span><b>${escapeHtml(a.name||'Account')}</b><span>${escapeHtml(groupLabel(groupForAccount(a)))} · ${escapeHtml(a.type||'Account')}</span></span><strong class="${accountSignedValue(a)<0?'bad':'good'}">${money(accountSignedValue(a))}</strong></button>`).join(''):''}</div><div class="mm-v095-account-actions"><button class="btn btn-small" onclick="showView('accounts')">Manage accounts</button><button class="btn btn-small" onclick="showView('investments')">Holdings</button></div></div>`;
+  }
+  function markV04(){
+    try{
+      window.MONEYMAP_EXPECTED_BUILD=BUILD;
+      document.documentElement.setAttribute('data-moneymap-build',BUILD);
+      document.querySelectorAll('#appBuildLabel,[data-build-label]').forEach(el=>{ el.textContent=BUILD; });
+      const build=document.getElementById('appBuildLabel'); if(build) build.textContent=BUILD;
+    }catch(e){}
+  }
+  const oldRenderAll=window.renderAll;
+  window.renderAll=function(){
+    const result=typeof oldRenderAll==='function' ? oldRenderAll.apply(this,arguments) : undefined;
+    renderAccountsDashboard();
+    renderOverviewLandingV04();
+    if(typeof renderInvestments==='function') renderInvestments();
+    markV04();
+    return result;
+  };
+  const oldShow=window.showView;
+  window.showView=function(id){
+    const result=typeof oldShow==='function' ? oldShow.apply(this,arguments) : undefined;
+    if(id==='accounts') renderAccountsDashboard();
+    if(id==='overview') renderOverviewLandingV04();
+    if(id==='investments' && typeof renderInvestments==='function') renderInvestments();
+    markV04();
+    return result;
+  };
+  const oldSettings=window.renderSettings;
+  if(typeof oldSettings==='function') window.renderSettings=function(){ const r=oldSettings.apply(this,arguments); markV04(); return r; };
+  const oldBackup=window.backupPayload;
+  if(typeof oldBackup==='function') window.backupPayload=function(){ const p=oldBackup.apply(this,arguments); p.build=BUILD; p.releaseStage='v0.4'; return p; };
+  document.addEventListener('DOMContentLoaded',()=>{ requestAnimationFrame(()=>{ renderAccountsDashboard(); renderOverviewLandingV04(); if(typeof renderInvestments==='function') renderInvestments(); markV04(); }); });
+  setTimeout(()=>{ renderAccountsDashboard(); renderOverviewLandingV04(); if(typeof renderInvestments==='function') renderInvestments(); markV04(); },350);
 })();
