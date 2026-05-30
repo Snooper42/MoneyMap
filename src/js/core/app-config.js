@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const BUILD_ID='v0.1.0', STORAGE_KEY='moneymap_v1';
+  const BUILD_ID='v0.1.1', STORAGE_KEY='moneymap_v1';
   window.MoneyMapConfig=Object.freeze({buildId:BUILD_ID,expectedBuild:BUILD_ID,storageKey:STORAGE_KEY,releaseName:'Public launch',cacheBust:BUILD_ID,localOnly:true});
   window.MONEYMAP_EXPECTED_BUILD=BUILD_ID;
   window.MoneyMap={version:BUILD_ID,storageKey:STORAGE_KEY,config:window.MoneyMapConfig};

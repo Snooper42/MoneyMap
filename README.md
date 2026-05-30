@@ -43,9 +43,9 @@ Open `http://localhost:8080` — tap **Explore with demo data** to see the full 
 
 ## Version
 
-Current: `v0.1.0` — see [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md)
+Current: `v0.1.1` — see [CHANGELOG.md](CHANGELOG.md) and [ROADMAP.md](ROADMAP.md)
 
-Patch notes: `docs/PATCH_NOTES_v0.1.0.md`
+Patch notes: `docs/PATCH_NOTES_v0.1.1.md`
 
 ---
 

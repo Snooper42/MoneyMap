@@ -1,7 +1,7 @@
 /* MoneyMap v0.5 mobile-first UX shell refresh.
    Final override layer. Keeps stored data shape unchanged and avoids browser-native dialogs. */
 (function(){
-  const BUILD = 'v0.5';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.1';
   const PRIMARY_MOBILE = ['overview','transactions','review','accounts'];
   const MORE_MOBILE = ['import','budgets','networth','investments','recurring','debt','credit','goals','rules','settings'];
   const NAV_META = {

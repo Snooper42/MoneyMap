@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.1.1
+- New chart-first dashboard for mobile and desktop.
+- Review shortcut is pinned at the top of the Overview dashboard and mobile nav is nudged back to Review.
+- Transaction editor redesigned with live preview, quick categories, transfer hiding, sticky actions, and cents rounding.
+- Fixed stale build labeling where legacy scripts could make GitHub Pages appear to be on v0.8.
+
+# Changelog
+
 All notable changes to MoneyMap are documented here.
 
 Format: [version] — date — summary  

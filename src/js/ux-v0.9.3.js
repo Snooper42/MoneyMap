@@ -5,7 +5,7 @@
   if(window.__MoneyMapV093Loaded) return;
   window.__MoneyMapV093Loaded = true;
 
-  const BUILD = 'v0.9.3';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.1';
   const MONTHS = 6;
   const ACCOUNT_GROUPS = [
     {id:'all', label:'All accounts', short:'All', icon:'◌'},

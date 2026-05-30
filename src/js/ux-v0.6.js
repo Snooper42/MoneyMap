@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const BUILD = 'v0.6';
+  const BUILD = (window.MoneyMapConfig && window.MoneyMapConfig.buildId) || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.1';
   const MONTH_COUNT = 6;
   let accountFilter = 'all';
   let initialized = false;

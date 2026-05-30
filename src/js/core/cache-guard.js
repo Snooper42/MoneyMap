@@ -3,7 +3,7 @@
 (function(){
   'use strict';
 
-  const BUILD = window.MoneyMapConfig?.buildId || window.MONEYMAP_EXPECTED_BUILD || 'v0.8';
+  const BUILD = window.MoneyMapConfig?.buildId || window.MONEYMAP_EXPECTED_BUILD || 'v0.1.1';
   const RELOAD_KEY = 'moneymap-cache-reload-' + BUILD;
   const STYLE_ID = 'moneymap-cache-guard-style';
 
