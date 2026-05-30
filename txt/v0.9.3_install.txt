@@ -1,0 +1,9 @@
+MoneyMap v0.9.3 install notes
+
+1. Download the full no-git zip.
+2. Unzip it locally and serve it with python3 -m http.server 8080.
+3. Open http://localhost:8080 in the same browser/profile used for local MoneyMap testing.
+4. Confirm Settings shows v0.9.3.
+5. Check Home, Accounts, Add/Edit Account, and Investments before deploying.
+
+The storage key remains moneymap_v1. Existing local data should remain compatible.

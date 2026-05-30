@@ -1,0 +1,8 @@
+MoneyMap v0.9.4 install notes
+
+1. Download the full no-git zip.
+2. Extract it outside your Git repo for local testing.
+3. Run `python3 -m http.server 8080` from the extracted folder.
+4. Open http://localhost:8080.
+5. Confirm Settings shows v0.9.4.
+6. Test Accounts, Investments, Save snapshot, and chart hover/tap behavior before deploying.

@@ -1,0 +1,662 @@
+/* MoneyMap v0.9.7 — onboarding redesign + mobile chart improvements
+   ─────────────────────────────────────────────────────────────────
+   Sections
+   ────────
+   1.  First-run overlay — scroll-lock fix + full redesign
+   2.  Dashboard accounts snapshot card
+   3.  Empty state — fresh-start welcome
+   4.  Mobile chart improvements
+   5.  Misc mobile polish
+   ───────────────────────────────────────────────────────────────── */
+
+
+/* ══════════════════════════════════════════════════════════════════
+   1. FIRST-RUN OVERLAY
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Overlay backdrop (the root fix: overflow: hidden, not auto) ── */
+.first-run {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 4000 !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 16px !important;
+  /* THE FIX: outer layer never scrolls — background cannot drift */
+  overflow: hidden !important;
+  background: rgba(3, 7, 18, 0.90) !important;
+  backdrop-filter: blur(22px) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+}
+
+.first-run.active {
+  display: flex !important;
+}
+
+/* ── Inner panel — scrolls if content taller than viewport ──────── */
+.fr-panel {
+  position: relative;
+  width: 100%;
+  max-width: 460px;
+  /* Never taller than the visible screen */
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  /* Critical: contain scroll so it can't bleed to the body */
+  overscroll-behavior: contain;
+  background: var(--panel);
+  border: 1px solid var(--line2);
+  border-radius: 26px;
+  padding: 28px 24px;
+  box-shadow: 0 48px 140px rgba(0, 0, 0, 0.58), 0 0 0 1px rgba(255,255,255,.04) inset;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* Firefox: no scrollbar visible on the panel itself */
+.fr-panel { scrollbar-width: none; }
+.fr-panel::-webkit-scrollbar { display: none; }
+
+/* ── Header ─────────────────────────────────────────────────────── */
+.fr-header { display: flex; flex-direction: column; gap: 6px; }
+
+.fr-wordmark {
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+}
+
+.fr-tagline {
+  font-size: 22px;
+  font-weight: 820;
+  line-height: 1.18;
+  letter-spacing: -0.04em;
+  color: var(--text);
+  margin: 0;
+  max-width: 32ch;
+}
+
+/* ── Preview card — static snapshot of a set-up dashboard ──────── */
+.fr-preview {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  /* Subtle inner glow to read as a "real screen" */
+  box-shadow: 0 0 0 1px rgba(var(--accent-rgb), 0.07) inset;
+}
+
+.fr-preview-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.fr-preview-label {
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+
+.fr-preview-value {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -0.06em;
+  line-height: 1;
+  color: var(--text);
+}
+
+.fr-preview-delta {
+  font-size: 11.5px;
+  font-weight: 760;
+  color: var(--good);
+  background: color-mix(in srgb, var(--good) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--good) 22%, transparent);
+  border-radius: 999px;
+  padding: 4px 9px;
+  white-space: nowrap;
+  margin-top: 6px;
+}
+
+/* Account rows in the preview */
+.fr-preview-accounts {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+
+.fr-preview-acct {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 50%, transparent);
+  min-height: 0;
+}
+
+.fr-preview-acct:last-child { border-bottom: 0; }
+
+.fr-preview-acct span {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.fr-preview-acct b {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.fr-preview-acct--debt b { color: var(--red); opacity: 0.85; }
+
+/* Net worth composition bar */
+.fr-preview-bar {
+  display: flex;
+  height: 5px;
+  border-radius: 999px;
+  overflow: hidden;
+  gap: 2px;
+}
+
+.fr-bar-fill {
+  height: 100%;
+  border-radius: 999px;
+}
+
+.fr-preview-caption {
+  font-size: 11px;
+  color: var(--soft);
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* ── Primary action buttons ──────────────────────────────────────── */
+.fr-ctas {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fr-cta {
+  display: grid;
+  grid-template-columns: 32px 1fr 20px;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  min-height: 64px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.14s, background 0.14s;
+  /* Override any global btn styles */
+  font-family: inherit;
+}
+
+.fr-cta:hover, .fr-cta:focus-visible {
+  border-color: var(--line2);
+  background: var(--panel3);
+}
+
+.fr-cta:active {
+  transform: scale(0.985);
+}
+
+.fr-cta--primary {
+  background: color-mix(in srgb, var(--accent) 12%, var(--panel2)) !important;
+  border-color: color-mix(in srgb, var(--accent) 28%, transparent) !important;
+}
+
+.fr-cta--primary:hover, .fr-cta--primary:focus-visible {
+  background: color-mix(in srgb, var(--accent) 18%, var(--panel2)) !important;
+  border-color: color-mix(in srgb, var(--accent) 42%, transparent) !important;
+}
+
+.fr-cta-icon {
+  font-size: 18px;
+  line-height: 1;
+  color: var(--accent);
+  justify-self: center;
+}
+
+.fr-cta--secondary .fr-cta-icon { color: var(--accent2); }
+
+.fr-cta-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.fr-cta-copy b {
+  font-size: 14.5px;
+  font-weight: 820;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.fr-cta-copy span {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.fr-cta-arrow {
+  font-size: 18px;
+  color: var(--soft);
+  justify-self: end;
+}
+
+/* ── Tertiary links ───────────────────────────────────────────────  */
+.fr-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fr-link {
+  background: none;
+  border: none;
+  padding: 6px 2px;
+  font-size: 12.5px;
+  font-family: inherit;
+  color: var(--muted);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  transition: color 0.12s, text-decoration-color 0.12s;
+}
+
+.fr-link:hover { color: var(--text); text-decoration-color: var(--line2); }
+
+.fr-dot { color: var(--soft); font-size: 11px; }
+
+.fr-continue-btn { display: none; }
+.fr-continue-btn.visible { display: inline; }
+
+/* ── Privacy pill ────────────────────────────────────────────────── */
+.fr-privacy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding-top: 4px;
+  border-top: 1px solid var(--line);
+}
+
+.fr-lock { font-size: 13px; flex: 0 0 auto; }
+
+#firstRunFootnote {
+  font-size: 11.5px;
+  color: var(--soft);
+  line-height: 1.38;
+  text-align: center;
+}
+
+/* ── Mobile-specific adjustments ────────────────────────────────── */
+@media (max-width: 480px) {
+  .fr-panel {
+    border-radius: 20px;
+    padding: 22px 18px;
+    gap: 18px;
+    /* On very small phones, allow slightly more height */
+    max-height: calc(100dvh - 24px);
+  }
+
+  .fr-tagline { font-size: 19px; }
+  .fr-preview-value { font-size: 28px; }
+
+  .fr-cta {
+    min-height: 58px;
+    padding: 12px 14px;
+    gap: 10px;
+    grid-template-columns: 28px 1fr 18px;
+  }
+
+  .fr-cta-copy b { font-size: 13.5px; }
+  .fr-cta-copy span { font-size: 11.5px; }
+}
+
+@media (max-width: 360px) {
+  .fr-panel { padding: 18px 14px; gap: 16px; }
+  .fr-tagline { font-size: 18px; }
+}
+
+/* ── Suppress old first-run-panel styles that conflict ──────────── */
+/* The old .first-run-panel is replaced by .fr-panel. These resets
+   prevent leftover rules from other CSS layers from breaking layout. */
+.first-run-panel { display: none !important; }
+.start-grid, .start-option, .first-run-head, .first-run-footer { display: none !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   2. DASHBOARD ACCOUNTS SNAPSHOT CARD
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Shows on the Overview when accounts exist — Monarch-style list */
+.acct-snapshot-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.acct-snapshot-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.acct-snapshot-head b {
+  font-size: 14px;
+  font-weight: 820;
+  letter-spacing: -0.02em;
+}
+
+.acct-snapshot-net {
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.05em;
+  color: var(--text);
+}
+
+.acct-snapshot-list { display: flex; flex-direction: column; }
+
+.acct-snapshot-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 18px;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  cursor: pointer;
+  transition: background 0.12s;
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  color: var(--text);
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+}
+
+.acct-snapshot-row:last-child { border-bottom: 0; }
+.acct-snapshot-row:hover { background: color-mix(in srgb, var(--panel2) 60%, transparent); }
+
+.acct-snapshot-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+}
+
+.acct-snapshot-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.acct-snapshot-type {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 1px;
+}
+
+.acct-snapshot-bal {
+  font-size: 14px;
+  font-weight: 820;
+  letter-spacing: -0.025em;
+  white-space: nowrap;
+}
+
+.acct-snapshot-bal.liability { color: var(--red); opacity: 0.85; }
+
+.acct-snapshot-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 18px;
+  border-top: 1px solid var(--line);
+}
+
+.acct-snapshot-footer .btn { font-size: 12px; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   3. EMPTY STATE — FRESH-START WELCOME
+   ══════════════════════════════════════════════════════════════════ */
+
+.welcome-card {
+  background: linear-gradient(160deg,
+    color-mix(in srgb, var(--accent) 8%, var(--panel)),
+    var(--panel) 60%
+  );
+  border: 1px solid color-mix(in srgb, var(--accent) 18%, var(--line));
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.welcome-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.welcome-card-head b {
+  font-size: 18px;
+  font-weight: 860;
+  letter-spacing: -0.035em;
+  color: var(--text);
+}
+
+.welcome-card-head p {
+  font-size: 13.5px;
+  color: var(--muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.welcome-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.welcome-step {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 55%, transparent);
+  cursor: pointer;
+  background: transparent;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  color: var(--text);
+  transition: opacity 0.12s;
+}
+
+.welcome-step:last-child { border-bottom: 0; }
+.welcome-step:hover { opacity: 0.8; }
+.welcome-step:active { opacity: 0.65; }
+
+.welcome-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel2));
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--accent);
+  flex: 0 0 auto;
+}
+
+.welcome-step-done .welcome-step-num {
+  background: color-mix(in srgb, var(--good) 16%, var(--panel2));
+  border-color: color-mix(in srgb, var(--good) 28%, transparent);
+  color: var(--good);
+}
+
+.welcome-step-copy b {
+  display: block;
+  font-size: 13.5px;
+  font-weight: 760;
+  color: var(--text);
+}
+
+.welcome-step-copy span {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.welcome-step-done .welcome-step-copy b { text-decoration: line-through; opacity: 0.5; }
+
+.welcome-step-caret { color: var(--soft); font-size: 16px; }
+
+.welcome-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.welcome-card-actions .btn { flex: 1 1 auto; justify-content: center; min-height: 42px; }
+
+/* Hide welcome card for users who've dismissed it */
+.mm-welcome-dismissed .welcome-card { display: none !important; }
+
+
+/* ══════════════════════════════════════════════════════════════════
+   4. MOBILE CHART IMPROVEMENTS
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1180px) {
+  /* Taller canvas wraps — more useful for reading trends */
+  .canvas-wrap {
+    height: 240px !important;
+    min-height: 240px !important;
+  }
+
+  /* Net worth chart gets extra height — it's the most meaningful */
+  #networthChartWrap,
+  [id*="networth"] .canvas-wrap,
+  .canvas-wrap.networth-chart {
+    height: 260px !important;
+    min-height: 260px !important;
+  }
+
+  /* Touch affordance hint on time-series charts */
+  .canvas-wrap::after {
+    content: "Tap bars to explore";
+    display: block;
+    position: absolute;
+    bottom: 8px;
+    right: 10px;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--soft);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  /* Show hint briefly on first render */
+  .canvas-wrap.mm-chart-hint::after {
+    opacity: 1;
+    animation: hintFade 2.4s ease forwards;
+  }
+}
+
+@media (max-width: 760px) {
+  .canvas-wrap {
+    height: 220px !important;
+    min-height: 220px !important;
+  }
+
+  /* Spend map rows: more comfortable tap targets */
+  .spend-map-row {
+    min-height: 52px !important;
+    padding: 10px 0 !important;
+  }
+
+  .spend-map-amount {
+    font-size: 15px !important;
+    font-weight: 860 !important;
+  }
+}
+
+@keyframes hintFade {
+  0%   { opacity: 0; }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   5. MISC MOBILE POLISH
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Prevent body scroll when first-run is active — belt-and-suspenders
+   approach on top of the overflow:hidden fix on .first-run itself    */
+body.first-run-open {
+  overflow: hidden !important;
+  position: fixed !important;
+  width: 100% !important;
+}
+
+/* Net worth card — make account list read cleanly at a glance */
+@media (max-width: 760px) {
+  .v59-net-value,
+  .v60-net-value {
+    font-size: clamp(36px, 10vw, 56px) !important;
+    line-height: 0.92 !important;
+  }
+
+  /* Snapshot stats inside the net worth card */
+  .v59-snapshot-strip,
+  .v60-snapshot-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .v59-stat b,
+  .v60-stat b {
+    font-size: 14px !important;
+  }
+}

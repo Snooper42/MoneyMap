@@ -1,0 +1,7 @@
+MoneyMap v0.9.2 install notes
+
+1. Use the full no-git zip for local testing first.
+2. Run the local server from the extracted folder with: python3 -m http.server 8080
+3. Open http://localhost:8080 in the same browser/profile you normally use.
+4. Check Settings shows v0.9.2.
+5. Test Add account and Edit account on desktop and mobile width before deploying.

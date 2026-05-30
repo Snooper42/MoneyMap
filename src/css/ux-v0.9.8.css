@@ -1,0 +1,412 @@
+/* MoneyMap v0.9.8 — touch-first mobile CSS
+   ─────────────────────────────────────────────────────────────────
+   1. Keyboard-aware drawer footer
+   2. Bottom sheet drawer feel
+   3. Swipe gesture overlays on tx/review cards
+   4. Review mode redesign
+   5. Transaction card improvements
+   ─────────────────────────────────────────────────────────────────
+   All rules scoped to ≤ 1180px (mobile/tablet) or media-query free
+   where safe on desktop too.
+   ───────────────────────────────────────────────────────────────── */
+
+
+/* ── CSS custom property: keyboard height set by touch.js ─────── */
+:root {
+  --keyboard-h: 0px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   1. KEYBOARD-AWARE DRAWER FOOTER
+   
+   Problem: when the virtual keyboard opens in a drawer form, the
+   "Save" button scrolls off-screen and users can't tap it without
+   dismissing the keyboard first.
+   
+   Fix: make .drawer-actions sticky at bottom of the drawer panel
+   and add --keyboard-h padding so it rises above the keyboard.
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1180px) {
+
+  /* The drawer panel is already 100dvh on mobile.
+     Making the body inside scrollable with a sticky footer. */
+  .drawer-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important; /* panel itself doesn't scroll */
+  }
+
+  /* Drawer head stays fixed at the top */
+  .drawer-head {
+    flex: 0 0 auto !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 2 !important;
+    background: var(--panel) !important;
+    border-bottom: 1px solid var(--line) !important;
+  }
+
+  /* Body scrolls between head and actions */
+  #drawerBody {
+    flex: 1 1 auto !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+    padding-bottom: 8px !important; /* breathing room before sticky actions */
+  }
+
+  /* Actions stick to the bottom, above the keyboard */
+  .drawer-actions {
+    flex: 0 0 auto !important;
+    position: sticky !important;
+    bottom: 0 !important;
+    z-index: 2 !important;
+    background: var(--panel) !important;
+    border-top: 1px solid var(--line) !important;
+    padding: 12px 16px !important;
+    /* Rise above the keyboard when it's open */
+    padding-bottom: calc(12px + var(--keyboard-h, 0px)) !important;
+    transition: padding-bottom 0.18s ease !important;
+  }
+
+  /* Keyboard-open body class: scroll into focused field */
+  body.mm-keyboard-open .drawer-panel {
+    /* Let visualViewport do its job — don't fight it */
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   2. BOTTOM SHEET DRAWER (mobile)
+   
+   Make the drawer feel like a native iOS/Android bottom sheet rather
+   than a flat full-screen page. A drag handle at the top signals
+   it can be swiped down.
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1180px) {
+
+  .drawer-panel {
+    /* Slide up from bottom on open */
+    border-radius: 22px 22px 0 0 !important;
+    /* Handle at the top */
+    padding-top: 0 !important;
+  }
+
+  /* Drag handle */
+  .drawer-panel::before {
+    content: '';
+    display: block;
+    width: 38px;
+    height: 4px;
+    border-radius: 999px;
+    background: var(--line2);
+    margin: 10px auto 0;
+    flex: 0 0 auto;
+    opacity: 0.7;
+  }
+
+  .drawer-head {
+    border-radius: 0 !important; /* flat inside the sheet */
+  }
+}
+
+/* On very tall drawers / small phones: full screen, no radius */
+@media (max-width: 480px) {
+  .drawer-panel {
+    border-radius: 0 !important;
+  }
+  .drawer-panel::before {
+    display: none;
+  }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   3. SWIPE GESTURE OVERLAYS ON TX CARDS
+   
+   .tx-swipe-right (approve): green overlay, slides from left
+   .tx-swipe-left  (edit):    accent-dim overlay, slides from right
+   These are injected by ux-v0.9.8.js into each tx card.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Parent card: clipping context for the overlays */
+.v60-tx-card,
+.tx-card {
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+  /* Prevent text selection during swipe */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Shared overlay styles */
+.tx-swipe-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.08s;
+  font-size: 13px;
+  font-weight: 820;
+  letter-spacing: -0.01em;
+  gap: 8px;
+}
+
+.tx-swipe-right-overlay {
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--good) 22%, var(--panel)),
+    color-mix(in srgb, var(--good) 8%, transparent) 80%
+  );
+  color: var(--good);
+  justify-content: flex-start;
+}
+
+.tx-swipe-left-overlay {
+  background: linear-gradient(270deg,
+    color-mix(in srgb, var(--accent2) 18%, var(--panel)),
+    color-mix(in srgb, var(--accent2) 6%, transparent) 80%
+  );
+  color: var(--accent2);
+  justify-content: flex-end;
+}
+
+/* Overlays fade in as the card is dragged */
+.tx-card-swiping-right .tx-swipe-right-overlay { opacity: 1; }
+.tx-card-swiping-left  .tx-swipe-left-overlay  { opacity: 1; }
+
+/* Already-reviewed: mute the review badge */
+.v60-tx-badge.reviewed {
+  background: color-mix(in srgb, var(--good) 10%, transparent) !important;
+  color: var(--good) !important;
+  border-color: color-mix(in srgb, var(--good) 20%, transparent) !important;
+}
+
+.v60-tx-badge.needs-review {
+  background: color-mix(in srgb, var(--orange) 12%, transparent) !important;
+  color: var(--orange) !important;
+  border-color: color-mix(in srgb, var(--orange) 22%, transparent) !important;
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   4. REVIEW MODE REDESIGN
+   
+   The review card is the core interaction loop. The current layout
+   has small approve/skip buttons. This makes them full-width and
+   large enough to tap with a thumb anywhere on the screen.
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1180px) {
+
+  /* Outer card: more breathing room */
+  .review-transaction {
+    border-radius: 22px !important;
+    padding: 20px !important;
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Merchant name: large and readable */
+  .review-merchant {
+    font-size: clamp(20px, 6vw, 28px) !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.04em !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Amount: the hero number */
+  .review-amount {
+    font-size: clamp(32px, 10vw, 48px) !important;
+    font-weight: 950 !important;
+    letter-spacing: -0.07em !important;
+    line-height: 1 !important;
+    margin: 14px 0 !important;
+  }
+
+  /* Category grid: horizontal scroll instead of 2-col grid */
+  .category-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 7px !important;
+    grid-template-columns: unset !important;
+    padding: 2px 0 !important;
+  }
+
+  .cat-btn {
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+    width: auto !important;
+    padding: 10px 14px !important;
+    min-height: 38px !important;
+    border-radius: 999px !important;
+    font-size: 13px !important;
+    font-weight: 760 !important;
+    white-space: nowrap !important;
+  }
+
+  /* Action buttons: large thumb-friendly strip */
+  .review-actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 10px !important;
+    margin-top: 16px !important;
+  }
+
+  .review-actions .btn {
+    min-height: 54px !important;
+    height: 54px !important;
+    border-radius: 16px !important;
+    font-size: 15px !important;
+    font-weight: 860 !important;
+    letter-spacing: -0.02em !important;
+    justify-content: center !important;
+  }
+
+  /* Approve button: prominent */
+  .review-actions .btn-primary,
+  .review-actions .btn[onclick*="approve"],
+  .review-actions .btn[onclick*="Approve"] {
+    background: linear-gradient(135deg,
+      color-mix(in srgb, var(--good) 90%, var(--accent2)),
+      var(--good)
+    ) !important;
+    color: #061815 !important;
+    box-shadow: 0 6px 20px color-mix(in srgb, var(--good) 28%, transparent) !important;
+  }
+
+  /* Skip: quieter */
+  .review-actions .btn:not(.btn-primary) {
+    background: var(--panel2) !important;
+    color: var(--muted) !important;
+  }
+
+  /* Swipe hint pill shown above the review card */
+  .review-swipe-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    padding: 8px 16px;
+    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 760;
+    color: var(--soft);
+    letter-spacing: 0.02em;
+  }
+
+  .review-swipe-hint span {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* Swipe overlays on the review card */
+  .review-swipe-right {
+    background: linear-gradient(90deg,
+      color-mix(in srgb, var(--good) 24%, var(--panel)),
+      transparent
+    );
+    color: var(--good);
+    font-size: 18px;
+    font-weight: 900;
+    justify-content: flex-start;
+    padding-left: 24px;
+  }
+
+  .review-swipe-left {
+    background: linear-gradient(270deg,
+      color-mix(in srgb, var(--muted) 18%, var(--panel)),
+      transparent
+    );
+    color: var(--muted);
+    font-size: 18px;
+    font-weight: 900;
+    justify-content: flex-end;
+    padding-right: 24px;
+  }
+}
+
+/* Hide swipe hint on desktop */
+@media (min-width: 1181px) {
+  .review-swipe-hint { display: none !important; }
+}
+
+
+/* ══════════════════════════════════════════════════════════════════
+   5. TRANSACTION CARD IMPROVEMENTS
+   ══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 1180px) {
+
+  /* v60 tx card: more generous layout */
+  .v60-tx-card {
+    min-height: 64px !important;
+    padding: 13px 14px !important;
+    border-radius: 16px !important;
+    gap: 12px !important;
+  }
+
+  .v60-tx-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+  }
+
+  .v60-tx-merchant {
+    font-size: 14.5px !important;
+    font-weight: 760 !important;
+    letter-spacing: -0.02em !important;
+    line-height: 1.2 !important;
+  }
+
+  .v60-tx-meta {
+    font-size: 11.5px !important;
+    line-height: 1.3 !important;
+    margin-top: 2px !important;
+  }
+
+  .v60-tx-amount {
+    font-size: 15.5px !important;
+    font-weight: 880 !important;
+    letter-spacing: -0.03em !important;
+    white-space: nowrap !important;
+  }
+
+  .v60-tx-badge {
+    font-size: 10px !important;
+    padding: 3px 7px !important;
+    border-radius: 999px !important;
+    border: 1px solid transparent;
+    font-weight: 760 !important;
+    white-space: nowrap !important;
+    margin-top: 4px !important;
+    display: block !important;
+    text-align: right !important;
+  }
+
+  .v60-tx-right {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-end !important;
+    gap: 2px !important;
+    flex: 0 0 auto !important;
+  }
+}
+
+/* Spacing between tx cards in the list */
+.tx-card-list {
+  display: grid;
+  gap: 8px !important;
+}

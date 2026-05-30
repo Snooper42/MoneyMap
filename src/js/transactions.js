@@ -637,7 +637,39 @@ function runTransferScan(showToast=false){ let count=0; state.transactions.forEa
 
 function applyRulesToAll(){ let ruleHits=0, transferHits=0; state.transactions.forEach(tx=>{ const beforeRule=tx.ruleId; const beforeTransfer=tx.hidden&&tx.category==='Transfers'; const res=applyAutomationToTx(tx,{guess:true}); if(res.ruleApplied || tx.ruleId!==beforeRule) ruleHits++; if((res.transferApplied || (tx.hidden&&tx.category==='Transfers')) && !beforeTransfer) transferHits++; }); detectRecurring(false); saveState(); toast(`Automation applied: ${ruleHits} rule hit${ruleHits===1?'':'s'}, ${transferHits} new transfer${transferHits===1?'':'s'} hidden.`); renderAll(); }
 
-function saveQuickTransaction(id){ const tx=id?state.transactions.find(t=>t.id===id):{id:uid('tx'),createdAt:new Date().toISOString()}; if(!tx) return; Object.assign(tx,{date:document.getElementById('qaDate').value, amount:parseFloat(document.getElementById('qaAmount').value)||0, description:document.getElementById('qaDesc').value.trim()||'Manual transaction', rawDescription:document.getElementById('qaDesc').value.trim()||'Manual transaction', category:document.getElementById('qaCat').value.trim()||'Other', account:document.getElementById('qaAcct').value.trim()||'General', hidden:document.getElementById('qaHidden').classList.contains('on'), reviewed:true}); if(!id) state.transactions.push(tx); state.settings.firstRunComplete=true; closeDrawer(); toast('Transaction saved.'); renderAll(); }
+function setTxType(type){
+  document.querySelectorAll('[data-tx-type]').forEach(function(btn){
+    btn.classList.toggle('selected', btn.dataset.txType===type);
+  });
+}
+
+function getSelectedTxType(){
+  return document.querySelector('[data-tx-type].selected')?.dataset.txType || 'spend';
+}
+
+function saveQuickTransaction(id){
+  const tx=id?state.transactions.find(t=>t.id===id):{id:uid('tx'),createdAt:new Date().toISOString()};
+  if(!tx) return;
+  const isSpend = getSelectedTxType()==='spend';
+  const rawAmount = parseFloat(document.getElementById('qaAmount')?.value)||0;
+  const amount = isSpend ? -Math.abs(rawAmount) : Math.abs(rawAmount);
+  const desc = (document.getElementById('qaDesc')?.value||'').trim() || 'Manual transaction';
+  Object.assign(tx,{
+    date:     document.getElementById('qaDate')?.value || new Date().toISOString().slice(0,10),
+    amount,
+    description:    desc,
+    rawDescription: tx.rawDescription || desc,
+    category:  (document.getElementById('qaCat')?.value||'').trim() || 'Other',
+    account:   (document.getElementById('qaAcct')?.value||'').trim() || 'General',
+    hidden:    document.getElementById('qaHidden')?.classList.contains('on') || false,
+    reviewed:  true
+  });
+  if(!id) state.transactions.push(tx);
+  state.settings.firstRunComplete=true;
+  closeDrawer();
+  toast('Transaction saved.');
+  renderAll();
+}
 
 async function deleteTransaction(id){ const ok=await mmConfirm('Delete this transaction? This cannot be undone.', {title:'Delete transaction?', confirmText:'Delete', danger:true}); if(!ok) return; state.transactions=state.transactions.filter(t=>t.id!==id); closeDrawer(); toast('Transaction deleted.'); renderAll(); }
 

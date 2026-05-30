@@ -1,0 +1,61 @@
+/* MoneyMap v0.8 targeted fixes */
+
+.cache-reset-notice:not(.v071-real-mismatch){ display:none !important; }
+
+/* Theme-aware net worth card. The v0.7 card used a fixed dark fill, which became muddy in dark mode. */
+.v07-now-card{
+  color:var(--text) !important;
+  background:
+    radial-gradient(520px 260px at 8% 0%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 60%),
+    linear-gradient(180deg, color-mix(in srgb, var(--panel) 93%, var(--accent) 7%), color-mix(in srgb, var(--panel2) 94%, black 6%)) !important;
+  border-color:color-mix(in srgb, var(--line) 72%, var(--accent) 28%) !important;
+  box-shadow:0 18px 46px rgba(0,0,0,.22) !important;
+}
+.v07-now-card .v07-muted,
+.v07-now-card .v07-sub,
+.v07-now-card .v07-mini-stat span{
+  color:color-mix(in srgb, var(--muted) 82%, var(--text) 18%) !important;
+}
+.v07-now-card .v07-mini-stat{
+  background:color-mix(in srgb, var(--panel2) 82%, var(--accent) 5%) !important;
+  border-color:color-mix(in srgb, var(--line) 75%, var(--accent) 25%) !important;
+}
+.v07-now-card .pill{
+  background:color-mix(in srgb, var(--panel2) 80%, var(--accent) 12%) !important;
+  color:var(--text) !important;
+  border-color:color-mix(in srgb, var(--line) 68%, var(--accent) 32%) !important;
+}
+[data-theme="dark"] .v07-now-card,
+[data-theme-pref="dark"] .v07-now-card{
+  background:
+    radial-gradient(520px 280px at 0% 0%, rgba(var(--accent-rgb),.18), transparent 62%),
+    linear-gradient(180deg, #101827, #0b1220) !important;
+  border-color:rgba(148,163,184,.22) !important;
+}
+[data-theme="dark"] .v07-now-card .v07-mini-stat,
+[data-theme-pref="dark"] .v07-now-card .v07-mini-stat{
+  background:rgba(255,255,255,.045) !important;
+  border-color:rgba(148,163,184,.18) !important;
+}
+[data-theme="light"] .v07-now-card,
+[data-theme-pref="light"] .v07-now-card{
+  background:
+    radial-gradient(520px 280px at 0% 0%, rgba(var(--accent-rgb),.16), transparent 62%),
+    linear-gradient(180deg, #ffffff, #f8fafc) !important;
+  border-color:rgba(15,23,42,.12) !important;
+  box-shadow:0 18px 42px rgba(15,23,42,.10) !important;
+}
+
+/* Transaction-level precision. Totals stay clean through the global money formatter. */
+.amount-cell,
+.tx-card-amount,
+.v60-tx-amount,
+.v06-tx-side strong,
+.v071-tx-amount{
+  font-variant-numeric:tabular-nums;
+}
+.v071-tx-amount{ white-space:nowrap; }
+
+@media(max-width:760px){
+  .v07-now-card{ border-radius:22px !important; }
+}

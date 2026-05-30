@@ -9,8 +9,13 @@ function buildNav(){
 }
 
 function buildMobileNav(){
-  const ids = ['overview','import','review','networth','settings'];
-  document.getElementById('mobileNav').innerHTML = NAV.filter(n=>ids.includes(n[0])).map(([id,title,,icon])=>`<button class="${id===activeView?'active':''}" onclick="showView('${id}')"><span>${icon}</span><span>${title}</span></button>`).join('');
+  const ids = ['overview','review','networth','settings'];
+  const buttons = NAV.filter(n=>ids.includes(n[0])).map(([id,title,,icon])=>`<button class="${id===activeView?'active':''}" onclick="showView('${id}')"><span>${icon}</span><span>${title}</span></button>`);
+  /* Add quick-add button after Overview — more useful than Import for mobile-first newcomers.
+     Keyboard users still have 'N' for quick-add and '⌘K' for import. */
+  const addBtn=`<button class="mobile-add-btn" onclick="openQuickAddMenu()" aria-label="Add transaction or balance"><span>＋</span><span>Add</span></button>`;
+  buttons.splice(1, 0, addBtn);
+  document.getElementById('mobileNav').innerHTML = buttons.join('');
 }
 
 function showView(id){ activeView=id; document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+id)); buildNav(); buildMobileNav(); if(id==='review') renderReview(); if(id==='recurring') detectRecurring(false); renderAll(); }
@@ -40,7 +45,13 @@ function ensureStarterContent(){
 
 function workspaceHasUserData(){ return Boolean((state.transactions||[]).length || (state.imports||[]).length || (state.goals||[]).length || (state.creditHistory||[]).length || (state.accounts||[]).length || (state.netWorthHistory||[]).length || (state.debts||[]).length || (state.holdings||[]).length); }
 
-function shouldShowFirstRun(){ return state.settings.startupSeenBuild !== APP_BUILD_ID; }
+function shouldShowFirstRun(){
+  /* Show for brand-new users who have never completed onboarding.
+     Do NOT show on every build bump — that's annoying for existing users.
+     Existing users see it again only if they've never set firstRunComplete=true. */
+  if(!state.settings.firstRunComplete) return true;
+  return false;
+}
 
 function openFirstRun(force=false){
   const el=document.getElementById('firstRun');
@@ -67,16 +78,17 @@ function resetWorkspaceForFreshStart(){
 }
 
 async function chooseFirstRun(mode){
-  if(mode==='continue'){ completeFirstRun(); toast('Current workspace continued.'); renderAll(); return; }
+  if(mode==='continue'){ completeFirstRun(); toast('Workspace continued.'); renderAll(); return; }
   if(mode==='demo' && workspaceHasUserData() && !(await mmConfirm('Replace your current workspace with demo data?', {title:'Load demo workspace?', confirmText:'Replace', danger:true}))) return;
-  if(mode==='fresh' && workspaceHasUserData() && !(await mmConfirm('Start fresh and clear existing transactions, imports, goals, and credit logs?', {title:'Start fresh?', confirmText:'Clear workspace', danger:true}))) return;
+  if(mode==='fresh' && workspaceHasUserData() && !(await mmConfirm('Clear existing data and start fresh?', {title:'Start fresh?', confirmText:'Clear workspace', danger:true}))) return;
   if(mode==='demo'){ completeFirstRun(); loadDemoData(); return; }
   if(mode==='import'){ completeFirstRun(); showView('import'); toast('Import center opened. Drop your CSV to begin.'); return; }
+  /* fresh — onboarding.js opens the account drawer after render */
   resetWorkspaceForFreshStart();
   saveState();
   closeFirstRun();
   showView('overview');
-  toast('Fresh workspace ready. Add data whenever you want.');
+  toast('Workspace ready. Let\'s add your first account.');
 }
 
 function commandActions(){

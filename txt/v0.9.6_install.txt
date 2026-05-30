@@ -1,0 +1,68 @@
+MoneyMap v0.9.6 — install notes
+════════════════════════════════════════════════════════════════
+
+Mobile-first UX pass. Transaction form redesign, iOS zoom fix,
+mobile nav improvement, drawer polish, spend-map extraction.
+
+localStorage key unchanged: moneymap_v1
+No schema migration. Existing data loads correctly.
+
+────────────────────────────────────────────────────────────────
+INSTALLING FROM FULL ZIP
+────────────────────────────────────────────────────────────────
+
+PowerShell:
+
+  cd "$env:USERPROFILE\Downloads"
+  Remove-Item -Recurse -Force .\MoneyMap_v0.9.6_full_no_git -ErrorAction SilentlyContinue
+  Expand-Archive .\MoneyMap_v0.9.6_full_no_git.zip -DestinationPath .\MoneyMap_v0.9.6_full_no_git
+  cd .\MoneyMap_v0.9.6_full_no_git\MoneyMap_v0.9.6
+  python -m http.server 8080
+
+Open: http://localhost:8080
+Use the same port so localStorage stays consistent.
+
+────────────────────────────────────────────────────────────────
+CHANGED FILES (patch over existing deployment)
+────────────────────────────────────────────────────────────────
+
+Files to replace:
+  index.html
+  src/js/core/app-config.js
+  src/js/state.js
+  src/js/settings.js
+  src/js/transactions.js
+  src/js/navigation.js
+  src/js/app.js
+
+Files to CREATE (new — must not already exist):
+  src/js/ui/spend-map.js
+  src/css/ux-v0.9.6.css
+
+Hard-refresh (Ctrl+Shift+R) after deploying.
+
+────────────────────────────────────────────────────────────────
+VERIFYING THE INSTALL
+────────────────────────────────────────────────────────────────
+
+1. Open http://localhost:8080
+2. Settings → Privacy → Build should show: v0.9.6
+3. Bottom nav on mobile: Overview · Add · Review · Net worth · Settings
+4. Tap "Add" → Quick add menu opens
+5. Tap "Add" → Transaction → form shows Spend / Income toggle at top
+6. Type 47.50 in Amount, select Spend, save → transaction saved as -47.50
+7. Open DevTools → Console → type: MM.money0(123) → "$123"
+
+────────────────────────────────────────────────────────────────
+MOBILE TESTING CHECKLIST
+────────────────────────────────────────────────────────────────
+
+□ Open on iOS Safari — inputs should NOT zoom when tapped
+□ Add transaction → Amount field shows numeric keypad with decimal
+□ Description field → keyboard auto-capitalizes first word
+□ Spend/Income toggle: Spend = red tint, Income = green tint
+□ Bottom nav Add button has accent color tint
+□ Drawer action buttons are comfortably tappable (≥ 44px)
+□ No horizontal scroll on any view
+
+════════════════════════════════════════════════════════════════

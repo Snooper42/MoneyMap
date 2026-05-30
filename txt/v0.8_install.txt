@@ -1,0 +1,17 @@
+MoneyMap v0.8 install notes
+
+1. Download MoneyMap_v0.8_full_no_git.zip.
+2. Unzip it on your Mac.
+3. Run a local server from the unzipped folder:
+
+   python3 -m http.server 8080
+
+4. Open:
+
+   http://localhost:8080
+
+5. Confirm Settings shows v0.8.
+6. Confirm your existing localStorage data appears if you are using the same browser and localhost port as earlier tests.
+7. Test import, transactions, Home, Settings, and net worth before deploying.
+
+Do not switch between file://, localhost, 127.0.0.1, or different ports during localStorage validation. Each can have a different browser storage origin.

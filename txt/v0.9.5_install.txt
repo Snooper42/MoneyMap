@@ -1,0 +1,98 @@
+MoneyMap v0.9.5 — install notes
+════════════════════════════════════════════════════════════════
+
+This is a conservative architecture patch. No existing behaviour changes.
+Your localStorage data is safe. No schema migration required.
+
+────────────────────────────────────────────────────────────────
+WHAT CHANGED
+────────────────────────────────────────────────────────────────
+
+New files (added to src/js/core/):
+  • render-bus.js    — render event registry
+  • shared-helpers.js — canonical format helpers (window.MM)
+
+Updated files:
+  • src/js/core/app-config.js  — version → v0.9.5, window.MoneyMap namespace
+  • src/js/state.js            — APP_BUILD_ID fallback updated
+  • index.html                 — two new <script> tags, all cache bust strings updated
+
+New documentation:
+  • docs/ARCHITECTURE_v0.9.5.md
+  • docs/PATCH_NOTES_v0.9.5.md
+  • txt/v0.9.5_install.txt
+
+────────────────────────────────────────────────────────────────
+INSTALLING FROM ZIP (FULL)
+────────────────────────────────────────────────────────────────
+
+PowerShell:
+
+  cd "$env:USERPROFILE\Downloads"
+  Remove-Item -Recurse -Force .\MoneyMap_v0.9.5_full_no_git -ErrorAction SilentlyContinue
+  Expand-Archive .\MoneyMap_v0.9.5_full_no_git.zip -DestinationPath .\MoneyMap_v0.9.5_full_no_git
+  cd .\MoneyMap_v0.9.5_full_no_git
+  python -m http.server 8080
+
+Open: http://localhost:8080
+
+Use the same localhost URL and port so localStorage stays consistent.
+
+────────────────────────────────────────────────────────────────
+INSTALLING CHANGED FILES ONLY
+────────────────────────────────────────────────────────────────
+
+If you are patching an existing deployment, copy these files into
+your project root:
+
+  index.html
+  src/js/core/app-config.js
+  src/js/core/render-bus.js          ← NEW — must be created
+  src/js/core/shared-helpers.js      ← NEW — must be created
+  src/js/state.js
+
+Then hard-refresh the browser (Ctrl+Shift+R / Cmd+Shift+R) to clear
+the cached v0.9.4 assets.
+
+────────────────────────────────────────────────────────────────
+VERIFYING THE INSTALL
+────────────────────────────────────────────────────────────────
+
+1. Open http://localhost:8080
+2. Open DevTools console (F12)
+3. You should see:
+     [MoneyMap] Render bus active. MoneyMapRenderBus.list() to inspect hooks.
+4. Run:
+     MoneyMapRenderBus.list()
+   → returns an array (may be empty — no hooks are registered by default
+     in v0.9.5; the bus is infrastructure for future patches)
+5. Run:
+     window.MoneyMap
+   → should show { version: 'v0.9.5', storageKey: 'moneymap_v1', ... }
+6. Run:
+     MM.esc('<b>test</b>')
+   → should return '&lt;b&gt;test&lt;/b&gt;'
+7. Run:
+     MM.money0(1234.56)
+   → should return '$1,235'
+8. Check the build label in Settings → Privacy → Build field shows v0.9.5
+
+────────────────────────────────────────────────────────────────
+DATA SAFETY
+────────────────────────────────────────────────────────────────
+
+• localStorage key unchanged: moneymap_v1
+• No state schema changes
+• Export a backup before any major install (Settings → Export backup)
+
+────────────────────────────────────────────────────────────────
+BROWSER COMPATIBILITY
+────────────────────────────────────────────────────────────────
+
+Same as v0.9.4:
+  • Chrome / Edge 90+
+  • Firefox 90+
+  • Safari 14+
+  • Mobile: iOS Safari 14+, Chrome for Android 90+
+
+════════════════════════════════════════════════════════════════

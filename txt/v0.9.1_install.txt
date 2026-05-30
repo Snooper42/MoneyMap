@@ -1,0 +1,8 @@
+MoneyMap v0.9.1 install notes
+
+1. Use the full no-git zip for local testing.
+2. Start the local server from the unzipped folder:
+   python3 -m http.server 8080
+3. Open http://localhost:8080 in the same browser and port you have been using.
+4. Confirm Settings shows v0.9.1.
+5. Check Home spending history and the current-month spending breakdown before deploying.

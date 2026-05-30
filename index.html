@@ -7,8 +7,8 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="0"/>
-<meta content="v0.6" name="moneymap-build"/>
-<script>window.MONEYMAP_EXPECTED_BUILD='v0.6';</script>
+<meta content="v0.9.8" name="moneymap-build"/>
+<script>window.MONEYMAP_EXPECTED_BUILD='v0.9.8';</script>
 <meta content="MoneyMap" name="application-name"/>
 <meta content="MoneyMap" name="apple-mobile-web-app-title"/>
 <meta content="A private, local-first personal finance dashboard for budgets, reviews, goals, and net worth." name="description"/>
@@ -23,12 +23,19 @@
 <link href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%230f172a'/%3E%3Cpath d='M18 43V21h7l7 10 7-10h7v22h-7V32.5L33.8 40h-3.6L25 32.5V43h-7z' fill='%23fb923c'/%3E%3C/svg%3E" rel="icon"/>
 
 
-<link href="src/css/base.css?v=v0.6" rel="stylesheet"/>
-<link href="src/css/layout.css?v=v0.6" rel="stylesheet"/>
-<link href="src/css/components.css?v=v0.6" rel="stylesheet"/>
-<link href="src/css/mobile.css?v=v0.6" rel="stylesheet"/>
-<link href="src/css/ux-v0.5.css?v=v0.6" rel="stylesheet"/>
-<link href="src/css/ux-v0.6.css?v=v0.6" rel="stylesheet"/></head>
+<link href="src/css/base.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/layout.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/components.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/mobile.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/ux-v0.7.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/ux-v0.8.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/ux-v0.9.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/ux-v0.9.1.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/ux-v0.9.2.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/ux-v0.9.4.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/ux-v0.9.6.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/ux-v0.9.7.css?v=v0.9.8" rel="stylesheet"/>
+<link href="src/css/ux-v0.9.8.css?v=v0.9.8" rel="stylesheet"/></head>
 
 
 
@@ -154,7 +161,7 @@
 <div class="upload-icon">⇡</div>
 <h3>Drop CSV files here</h3>
 <p>Or click to select files. Nothing leaves your device.</p>
-<input accept=".csv,text/csv" id="csvInput" multiple="" type="file"/>
+<input accept=".csv,.txt,.tsv,.tab,.psv,text/csv,text/plain" id="csvInput" multiple="" type="file"/>
 </div>
 <div class="split-line"></div>
 <div class="mini-list">
@@ -401,33 +408,101 @@
 <datalist id="categoryList"></datalist>
 <div aria-hidden="true" class="drawer" id="drawer"><div class="drawer-backdrop" onclick="closeDrawer()"></div><div aria-labelledby="drawerTitle" aria-modal="true" class="drawer-panel" role="dialog"><div class="drawer-head"><div><h3 class="section-title" id="drawerTitle">Quick add</h3><p class="section-sub" id="drawerSub">Add or manage data.</p></div><button aria-label="Close drawer" class="btn btn-square drawer-close" onclick="closeDrawer()">×</button></div><div id="drawerBody"></div></div></div>
 <div aria-hidden="true" class="first-run" id="firstRun">
-<div aria-labelledby="firstRunTitle" aria-modal="true" class="first-run-panel" role="dialog">
-<div class="first-run-head">
-<div class="eyebrow">First run</div>
-<h2 id="firstRunTitle">Choose how to start.</h2>
-<p>MoneyMap stores everything locally in this browser. Pick demo mode to explore, start fresh for a blank workspace, or import a CSV to begin with real data.</p>
-</div>
-<div class="start-grid">
-<button class="start-option" onclick="chooseFirstRun('demo')"><span class="start-icon">◈</span><b>Demo mode</b><span>Load sample transactions, budgets, goals, recurring charges, and credit history.</span></button>
-<button class="start-option" onclick="chooseFirstRun('fresh')"><span class="start-icon">＋</span><b>Start fresh</b><span>Keep an empty workspace and add items manually when you are ready.</span></button>
-<button class="start-option" onclick="chooseFirstRun('import')"><span class="start-icon">⇡</span><b>Import CSV</b><span>Go straight to the import center and map your bank export.</span></button>
-</div>
-<div class="first-run-footer"><span id="firstRunFootnote">Private by default. No bank login or backend required.</span><div class="actions"><button class="btn btn-small" onclick="chooseFirstRun('continue')">Continue current workspace</button><button class="btn btn-small" onclick="chooseFirstRun('fresh')">Start fresh</button></div></div>
+<div aria-labelledby="frTitle" aria-modal="true" class="fr-panel" role="dialog">
+
+  <!-- Header -->
+  <div class="fr-header">
+    <div class="fr-wordmark">MoneyMap</div>
+    <p class="fr-tagline">Your full financial picture — no bank login, no sync, no tracking.</p>
+  </div>
+
+  <!-- Live preview of what the dashboard looks like -->
+  <div class="fr-preview" aria-hidden="true">
+    <div class="fr-preview-top">
+      <div>
+        <div class="fr-preview-label">Net worth</div>
+        <div class="fr-preview-value">$47,200</div>
+      </div>
+      <div class="fr-preview-delta">↑ +$1,450 this month</div>
+    </div>
+    <div class="fr-preview-accounts">
+      <div class="fr-preview-acct"><span>Chase Checking</span><b>$4,280</b></div>
+      <div class="fr-preview-acct"><span>High-yield savings</span><b>$15,400</b></div>
+      <div class="fr-preview-acct"><span>Roth IRA</span><b>$4,874</b></div>
+      <div class="fr-preview-acct fr-preview-acct--debt"><span>Rewards card</span><b>−$1,850</b></div>
+    </div>
+    <div class="fr-preview-bar" aria-hidden="true">
+      <div class="fr-bar-fill" style="width:49%;background:var(--good)"></div>
+      <div class="fr-bar-fill" style="width:25%;background:var(--blue)"></div>
+      <div class="fr-bar-fill" style="width:15%;background:var(--purple)"></div>
+      <div class="fr-bar-fill" style="width:8%;background:var(--red);opacity:.7"></div>
+    </div>
+    <div class="fr-preview-caption">Your dashboard will look like this once set up</div>
+  </div>
+
+  <!-- Primary CTAs -->
+  <div class="fr-ctas">
+    <button class="fr-cta fr-cta--primary" onclick="chooseFirstRun('demo')">
+      <span class="fr-cta-icon">◈</span>
+      <div class="fr-cta-copy">
+        <b id="frTitle">Explore with demo data</b>
+        <span>See the full dashboard, charts, and budget tools in action</span>
+      </div>
+      <span class="fr-cta-arrow">›</span>
+    </button>
+    <button class="fr-cta fr-cta--secondary" onclick="chooseFirstRun('fresh')">
+      <span class="fr-cta-icon">◆</span>
+      <div class="fr-cta-copy">
+        <b>Add my accounts</b>
+        <span>Start with real balances — takes about two minutes</span>
+      </div>
+      <span class="fr-cta-arrow">›</span>
+    </button>
+  </div>
+
+  <!-- Tertiary links -->
+  <div class="fr-links">
+    <button class="fr-link" onclick="chooseFirstRun('import')">Import a CSV file</button>
+    <span class="fr-dot">·</span>
+    <button class="fr-link fr-continue-btn" id="frContinueBtn" onclick="chooseFirstRun('continue')">Continue existing workspace</button>
+  </div>
+
+  <!-- Privacy note -->
+  <div class="fr-privacy">
+    <span class="fr-lock">🔒</span>
+    <span id="firstRunFootnote">Everything stays in your browser. Nothing leaves your device.</span>
+  </div>
+
 </div>
 </div>
 
 
-<script src="src/js/utils.js?v=v0.6"></script>
-<script src="src/js/state.js?v=v0.6"></script>
-<script src="src/js/storage.js?v=v0.6"></script>
-<script src="src/js/navigation.js?v=v0.6"></script>
-<script src="src/js/accounts.js?v=v0.6"></script>
-<script src="src/js/transactions.js?v=v0.6"></script>
-<script src="src/js/budgets.js?v=v0.6"></script>
-<script src="src/js/investments.js?v=v0.6"></script>
-<script src="src/js/charts.js?v=v0.6"></script>
-<script src="src/js/settings.js?v=v0.6"></script>
-<script src="src/js/app.js?v=v0.6"></script>
-<script src="src/js/ux-v0.5.js?v=v0.6"></script>
-<script src="src/js/ux-v0.6.js?v=v0.6"></script></body>
+<script src="src/js/core/app-config.js?v=v0.9.8"></script>
+<script src="src/js/utils.js?v=v0.9.8"></script>
+<script src="src/js/core/security.js?v=v0.9.8"></script>
+<script src="src/js/state.js?v=v0.9.8"></script>
+<script src="src/js/storage.js?v=v0.9.8"></script>
+<script src="src/js/navigation.js?v=v0.9.8"></script>
+<script src="src/js/accounts.js?v=v0.9.8"></script>
+<script src="src/js/transactions.js?v=v0.9.8"></script>
+<script src="src/js/import/parsers.js?v=v0.9.8"></script>
+<script src="src/js/import/workflow.js?v=v0.9.8"></script>
+<script src="src/js/budgets.js?v=v0.9.8"></script>
+<script src="src/js/investments.js?v=v0.9.8"></script>
+<script src="src/js/charts.js?v=v0.9.8"></script>
+<script src="src/js/settings.js?v=v0.9.8"></script>
+<script src="src/js/app.js?v=v0.9.8"></script>
+<script src="src/js/core/cache-guard.js?v=v0.9.8"></script>
+<!-- v0.9.5: render bus + shared helpers; v0.9.6: spend-map + mobile UX; v0.9.7: onboarding; v0.9.8: touch -->
+<script src="src/js/core/render-bus.js?v=v0.9.8"></script>
+<script src="src/js/core/shared-helpers.js?v=v0.9.8"></script>
+<script src="src/js/ui/spend-map.js?v=v0.9.8"></script>
+<script src="src/js/ui/onboarding.js?v=v0.9.8"></script>
+<script src="src/js/ui/touch.js?v=v0.9.8"></script>
+<script src="src/js/ux-v0.7.js?v=v0.9.8"></script>
+<script src="src/js/ux-v0.7.1.js?v=v0.9.8"></script><script src="src/js/ux-v0.9.js?v=v0.9.8"></script>
+<script src="src/js/ux-v0.9.1.js?v=v0.9.8"></script>
+<script src="src/js/ux-v0.9.2.js?v=v0.9.8"></script>
+<script src="src/js/ux-v0.9.4.js?v=v0.9.8"></script>
+<script src="src/js/ux-v0.9.8.js?v=v0.9.8"></script></body>
 </html>

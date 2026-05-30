@@ -1,0 +1,195 @@
+/* MoneyMap v0.9.6 — mobile-first UX CSS
+   ─────────────────────────────────────────────────────────────────────
+   What this covers
+   ────────────────
+   1. Prevent iOS input zoom  — font-size: 16px on all inputs mobile
+   2. Spend / Income toggle   — visual state for the transaction type toggle
+   3. Drawer form polish      — consistent spacing and action layout
+   4. Mobile Add nav button   — ＋ button replaces Import in bottom nav
+   5. Touch target sizing     — drawer action buttons 48px minimum
+   ───────────────────────────────────────────────────────────────────── */
+
+/* ── 1. iOS input zoom prevention ──────────────────────────────────
+   Any input with font-size < 16px causes iOS Safari to zoom the page
+   when focused. This is universally annoying. Fix it once here.       */
+@media (max-width: 1180px) {
+  .input,
+  input.input,
+  select.input,
+  textarea.input,
+  input[type="text"],
+  input[type="number"],
+  input[type="date"],
+  input[type="email"],
+  input[type="search"],
+  select,
+  textarea {
+    font-size: 16px !important;
+    /* Preserve visual size of the element — scale compensates for the
+       font-size bump so the field doesn't look too big visually. */
+  }
+
+  /* Restore label and helper text sizes */
+  label,
+  .field-hint,
+  .form-field > p,
+  .drawer-note {
+    font-size: 13px !important;
+  }
+}
+
+/* ── 2. Spend / Income type toggle ─────────────────────────────────  */
+.tx-type-toggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.tx-type-toggle .btn {
+  justify-content: center;
+  height: 46px;
+  min-height: 46px;
+  font-size: 14px !important;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  border-radius: 14px;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+/* Spend selected — warm red tint */
+.tx-type-toggle .btn.selected[data-tx-type="spend"] {
+  background: color-mix(in srgb, var(--red, #ff6b82) 16%, transparent) !important;
+  color: var(--red, #ff6b82) !important;
+  border-color: color-mix(in srgb, var(--red, #ff6b82) 35%, transparent) !important;
+}
+
+/* Income selected — green tint */
+.tx-type-toggle .btn.selected[data-tx-type="income"] {
+  background: color-mix(in srgb, var(--good, #53e0ac) 15%, transparent) !important;
+  color: var(--good, #53e0ac) !important;
+  border-color: color-mix(in srgb, var(--good, #53e0ac) 30%, transparent) !important;
+}
+
+/* Unselected state: muted */
+.tx-type-toggle .btn:not(.selected) {
+  opacity: 0.55;
+}
+
+/* ── 3. Drawer form polish ──────────────────────────────────────── */
+.drawer-form-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.drawer-form-card .form-row,
+.drawer-form-card .form-field,
+.drawer-form-card .toggle {
+  margin-bottom: 0;
+}
+
+.drawer-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.drawer-actions .btn {
+  flex: 1 1 auto;
+  min-height: 46px;
+  height: 46px;
+  justify-content: center;
+  border-radius: 14px;
+}
+
+/* Primary action takes full width on narrow drawers */
+.drawer-actions .btn-primary {
+  flex: 1 1 100%;
+  order: -1;
+}
+
+/* Danger button is naturally smaller */
+.drawer-actions .btn-danger {
+  flex: 0 1 auto;
+}
+
+@media (max-width: 480px) {
+  .drawer-actions {
+    flex-direction: column;
+  }
+  .drawer-actions .btn {
+    width: 100% !important;
+  }
+}
+
+/* ── 4. Mobile Add nav button ───────────────────────────────────── */
+.mobile-bar .mobile-add-btn {
+  background: color-mix(in srgb, var(--accent, #53e0ac) 14%, transparent) !important;
+  color: var(--accent, #53e0ac) !important;
+  border-radius: 14px !important;
+}
+
+.mobile-bar .mobile-add-btn span:first-child {
+  font-size: 22px !important;
+  line-height: 1 !important;
+  font-weight: 400 !important;
+}
+
+.mobile-bar .mobile-add-btn span:last-child {
+  font-size: 9px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.04em !important;
+}
+
+/* Active state: same glow as the accent but stronger */
+.mobile-bar .mobile-add-btn:active {
+  background: color-mix(in srgb, var(--accent, #53e0ac) 28%, transparent) !important;
+}
+
+/* ── 5. Touch target sizing ─────────────────────────────────────── */
+/* Ensure all interactive elements inside drawers hit 44px minimum    */
+@media (max-width: 1180px) {
+  .drawer-panel .btn,
+  .drawer-panel button,
+  .drawer-panel .switch {
+    min-height: 44px;
+  }
+
+  .drawer-panel .toggle {
+    min-height: 52px;
+    align-items: center;
+  }
+
+  /* Money input row — keep $ sign and field aligned */
+  .money-input {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  .money-input span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    min-height: 44px;
+    flex: 0 0 auto;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 15px;
+    background: var(--panel2);
+    border: 1px solid var(--line);
+    border-right: 0;
+    border-radius: 12px 0 0 12px;
+  }
+
+  .money-input .input {
+    border-radius: 0 12px 12px 0 !important;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
